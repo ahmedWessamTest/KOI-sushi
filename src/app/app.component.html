@@ -1,0 +1,15 @@
+@if (isBrowser) {
+<div class="text-main">
+  <router-outlet></router-outlet>
+</div>
+}
+
+<ngx-spinner
+  name="actionsLoader"
+  bdColor="rgba(0, 0, 0, 0.8)"
+  size="medium"
+  color="#fff"
+  type="square-spin"
+  [fullScreen]="true"
+  ><p style="color: white">Loading...</p></ngx-spinner
+>
