@@ -131,7 +131,43 @@
         class="w-full"
       ></p-dropdown>
     </div>
-
+<!-- Image Upload Section -->
+      <div>
+        <div class="p-field">
+          <label class="font-medium mb-1 block">Product Image</label>
+          <p-fileUpload
+            #fileUpload
+            name="image"
+            accept="image/*"
+            [auto]="true"
+            [chooseLabel]="'Choose Image'"
+            [uploadLabel]="'Upload'"
+            [styleClass]="'w-full'"
+            [cancelLabel]="'Cancel'"
+            (onRemove)="clearImage()"
+            [showUploadButton]="false"
+            [showCancelButton]="false"
+            [customUpload]="true"
+            (onSelect)="onFileSelect($event)"
+            [draggable]="true">
+            <ng-template pTemplate="content">
+              <div
+                class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-main-500 transition">
+                <i class="pi pi-cloud-upload text-4xl text-gray-400"></i>
+                <p class="text-gray-500 mt-2">
+                  Drag & drop an image or
+                  <span class="text-blue-500 cursor-pointer" (click)="fileUpload.choose()">click to select</span>
+                </p>
+              </div>
+            </ng-template>
+          </p-fileUpload>
+          @if (submitForm.get('image')?.invalid && submitForm.get('image')?.touched) {
+          <div class="p-error">
+            <small>Product Image is required.</small>
+          </div>
+          }
+        </div>
+      </div>
     <!-- Limit (only if "limited" use selected) -->
     <div class="col-span-1" *ngIf="submitForm.get('use')?.value === 'limited'">
       <label for="limit" class="font-medium block mb-1">Limit</label>

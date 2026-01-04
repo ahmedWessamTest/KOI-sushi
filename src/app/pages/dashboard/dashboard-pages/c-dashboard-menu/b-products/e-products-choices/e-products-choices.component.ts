@@ -1,7 +1,6 @@
-import { DatePipe } from "@angular/common";
-import { Component, inject, SimpleChanges } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { ActivatedRoute, Router, RouteReuseStrategy, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { NgxSpinnerService } from "ngx-spinner";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -11,9 +10,7 @@ import { InputSwitchModule } from "primeng/inputswitch";
 import { TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 import { timer } from "rxjs";
-import { ProductsPieces } from "../../../../../../core/Interfaces/d-products/IGetAllProducts";
 import { Choice, IGetProductById } from "../../../../../../core/Interfaces/d-products/IGetProductById";
-import { productDetailsResolver } from "../../../../../../core/resolvers/d-products/product-details.resolver";
 import { ProductsService } from "../../../../../../core/services/d-products/products.service";
 import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
 import { NoDataFoundBannerComponent } from "../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component";
@@ -28,10 +25,8 @@ import { NoDataFoundBannerComponent } from "../../../../../../shared/components/
     TableModule,
     FormsModule,
     DropdownModule,
-    ToastModule,
-    InputSwitchModule,
+    ToastModule,    InputSwitchModule,
     RouterLink,
-    DatePipe,
     NoDataFoundBannerComponent,
     LoadingDataBannerComponent,
   ],
@@ -113,7 +108,7 @@ export class EProductsChoicesComponent {
     }
   }
 
-  editPicePrice(picePrice: ProductsPieces) {
+  editPicePrice(picePrice: any) {
     localStorage.setItem("choices", JSON.stringify(picePrice));
     this.route.navigate([`/dashboard/menu/products/products-choice-edit/${this.product.product.id}`]);
   }

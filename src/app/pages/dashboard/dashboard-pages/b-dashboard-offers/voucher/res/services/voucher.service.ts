@@ -16,7 +16,7 @@ export class VoucherService {
 
   getAllVouchers(page: number = 1, limit: number = 10): Observable<IVouchers> {
     return this.http.get<IVouchers>(
-      `${WEB_SITE_BASE_URL}vouchers/index?limit=${limit}`
+      `${WEB_SITE_BASE_URL}voucher?limit=${limit}&page=${page}`
     );
   }
 
@@ -31,20 +31,20 @@ export class VoucherService {
     );
   }
 
-  updateVoucher(id: string, voucherData: IAddVoucher): Observable<any> {
+  updateVoucher(id: string, voucherData: any): Observable<any> {
     return this.http.post<any>(
       `${WEB_SITE_BASE_URL}vouchers/update/${id}`,
       voucherData
     );
   }
 
-  addVoucher(voucherData: IAddVoucher): Observable<any> {
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}vouchers/store`, voucherData);
+  addVoucher(voucherData: FormData): Observable<any> {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}voucher`, voucherData);
   }
 
   activeUsers(search: string = ''): Observable<IActiveUsers> {
     return this.http.get<IActiveUsers>(
-      `${WEB_SITE_BASE_URL}activeusers?search=${search}`
+      `${WEB_SITE_BASE_URL}users?search=${search}`
     );
   }
 }

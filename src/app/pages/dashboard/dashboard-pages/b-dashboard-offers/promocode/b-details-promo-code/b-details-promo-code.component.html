@@ -44,6 +44,20 @@
           {{ promoCodeData.promo_code.type }}
         </p>
       </div>
+      <!-- Category -->
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-600">Category</label>
+        <p class="text-gray-900 font-semibold">
+          {{ promoCodeData.promo_code.promo_code_categories.length === 0? 'unlimited' : 'Specific Categories' }}
+        </p>
+      </div>
+      <!-- Users -->
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-600">Users</label>
+        <p class="text-gray-900 font-semibold">
+          {{ promoCodeData.promo_code.users.length === 0? 'unlimited' : 'Specific Users' }}
+        </p>
+      </div>
 
       <!-- use -->
       <div class="flex flex-col">
@@ -77,23 +91,12 @@
 
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-3 mt-4">
-      <button
-        icon="pi pi-angle-double-left"
-        pButton
-        label="Back"
-        class="p-button-text"
-        routerLink="../../"
-      ></button>
-      <button
-        pButton
-        label="Edit Coupon"
-        class="p-button-primary btn-main px-3"
-        [routerLink]="[
+      <button icon="pi pi-angle-double-left" pButton label="Back" class="p-button-text" routerLink="../../"></button>
+      <button pButton label="Edit Coupon" class="p-button-primary btn-main px-3" [routerLink]="[
           '../../',
           'promo-codes-edit',
           promoCodeData.promo_code.id
-        ]"
-      ></button>
+        ]"></button>
     </div>
   </ng-template>
 </p-card>

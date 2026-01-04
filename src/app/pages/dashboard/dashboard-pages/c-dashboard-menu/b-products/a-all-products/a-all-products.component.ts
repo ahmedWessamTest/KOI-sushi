@@ -41,14 +41,14 @@ import { WEB_SITE_IMG_URL } from "../../../../../../core/constants/WEB_SITE_BASE
   providers: [MessageService],
 })
 export class AAllProductsComponent {
-  products: productsData[] = [];
+  products: any[] = [];
   allCategories!: IGetProductsCategories;
-  filteredProducts: productsData[] = [];
+  filteredProducts: any[] = [];
   categoryData!: {
     value: number;
     label: string;
   }[];
-  allProducts!: IGetAllProducts;
+  allProducts!: any;
   readonly imgUrl = WEB_SITE_IMG_URL;
   private ngxSpinnerService = inject(NgxSpinnerService);
 
@@ -105,9 +105,9 @@ export class AAllProductsComponent {
   initCategories(): void {
     this.productsService.getAllProductsCategories().subscribe((response) => {
       this.allCategories = response;
-      this.categoryData = this.allCategories.categories.map((category) => ({
+      this.categoryData = this.allCategories.categories.data.map((category) => ({
         value: category.id,
-        label: category.en_name,
+        label: category.title_en,
       }));
     });
   }
@@ -115,7 +115,7 @@ export class AAllProductsComponent {
   // get All Product
   fetchData() {
     this.productsService.getAllProducts().subscribe(
-      (response) => {
+      (response: any) => {
         // response.products.data.reverse();
         this.allProducts = response;
         this.totalRecords = response.products.total;
@@ -129,7 +129,7 @@ export class AAllProductsComponent {
   }
 
   // Toggle Product
-  toggleProductStatus(Product: productsData) {
+  toggleProductStatus(Product: any) {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
 
@@ -170,7 +170,7 @@ export class AAllProductsComponent {
   loadProducts(page: number, perPage: number) {
     this.ngxSpinnerService.show("actionsLoader");
     this.productsService.getAllProducts(page, perPage).subscribe(
-      (response) => {
+      (response: any) => {
         this.ngxSpinnerService.hide("actionsLoader");
         this.allProducts = response;
         this.totalRecords = response.products.total;

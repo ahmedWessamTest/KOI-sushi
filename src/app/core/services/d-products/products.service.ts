@@ -14,29 +14,32 @@ import { IAddChoicesResponse } from "../../Interfaces/d-products/IAddChoicesResp
   providedIn: "root",
 })
 export class ProductsService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   categoryId = signal(0);
 
- getAllProducts(page: number = 1, perPage: number = 10, search?: string) {
-  let params = new HttpParams()
-    .set('page', page.toString())
-    .set('perPage', perPage.toString());
+  getAllProducts(page: number = 1, perPage: number = 10, search?: string, category_ids?: number[]) {
+    // let params = new HttpParams()
+    //   .set('page', page.toString())
+    //   .set('limit', perPage.toString());
 
-  if (search) {
-    params = params.set('search', search);
+    // if (search) {
+    //   params = params.set('search', search);
+    // }
+
+    return this.http.post<IGetAllProducts>(`${WEB_SITE_BASE_URL}products`, {
+      category_ids
+
+    });
   }
-
-  return this.http.get<IGetAllProducts>(`${WEB_SITE_BASE_URL}products`, { params });
-}
   getAllProductsCategories() {
-    return this.http.get<IGetProductsCategories>(`${WEB_SITE_BASE_URL}getcategory`);
+    return this.http.get<IGetProductsCategories>(`${WEB_SITE_BASE_URL}categories`,);
   }
   getProductById(CategoryId: string) {
     return this.http.get<IGetProductById>(`${WEB_SITE_BASE_URL}product_data/${CategoryId}`);
   }
   addProduct(ProductData: {}) {
-    return this.http.post<IAddProducts>(`${WEB_SITE_BASE_URL}product_store`, ProductData);
+    return this.http.post<IAddProducts>(`${WEB_SITE_BASE_URL}products/create`, ProductData);
   }
   updateProduct(CategoryId: string, ProductData: {}) {
     return this.http.post<IUpdateProductsResponse>(`${WEB_SITE_BASE_URL}product_update/${CategoryId}`, ProductData);

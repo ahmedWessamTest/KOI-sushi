@@ -33,6 +33,7 @@ export class BDetailsPromoCodeComponent {
   getPromoCodeData(): void {
     this.route.data.subscribe((data) => {
       this.promoCodeData = data['promoCode'];
+      console.log(this.promoCodeData);
       this.isLoading = true;
     });
   }

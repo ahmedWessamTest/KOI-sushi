@@ -10,4 +10,5 @@ export interface IAddVoucher {
   status: number;
   users: number[];
   expiration_date: string;
+  image:string
 }

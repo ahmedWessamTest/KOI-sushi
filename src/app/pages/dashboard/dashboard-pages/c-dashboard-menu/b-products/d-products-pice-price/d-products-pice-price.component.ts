@@ -11,7 +11,6 @@ import { InputSwitchModule } from "primeng/inputswitch";
 import { TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 import { timer } from "rxjs";
-import { ProductsPieces } from "../../../../../../core/Interfaces/d-products/IGetAllProducts";
 import { IGetProductById, PiecesPrice } from "../../../../../../core/Interfaces/d-products/IGetProductById";
 import { ProductsService } from "../../../../../../core/services/d-products/products.service";
 import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
@@ -73,7 +72,7 @@ export class DProductsPicePriceComponent {
   }
 
   // Toggle Product
-  toggleProductStatus(picePrice: ProductsPieces) {
+  toggleProductStatus(picePrice: any) {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
 
@@ -113,7 +112,7 @@ export class DProductsPicePriceComponent {
     }
   }
 
-  editPicePrice(picePrice: ProductsPieces) {
+  editPicePrice(picePrice: any) {
     localStorage.setItem("PiceDetails", JSON.stringify(picePrice));
     this.route.navigate([`/dashboard/menu/products/products-pice-price-edit/${this.product.product.id}`]);
   }

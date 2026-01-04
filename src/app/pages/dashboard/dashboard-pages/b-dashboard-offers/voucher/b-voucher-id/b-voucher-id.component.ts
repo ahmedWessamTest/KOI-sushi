@@ -31,6 +31,7 @@ import { OnlyNumberDirective } from '../../../../../../only-number.directive';
 import { ActiveUser } from '../res/model/activeUser';
 import { IAddVoucher } from '../res/model/reqVoucher';
 import { VoucherService } from '../res/services/voucher.service';
+import { FileUploadModule } from "primeng/fileupload";
 
 @Component({
   selector: 'app-b-add-voucher',
@@ -47,7 +48,8 @@ import { VoucherService } from '../res/services/voucher.service';
     OnlyNumberDirective,
     MultiSelectModule,
     CalendarModule,
-  ],
+    FileUploadModule
+],
   templateUrl: './b-voucher-id.component.html',
   styleUrl: './b-voucher-id.component.scss',
   providers: [MessageService, FormsModule],
@@ -66,17 +68,17 @@ export class BVoucherIdComponent implements OnInit {
   isLoadingUsers = signal<boolean>(false);
 
   useOptions = [
-    { label: 'Multi Use', value: 'all' },
+    { label: 'Multi Use', value: 'unlimited' },
     { label: 'One Use', value: 'once' },
   ];
 
   typeOptions = [
-    { label: 'Percentage', value: 'percent' },
+    { label: 'Percentage', value: 'percentage' },
     { label: 'Fixed Amount', value: 'fixed' },
   ];
 
   applyOptions = [
-    { label: 'All Users', value: 'all' },
+    { label: 'All Users', value: 'unlimited' },
     { label: 'Specific  users', value: 'limited' },
   ];
 
@@ -114,8 +116,8 @@ export class BVoucherIdComponent implements OnInit {
     this.submitForm = this.fb.group({
       title_ar: ['', [Validators.required, Validators.minLength(3)]],
       title_en: ['', [Validators.required, Validators.minLength(3)]],
-      use: ['all', Validators.required],
-      type: ['percent', Validators.required],
+      use: ['unlimited', Validators.required],
+      type: ['percentage', Validators.required],
       value: [0, [Validators.required]],
       min_amount: [0, [Validators.required]],
       apply: ['all', Validators.required],
@@ -123,6 +125,7 @@ export class BVoucherIdComponent implements OnInit {
       status: [1, Validators.required],
       users: [[]],
       expiration_date: ['', [Validators.required]],
+      image: ["", Validators.required],
     });
   }
 
@@ -186,7 +189,7 @@ export class BVoucherIdComponent implements OnInit {
             const existingUsers = this.allUsers();
             // Merge existing users with new search results, avoiding duplicates
             const mergedUsers = [...existingUsers];
-            response.rows.forEach((user: ActiveUser) => {
+            response.data.data.forEach((user: ActiveUser) => {
               if (
                 !mergedUsers.some(
                   (existing: ActiveUser) => existing.id === user.id
@@ -197,7 +200,7 @@ export class BVoucherIdComponent implements OnInit {
             });
             this.allUsers.set(mergedUsers);
           } else {
-            this.allUsers.set(response.rows);
+            this.allUsers.set(response.data.data);
           }
           this.isLoadingUsers.set(false);
         });
@@ -205,91 +208,77 @@ export class BVoucherIdComponent implements OnInit {
   }
 
   saveForm(): void {
-    this.submitForm.markAllAsTouched();
-    if (this.submitForm.invalid) {
-      // Log which controls are invalid
-      Object.keys(this.submitForm.controls).forEach((key) => {
-        const control = this.submitForm.get(key);
-        console.log(control);
-        if (control?.invalid) {
-          console.log(`Control ${key} is invalid:`, control.errors);
-        }
-      });
-
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Please fill all required fields correctly',
-      });
-      return;
-    }
-
-    this.ngxSpinnerService.show('actionsLoader');
-    this.messageService.clear();
-    this.errorMessage.set('');
-
-    const formValue = this.submitForm.value;
-    console.log(this.submitForm);
-    // Format expiration date to YYYY-MM-DD
-    const expirationDate =
-      formValue.expiration_date instanceof Date
-        ? formValue.expiration_date.toISOString().split('T')[0]
-        : formValue.expiration_date;
-
-    const voucherData: IAddVoucher = {
-      title_ar: formValue.title_ar,
-      title_en: formValue.title_en,
-      use: formValue.use,
-      type: formValue.type,
-      value: Number(formValue.value),
-      min_amount: Number(formValue.min_amount),
-      apply: formValue.apply,
-      limit: Number(formValue.limit),
-      status: formValue.status,
-      users: formValue.users || [],
-      expiration_date: expirationDate,
-    };
-
-    if (this.isEditing && this.voucherId) {
-      this.voucherService.updateVoucher(this.voucherId, voucherData).subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard/offers/vouchers']);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Updated',
-            detail: 'Voucher updated successfully',
-          });
-          timer(200).subscribe(() =>
-            this.ngxSpinnerService.hide('actionsLoader')
-          );
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError(error);
-          this.toastrService.error(error.message, 'Error');
-        },
-      });
-    } else {
-      this.voucherService.addVoucher(voucherData).subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard/offers/vouchers']);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Added',
-            detail: 'Voucher added successfully',
-          });
-          this.ngxSpinnerService.hide('actionsLoader');
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError(error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: `${error.message}`,
-          });
-        },
-      });
-    }
+  this.submitForm.markAllAsTouched();
+  if (this.submitForm.invalid) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Please fill all required fields correctly',
+    });
+    return;
   }
+
+  this.ngxSpinnerService.show('actionsLoader');
+  this.messageService.clear();
+  this.errorMessage.set('');
+
+  const formValue = this.submitForm.value;
+
+  // 1. إنشاء الـ FormData
+  const formData = new FormData();
+
+  // 2. معالجة التاريخ
+  const expirationDate =
+    formValue.expiration_date instanceof Date
+      ? formValue.expiration_date.toISOString().split('T')[0]
+      : formValue.expiration_date;
+
+  // 3. إضافة الحقول العادية للـ FormData
+  formData.append('title_ar', formValue.title_ar);
+  formData.append('title_en', formValue.title_en);
+  formData.append('use', formValue.use);
+  formData.append('type', formValue.type);
+  formData.append('value', String(formValue.value));
+  formData.append('min_amount', String(formValue.min_amount));
+  formData.append('apply', formValue.apply);
+  formData.append('limit', String(formValue.limit));
+  formData.append('status', String(formValue.status));
+  formData.append('expiration_date', expirationDate);
+
+  // 4. إضافة المصفوفات (Users)
+  // الـ Backend غالباً بيحتاج المصفوفة تتبعت بالشكل ده users[]
+  if (formValue.users && formValue.users.length > 0) {
+    formValue.users.forEach((userId: number) => {
+      formData.append('users[]', String(userId));
+    });
+  }
+
+  // 5. إضافة الصورة (تأكد أن formValue.image هو كائن File)
+  if (formValue.image) {
+    formData.append('image', formValue.image);
+  }
+
+  // 6. التعامل مع الـ Update (في الـ Laravel أحياناً بنحتاج _method عشان الـ PUT يشتغل مع الـ FormData)
+  if (this.isEditing && this.voucherId) {
+    // formData.append('_method', 'PUT'); // فك الكومنت ده لو السيرفر عندك Laravel وبيطلب كده
+    this.voucherService.updateVoucher(this.voucherId, formData).subscribe({
+      next: () => this.handleSuccess('Updated successfully'),
+      error: (error) => this.handleError(error)
+    });
+  } else {
+    this.voucherService.addVoucher(formData).subscribe({
+      next: () => this.handleSuccess('Added successfully'),
+      error: (error) => this.handleError(error)
+    });
+  }
+}
+
+// دالة مساعدة لتقليل تكرار الكود
+private handleSuccess(detail: string): void {
+  this.router.navigate(['/dashboard/offers/vouchers']);
+  this.messageService.add({ severity: 'success', summary: 'Success', detail });
+  this.ngxSpinnerService.hide('actionsLoader');
+}
 
   handleError(error: HttpErrorResponse): void {
     let errorMsg = 'An error occurred';
@@ -309,9 +298,18 @@ export class BVoucherIdComponent implements OnInit {
     console.log(this.searchTerm);
     this.searchSubject.next(this.searchTerm);
   }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  onFileSelect(event: any): void {
+    const files = event.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      this.submitForm.patchValue({ image: file });
+    }
+  }
+  clearImage(): void {
+    this.submitForm.patchValue({ image: "" });
   }
 }

@@ -4,10 +4,12 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormArray,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Category } from '../../../../../../core/Interfaces/d-products/IGetProductsCategories';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
@@ -22,9 +24,13 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import {
   debounceTime,
   distinctUntilChanged,
+  finalize,
+  of,
+  startWith,
   Subject,
   switchMap,
   takeUntil,
+  tap,
   timer,
 } from 'rxjs';
 import { OnlyNumberDirective } from '../../../../../../only-number.directive';
@@ -33,6 +39,8 @@ import { PromoCode } from '../res/model/promo-code';
 import { PromoCodeService } from '../res/services/promo-code.service';
 import { IAddProducts } from '../../../../../../core/Interfaces/d-products/IAddProductsResponse';
 import { ProductsService } from '../../../../../../core/services/d-products/products.service';
+import { CategoriesService } from '../../../../../../core/services/h-category/categories.service';
+import { Product } from '../../../../../../core/Interfaces/b-combo/IGetAllComboProducts';
 
 @Component({
   selector: 'app-b-promo-code-id',
@@ -57,15 +65,18 @@ import { ProductsService } from '../../../../../../core/services/d-products/prod
 export class BPromoCodeIdComponent implements OnInit {
   submitForm!: FormGroup;
   isEditing = false;
-  
+  productsIsLoading = signal<boolean>(false);
   promoCodeId: string | null = null;
-  allProducts = signal<IAddProducts[]>([])
-
+  allProducts = signal<Product[]>([]);
+  allCategory = signal<any>([]);
+  categoryIsLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
 
   allUsers = signal<ActiveUser[]>([]);
 
   isLoadingUsers = signal<boolean>(false);
+  allCategories = signal<Category[]>([]);
+  isLoadingCategories = signal<boolean>(false);
 
   useOptions = [
     { label: 'Multi Use', value: 'unlimited' },
@@ -85,6 +96,8 @@ export class BPromoCodeIdComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   private searchSubject = new Subject<string>();
+  private searchProductsSubject = new Subject<string>();
+  private ProductsSearchSubject = new Subject<string>();
 
   private destroy$ = new Subject<void>();
 
@@ -97,18 +110,23 @@ export class BPromoCodeIdComponent implements OnInit {
   private messageService = inject(MessageService);
 
   private activatedRoute = inject(ActivatedRoute);
-
-  private toastrService = inject(ToastrService);
+  private SelectedCategoriesIds = signal<number[]>([]);
   private _ProductsService = inject(ProductsService);
+  private _CategoriesService = inject(CategoriesService);
   searchTerm = '';
 
   constructor() {
     this.initializeForm();
   }
-
+  onProductsSearchChange(event: any) {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm = target.value.trim();
+    this.searchProductsSubject.next(this.searchTerm);
+  }
   ngOnInit(): void {
     this.checkEditMode(); // This must be called first to set isEditing and load initial users
     this.loadUsers();
+    this.loadCategoris()
     this.setupFormListeners();
     this.fetchProducts();
   }
@@ -124,7 +142,8 @@ export class BPromoCodeIdComponent implements OnInit {
       limit: [0],
       status: [true, Validators.required],
       users: [[]],
-      allProducts: [[]],
+      products_ids: [[]],
+      categories_ids: [[]],
       expiration_date: ['', [Validators.required]],
     });
   }
@@ -133,7 +152,7 @@ export class BPromoCodeIdComponent implements OnInit {
     // Enable/disable limit field based on use selection
     this.submitForm.get('use')?.valueChanges.subscribe((value) => {
       const limitControl = this.submitForm.get('limited');
-      
+
       if (value === 'limited') {
         limitControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
@@ -144,7 +163,7 @@ export class BPromoCodeIdComponent implements OnInit {
     });
 
     this.submitForm.get('apply')?.valueChanges.subscribe((value) => {
-      const usersControl = this.submitForm.get('users');      
+      const usersControl = this.submitForm.get('users');
       if (value === 'limited') {
         usersControl?.setValidators([Validators.required]);
       } else {
@@ -153,33 +172,60 @@ export class BPromoCodeIdComponent implements OnInit {
       }
       usersControl?.updateValueAndValidity();
     });
+    this.submitForm.get('categories_ids')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((ids) => {
+        this.SelectedCategoriesIds.set(ids);
+        this.fetchProducts();
+      });
   }
 
   checkEditMode(): void {
-    const promoCodeData = this.activatedRoute.snapshot.data['promoCode'];
-    if (promoCodeData) {
+    const response = this.activatedRoute.snapshot.data['promoCode'];
+    if (response && response.promo_code) {
       this.isEditing = true;
-      const promoCode = promoCodeData.promo_code;
+      const promoCode = response.promo_code;
       this.promoCodeId = promoCode.id.toString();
 
-      // Extract user IDs from the voucher's users array
-      const userIds = promoCode.users?.map((user: ActiveUser) => user.id) || [];
+      const expDate = promoCode.expiration_date ? new Date(promoCode.expiration_date) : '';
 
-      // Set initial users in allUsers signal if we have users from the resolver
-      if (promoCode.users && promoCode.users.length > 0) {
+      const userIds = promoCode.users?.map((user: any) => user.id) || [];
+      if (promoCode.users) {
         this.allUsers.set(promoCode.users);
-        console.log(this.allUsers());
       }
-      // Create a copy of voucher data and set the users field to just the IDs
-      const promoCodeFormData = { ...promoCode, users: userIds };
-      this.submitForm.patchValue(promoCodeFormData);
+
+      const catIds = promoCode.promo_code_categories?.map((item: any) => item.category_id) || [];
+
+      const prodIds = promoCode.promo_code_categories?.flatMap((catItem: any) =>
+        catItem.promo_code_category_excludes?.map((excludeItem: any) => excludeItem.product_id)
+      ) || [];
+
+      this.SelectedCategoriesIds.set(catIds);
+
+      this.submitForm.patchValue({
+        code: promoCode.code,
+        use: promoCode.use,
+        type: promoCode.type,
+        value: promoCode.value,
+        min_amount: promoCode.min_amount,
+        apply: promoCode.apply,
+        status: promoCode.status,
+        expiration_date: expDate, // التاريخ الآن سيظهر في الـ Calendar
+        users: userIds,
+        categories_ids: catIds, // التصنيفات ستظهر مختارة
+        products_ids: prodIds   // المنتجات ستظهر مختارة
+      });
+
+      // ملاحظة: لكي تظهر أسماء المنتجات في الـ MultiSelect، يجب استدعاء الـ API الخاص بها
+      this.fetchProducts();
     }
   }
-  
+
   loadUsers(): void {
     if (!this.isEditing || (this.isEditing && this.allUsers().length === 0)) {
       this.searchSubject
         .pipe(
+          startWith(""),
           debounceTime(500),
           distinctUntilChanged(),
           switchMap((term) => this.promoCodeService.activeUsers(term)),
@@ -203,22 +249,47 @@ export class BPromoCodeIdComponent implements OnInit {
             this.allUsers.set(mergedUsers);
           } else {
             this.allUsers.set(response.data.data);
-            
+
           }
           this.isLoadingUsers.set(false);
         });
     }
   }
 
-  fetchProducts():void {
-    this._ProductsService.getAllProducts().subscribe({
-      next:(response:any)=>{
-        console.log(response);
-        
-        this.allProducts.set(response.products.data)
-      }
-    })
+  fetchProducts(): void {
+    this.searchProductsSubject
+      .pipe(
+        startWith(""),
+        tap(() => this.productsIsLoading.set(true)),
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((term) => {
+          if (this.SelectedCategoriesIds().length === 0) {
+            return of({ products: { products: [] } }).pipe(
+              finalize(() => this.productsIsLoading.set(false))
+            );
+          }
+          return this._ProductsService.getAllProducts(1, 10, term, this.SelectedCategoriesIds()).pipe(
+            finalize(() => this.productsIsLoading.set(false))
+          );
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe({
+        next: (response: any) => {
+          // تحديث الـ Signal بالمنتجات الجديدة
+          this.allProducts.set(response.products);
+        }
+      });
   }
+
+  onCategoryChange(): void {
+    this.allProducts.set([]);
+
+    this.submitForm.get('products_ids')?.setValue([]);
+
+    this.searchProductsSubject.next(this.searchTerm);
+  }
+
 
   saveForm(): void {
     this.submitForm.markAllAsTouched();
@@ -232,70 +303,63 @@ export class BPromoCodeIdComponent implements OnInit {
     }
 
     this.ngxSpinnerService.show('actionsLoader');
-    this.messageService.clear();
-    this.errorMessage.set('');
-
     const formValue = this.submitForm.value;
 
-    // Format expiration date to YYYY-MM-DD
-    const expirationDate =
-      formValue.expiration_date instanceof Date
-        ? formValue.expiration_date.toISOString().split('T')[0]
-        : formValue.expiration_date;
+    // 1. تحويل التاريخ
+    const expirationDate = formValue.expiration_date instanceof Date
+      ? formValue.expiration_date.toISOString().split('T')[0]
+      : formValue.expiration_date;
+    const selectedProductsObjects = this.allProducts().filter(p =>
+      formValue.products_ids.includes(p.id)
+    );
 
-    const promoCodeData: PromoCode = {
+    const categoriesPayload = formValue.categories_ids.map((catId: number) => {
+      // فلترة المنتجات التي تنتمي لهذا التصنيف فقط
+      const excludedForThisCat = selectedProductsObjects
+        .filter(p => p.category_id === catId)
+        .map(p => p.id);
+
+      return {
+        category_id: catId,
+        promo_code_category_excludes: excludedForThisCat // ستكون مصفوفة فارغة إذا لم يختر منتج من هذا التصنيف
+      };
+    });
+
+    // 3. تجهيز الكائن النهائي للإرسال
+    const promoCodeData: any = {
       code: formValue.code,
       use: formValue.use,
       type: formValue.type,
       value: Number(formValue.value),
       min_amount: Number(formValue.min_amount),
       apply: formValue.apply,
-      status: formValue.status,
-      expiration_date: expirationDate,
-      users: formValue.users
+      status: formValue.status ? 1 : 0,
+      expiration_date: formValue.expiration_date instanceof Date
+        ? formValue.expiration_date.toISOString().split('T')[0]
+        : formValue.expiration_date,
+      users: formValue.users || [],
+      promo_code_categories: categoriesPayload
     };
-    
+
+    // 4. تنفيذ طلب الإرسال
     if (this.isEditing && this.promoCodeId) {
-      this.promoCodeService
-        .updatePromoCode(this.promoCodeId, promoCodeData)
-        .subscribe({
-          next: () => {
-            this.router.navigate(['/dashboard/offers/promo-codes']);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Updated',
-              detail: 'Voucher updated successfully',
-            });
-            timer(200).subscribe(() =>
-              this.ngxSpinnerService.hide('actionsLoader')
-            );
-          },
-          error: (error: HttpErrorResponse) => {
-            this.handleError(error);
-            this.toastrService.error(error.message, 'Error');
-          },
-        });
+      this.promoCodeService.updatePromoCode(this.promoCodeId, promoCodeData).subscribe({
+        next: () => this.handleSuccess('Updated successfully'),
+        error: (err) => this.handleError(err)
+      });
     } else {
       this.promoCodeService.addPromoCode(promoCodeData).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Added',
-            detail: 'Voucher added successfully',
-          });
-          this.ngxSpinnerService.hide('actionsLoader');
-          this.router.navigate(['/dashboard/offers/promo-codes']);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError(error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: `${error.message}`,
-          });
-        },
+        next: () => this.handleSuccess('Added successfully'),
+        error: (err) => this.handleError(err)
       });
     }
+  }
+
+  // دالة مساعدة للنجاح
+  private handleSuccess(msg: string) {
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: msg });
+    this.ngxSpinnerService.hide('actionsLoader');
+    this.router.navigate(['/dashboard/offers/promo-codes']);
   }
 
   handleError(error: HttpErrorResponse): void {
@@ -310,7 +374,7 @@ export class BPromoCodeIdComponent implements OnInit {
     timer(200).subscribe(() => this.ngxSpinnerService.hide('actionsLoader'));
   }
 
-  onSearchChange(event: Event): void {    
+  onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.searchTerm = target.value.trim();
     this.searchSubject.next(this.searchTerm);
@@ -319,5 +383,22 @@ export class BPromoCodeIdComponent implements OnInit {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+  loadCategoris() {
+    this._CategoriesService.getAllCategories().pipe().subscribe({
+      next: (response) => {
+        this.allCategory.set(response.categories.data);
+        this.categoryIsLoading.set(false);
+      },
+      error: (error) => {
+        this.categoryIsLoading.set(false);
+        console.error('Error fetching categories:', error);
+      },
+    });
+  }
+  onCategorySearchChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm = target.value.trim();
+    this.ProductsSearchSubject.next(this.searchTerm);
   }
 }

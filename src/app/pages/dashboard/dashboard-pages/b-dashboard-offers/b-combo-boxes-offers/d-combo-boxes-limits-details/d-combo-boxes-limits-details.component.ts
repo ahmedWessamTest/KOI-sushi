@@ -14,8 +14,6 @@ import { TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 import { timer } from "rxjs";
 import { IGetComboOfferById, Limit } from "../../../../../../core/Interfaces/b-combo/IGetComboOfferById";
-import { ProductsPieces } from "../../../../../../core/Interfaces/d-products/IGetAllProducts";
-import { ProductsService } from "../../../../../../core/services/d-products/products.service";
 import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
 import { NoDataFoundBannerComponent } from "../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component";
 import { Category } from "../../../../../../core/Interfaces/h-category/ICategoryById";
@@ -84,7 +82,7 @@ export class DComboBoxesLimitsDetailsComponent {
     });
   }
 
-  editPicePrice(picePrice: ProductsPieces) {
+  editPicePrice(picePrice: any) {
     localStorage.setItem("combo", JSON.stringify(picePrice));
     console.log("picePrice",picePrice);
     this.route.navigate([`/dashboard/offers/combo/limits-edit/${this.combo.combo.id}`]);
