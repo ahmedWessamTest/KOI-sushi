@@ -174,8 +174,24 @@ export class BPromoCodeIdComponent implements OnInit {
     });
     this.submitForm.get('categories_ids')?.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((ids) => {
-        this.SelectedCategoriesIds.set(ids);
+      .subscribe((selectedCatIds: number[]) => {
+        this.SelectedCategoriesIds.set(selectedCatIds);
+
+        // --- منطق التنظيف ---
+        const currentProductIds = this.submitForm.get('products_ids')?.value as number[];
+
+        if (currentProductIds && currentProductIds.length > 0) {
+          // نقوم بفلترة المنتجات المختارة: نبقي فقط على المنتجات التي تنتمي للتصنيفات التي ما زالت مختارة
+          const cleanedProductIds = this.allProducts().filter(p =>
+            selectedCatIds.includes(p.category_id) && currentProductIds.includes(p.id)
+          ).map(p => p.id);
+
+          // إذا كان هناك اختلاف في الطول، يعني أننا حذفنا منتجات تابعة لتصنيف تمت إزالته
+          if (cleanedProductIds.length !== currentProductIds.length) {
+            this.submitForm.get('products_ids')?.setValue(cleanedProductIds, { emitEvent: false });
+          }
+        }
+
         this.fetchProducts();
       });
   }
