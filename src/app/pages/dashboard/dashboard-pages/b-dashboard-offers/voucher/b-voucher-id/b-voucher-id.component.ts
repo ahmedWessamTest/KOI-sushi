@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,7 +10,6 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
@@ -19,97 +18,85 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { FileUploadModule } from "primeng/fileupload";
 import {
   debounceTime,
   distinctUntilChanged,
+  finalize,
+  of,
+  startWith,
   Subject,
   switchMap,
   takeUntil,
+  tap,
   timer,
 } from 'rxjs';
+
 import { OnlyNumberDirective } from '../../../../../../only-number.directive';
 import { ActiveUser } from '../res/model/activeUser';
-import { IAddVoucher } from '../res/model/reqVoucher';
+import { Product } from '../../../../../../core/Interfaces/b-combo/IGetAllComboProducts';
 import { VoucherService } from '../res/services/voucher.service';
-import { FileUploadModule } from "primeng/fileupload";
+import { ProductsService } from '../../../../../../core/services/d-products/products.service';
+import { CategoriesService } from '../../../../../../core/services/h-category/categories.service';
 
 @Component({
-  selector: 'app-b-add-voucher',
+  selector: 'app-b-voucher-id',
   standalone: true,
   imports: [
-    CommonModule,
-    ButtonModule,
-    CardModule,
-    InputSwitchModule,
-    DialogModule,
-    FormsModule,
-    ReactiveFormsModule,
-    DropdownModule,
-    OnlyNumberDirective,
-    MultiSelectModule,
-    CalendarModule,
-    FileUploadModule
-],
+    CommonModule, ButtonModule, CardModule, InputSwitchModule, DialogModule,
+    FormsModule, ReactiveFormsModule, DropdownModule, OnlyNumberDirective,
+    MultiSelectModule, CalendarModule, FileUploadModule
+  ],
   templateUrl: './b-voucher-id.component.html',
   styleUrl: './b-voucher-id.component.scss',
-  providers: [MessageService, FormsModule],
+  providers: [MessageService],
 })
-export class BVoucherIdComponent implements OnInit {
+export class BVoucherIdComponent implements OnInit, OnDestroy {
   submitForm!: FormGroup;
-
   isEditing = false;
-
   voucherId: string | null = null;
+  searchTerm = '';
 
-  errorMessage = signal<string>('');
-
+  // Signals
+  allProducts = signal<Product[]>([]);
+  allCategory = signal<any>([]);
   allUsers = signal<ActiveUser[]>([]);
-
+  productsIsLoading = signal<boolean>(false);
+  categoryIsLoading = signal<boolean>(false);
   isLoadingUsers = signal<boolean>(false);
+  errorMessage = signal<string>('');
+  private SelectedCategoriesIds = signal<number[]>([]);
 
-  useOptions = [
-    { label: 'Multi Use', value: 'unlimited' },
-    { label: 'One Use', value: 'once' },
-  ];
-
-  typeOptions = [
-    { label: 'Percentage', value: 'percentage' },
-    { label: 'Fixed Amount', value: 'fixed' },
-  ];
-
-  applyOptions = [
-    { label: 'All Users', value: 'unlimited' },
-    { label: 'Specific  users', value: 'limited' },
-  ];
-
-  private fb = inject(FormBuilder);
-
+  // Subjects
   private searchSubject = new Subject<string>();
-
+  private searchProductsSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
 
+  // Injections
+  private fb = inject(FormBuilder);
   private voucherService = inject(VoucherService);
-
+  private _ProductsService = inject(ProductsService);
+  private _CategoriesService = inject(CategoriesService);
   private ngxSpinnerService = inject(NgxSpinnerService);
-
   private router = inject(Router);
-
   private messageService = inject(MessageService);
-
   private activatedRoute = inject(ActivatedRoute);
 
-  private toastrService = inject(ToastrService);
-
-  searchTerm = '';
+  // Options
+  useOptions = [{ label: 'Multi Use', value: 'unlimited' }, { label: 'One Use', value: 'once' }];
+  typeOptions = [{ label: 'Percentage', value: 'percentage' }, { label: 'Fixed Amount', value: 'fixed' }];
+  applyOptions = [{ label: 'All Users', value: 'all' }, { label: 'Specific users', value: 'specific' }];
 
   constructor() {
     this.initializeForm();
   }
 
   ngOnInit(): void {
-    this.checkEditMode(); // This must be called first to set isEditing and load initial users
+    this.checkEditMode();
     this.loadUsers();
+    this.loadCategories();
     this.setupFormListeners();
+    this.fetchProducts();
   }
 
   initializeForm(): void {
@@ -118,22 +105,23 @@ export class BVoucherIdComponent implements OnInit {
       title_en: ['', [Validators.required, Validators.minLength(3)]],
       use: ['unlimited', Validators.required],
       type: ['percentage', Validators.required],
-      value: [0, [Validators.required]],
-      min_amount: [0, [Validators.required]],
+      value: [0, [Validators.required, Validators.min(0)]],
+      min_amount: [0, [Validators.required, Validators.min(0)]],
       apply: ['all', Validators.required],
       limit: [0],
       status: [1, Validators.required],
       users: [[]],
+      products_ids: [[]],
+      categories_ids: [[]],
       expiration_date: ['', [Validators.required]],
       image: ["", Validators.required],
     });
   }
 
   setupFormListeners(): void {
-    // Enable/disable limit field based on use selection
     this.submitForm.get('use')?.valueChanges.subscribe((value) => {
       const limitControl = this.submitForm.get('limit');
-      if (value === 'limited') {
+      if (value === 'specific') {
         limitControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         limitControl?.clearValidators();
@@ -142,9 +130,10 @@ export class BVoucherIdComponent implements OnInit {
       limitControl?.updateValueAndValidity();
     });
 
+    // 2. مراقبة نوع التطبيق (مستخدمين معينين)
     this.submitForm.get('apply')?.valueChanges.subscribe((value) => {
       const usersControl = this.submitForm.get('users');
-      if (value === 'limited') {
+      if (value === 'specific') {
         usersControl?.setValidators([Validators.required]);
       } else {
         usersControl?.clearValidators();
@@ -152,7 +141,54 @@ export class BVoucherIdComponent implements OnInit {
       }
       usersControl?.updateValueAndValidity();
     });
+
+    // 3. مراقبة التصنيفات لتنظيف المنتجات المحددة
+    this.submitForm.get('categories_ids')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((selectedCatIds: number[]) => {
+        this.SelectedCategoriesIds.set(selectedCatIds);
+        const currentProductIds = this.submitForm.get('products_ids')?.value as number[];
+
+        if (currentProductIds?.length > 0) {
+          const cleanedIds = this.allProducts().filter(p =>
+            selectedCatIds.includes(p.category_id) && currentProductIds.includes(p.id)
+          ).map(p => p.id);
+
+          if (cleanedIds.length !== currentProductIds.length) {
+            this.submitForm.get('products_ids')?.setValue(cleanedIds, { emitEvent: false });
+          }
+        }
+        this.fetchProducts();
+      });
   }
+
+  fetchProducts(): void {
+    this.searchProductsSubject.pipe(
+      startWith(""),
+      tap(() => this.productsIsLoading.set(true)),
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap((term) => {
+        if (this.SelectedCategoriesIds().length === 0) {
+          return of({ products: [] }).pipe(finalize(() => this.productsIsLoading.set(false)));
+        }
+        return this._ProductsService.getAllProducts(1, 10, term, this.SelectedCategoriesIds()).pipe(
+          finalize(() => this.productsIsLoading.set(false))
+        );
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe((response: any) => {
+      // ندمج المنتجات الجديدة مع القديمة المختارة لضمان بقاء الـ Labels في حالة التعديل
+      const currentProducts = this.allProducts();
+      const newProducts = response.products || [];
+      const merged = [...newProducts];
+      currentProducts.forEach(p => {
+        if (!merged.find(m => m.id === p.id)) merged.push(p);
+      });
+      this.allProducts.set(merged);
+    });
+  }
+
   checkEditMode(): void {
     const voucherData = this.activatedRoute.snapshot.data['voucher'];
     if (voucherData) {
@@ -160,156 +196,161 @@ export class BVoucherIdComponent implements OnInit {
       const voucher = voucherData.voucher;
       this.voucherId = voucher.id.toString();
 
-      // Extract user IDs from the voucher's users array
-      const userIds = voucher.users?.map((user: ActiveUser) => user.id) || [];
+      if (voucher.users) this.allUsers.set(voucher.users);
 
-      // Set initial users in allUsers signal if we have users from the resolver
-      if (voucher.users && voucher.users.length > 0) {
-        this.allUsers.set(voucher.users);
-      }
+      const catIds = voucher.voucher_categories?.map((item: any) => item.category_id) || [];
+      const prodIds = voucher.voucher_categories?.flatMap((cat: any) =>
+        cat.voucher_category_excludes?.map((ex: any) => ex.product_id)
+      ) || [];
 
-      // Create a copy of voucher data and set the users field to just the IDs
-      const voucherFormData = { ...voucher, users: userIds };
-      this.submitForm.patchValue(voucherFormData);
-    }
-  }
+      this.SelectedCategoriesIds.set(catIds);
 
-  loadUsers(): void {
-    if (!this.isEditing || (this.isEditing && this.allUsers().length === 0)) {
-      this.searchSubject
-        .pipe(
-          debounceTime(500),
-          distinctUntilChanged(),
-          switchMap((term) => this.voucherService.activeUsers(term)),
-          takeUntil(this.destroy$)
-        )
-        .subscribe((response) => {
-          // If we're in edit mode, we need to preserve the existing selected users
-          if (this.isEditing) {
-            const existingUsers = this.allUsers();
-            // Merge existing users with new search results, avoiding duplicates
-            const mergedUsers = [...existingUsers];
-            response.data.data.forEach((user: ActiveUser) => {
-              if (
-                !mergedUsers.some(
-                  (existing: ActiveUser) => existing.id === user.id
-                )
-              ) {
-                mergedUsers.push(user);
-              }
-            });
-            this.allUsers.set(mergedUsers);
-          } else {
-            this.allUsers.set(response.data.data);
-          }
-          this.isLoadingUsers.set(false);
-        });
+      this.submitForm.patchValue({
+        ...voucher,
+        expiration_date: voucher.expiration_date ? new Date(voucher.expiration_date) : '',
+        users: voucher.users?.map((u: any) => u.id) || [],
+        categories_ids: catIds,
+        products_ids: prodIds,
+        image: voucher.image_url || "" // نضع الرابط في الـ input مؤقتاً
+      });
+
+      this.fetchProducts();
     }
   }
 
   saveForm(): void {
-  this.submitForm.markAllAsTouched();
-  if (this.submitForm.invalid) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Please fill all required fields correctly',
-    });
-    return;
-  }
+    this.submitForm.markAllAsTouched();
+    if (this.submitForm.invalid) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Validation failed' });
+      return;
+    }
 
-  this.ngxSpinnerService.show('actionsLoader');
-  this.messageService.clear();
-  this.errorMessage.set('');
+    this.ngxSpinnerService.show('actionsLoader');
+    const formValue = this.submitForm.value;
+    const formData = new FormData();
 
-  const formValue = this.submitForm.value;
-
-  // 1. إنشاء الـ FormData
-  const formData = new FormData();
-
-  // 2. معالجة التاريخ
-  const expirationDate =
-    formValue.expiration_date instanceof Date
+    // 1. معالجة التاريخ والبيانات الأساسية
+    const expirationDate = formValue.expiration_date instanceof Date
       ? formValue.expiration_date.toISOString().split('T')[0]
       : formValue.expiration_date;
 
-  // 3. إضافة الحقول العادية للـ FormData
-  formData.append('title_ar', formValue.title_ar);
-  formData.append('title_en', formValue.title_en);
-  formData.append('use', formValue.use);
-  formData.append('type', formValue.type);
-  formData.append('value', String(formValue.value));
-  formData.append('min_amount', String(formValue.min_amount));
-  formData.append('apply', formValue.apply);
-  formData.append('limit', String(formValue.limit));
-  formData.append('status', String(formValue.status));
-  formData.append('expiration_date', expirationDate);
+    // 2. بناء الـ Payload الخاص بالتصنيفات والمنتجات
+    const selectedProds = this.allProducts().filter(p => formValue.products_ids.includes(p.id));
+    const categoriesPayload = formValue.categories_ids.map((catId: number) => ({
+      category_id: catId,
+      voucher_category_excludes: selectedProds.filter(p => p.category_id === catId).map(p => p.id)
+    }));
 
-  // 4. إضافة المصفوفات (Users)
-  // الـ Backend غالباً بيحتاج المصفوفة تتبعت بالشكل ده users[]
-  if (formValue.users && formValue.users.length > 0) {
-    formValue.users.forEach((userId: number) => {
-      formData.append('users[]', String(userId));
-    });
-  }
+    // 3. تعبئة FormData بالحقول النصية
+    formData.append('title_ar', formValue.title_ar);
+    formData.append('title_en', formValue.title_en);
+    formData.append('use', formValue.use);
+    formData.append('type', formValue.type);
+    formData.append('value', String(formValue.value));
+    formData.append('min_amount', String(formValue.min_amount));
+    formData.append('apply', formValue.apply);
+    formData.append('limit', String(formValue.limit));
+    formData.append('status', String(formValue.status ? 1 : 0));
+    formData.append('expiration_date', expirationDate);
 
-  // 5. إضافة الصورة (تأكد أن formValue.image هو كائن File)
-  if (formValue.image) {
-    formData.append('image', formValue.image);
-  }
-
-  // 6. التعامل مع الـ Update (في الـ Laravel أحياناً بنحتاج _method عشان الـ PUT يشتغل مع الـ FormData)
-  if (this.isEditing && this.voucherId) {
-    // formData.append('_method', 'PUT'); // فك الكومنت ده لو السيرفر عندك Laravel وبيطلب كده
-    this.voucherService.updateVoucher(this.voucherId, formData).subscribe({
-      next: () => this.handleSuccess('Updated successfully'),
-      error: (error) => this.handleError(error)
-    });
-  } else {
-    this.voucherService.addVoucher(formData).subscribe({
-      next: () => this.handleSuccess('Added successfully'),
-      error: (error) => this.handleError(error)
-    });
-  }
-}
-
-// دالة مساعدة لتقليل تكرار الكود
-private handleSuccess(detail: string): void {
-  this.router.navigate(['/dashboard/offers/vouchers']);
-  this.messageService.add({ severity: 'success', summary: 'Success', detail });
-  this.ngxSpinnerService.hide('actionsLoader');
-}
-
-  handleError(error: HttpErrorResponse): void {
-    let errorMsg = 'An error occurred';
-    if (error.error?.errors) {
-      const firstError = Object.values(error.error.errors)[0];
-      errorMsg = Array.isArray(firstError) ? firstError[0] : firstError;
-    } else if (error.error?.message) {
-      errorMsg = error.error.message;
+    // --- التعديل المطلوب هنا للـ Users ---
+    // نقوم بتحويل مصفوفة الـ IDs إلى JSON string لضمان وصولها كـ Array تحت مفتاح "users"
+    if (formValue.users && formValue.users.length > 0) {
+      formValue.users.forEach((userId: number) => {
+        formData.append('users[]', String(userId));
+      })
     }
-    this.errorMessage.set(errorMsg);
-    timer(200).subscribe(() => this.ngxSpinnerService.hide('actionsLoader'));
+
+    // إضافة التصنيفات كـ JSON أيضاً
+    if (categoriesPayload.length > 0) {
+      categoriesPayload.forEach((item: any, index: number) => {
+        // إرسال ID التصنيف
+        formData.append(`voucher_categories[${index}][category_id]`, String(item.category_id));
+
+        // إرسال مصفوفة المنتجات المستثناة داخل هذا التصنيف
+        if (item.voucher_category_excludes && item.voucher_category_excludes.length > 0) {
+          item.voucher_category_excludes.forEach((productId: number, pIndex: number) => {
+            formData.append(`voucher_categories[${index}][voucher_category_excludes][${pIndex}]`, String(productId));
+          });
+        }
+      });
+    }
+
+    // إضافة الصورة
+    if (formValue.image instanceof File) {
+      formData.append('image', formValue.image);
+    }
+
+    // 4. إرسال الطلب
+    const request = (this.isEditing && this.voucherId)
+      ? this.voucherService.updateVoucher(this.voucherId, formData)
+      : this.voucherService.addVoucher(formData);
+
+    request.subscribe({
+      next: () => this.handleSuccess(this.isEditing ? 'Updated' : 'Added'),
+      error: (err) => this.handleError(err)
+    });
   }
 
+  // الدوال المساعدة
+  loadUsers(): void {
+    this.searchSubject.pipe(
+      startWith(""),
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(term => this.voucherService.activeUsers(term)),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      this.allUsers.set(res.data.data);
+    });
+  }
+
+  loadCategories(): void {
+    this._CategoriesService.getAllCategories().subscribe(res => {
+
+      this.allCategory.set(res.categories.data);
+    });
+  }
+
+  onFileSelect(event: any): void {
+    if (event.files?.length > 0) {
+      this.submitForm.patchValue({ image: event.files[0] });
+    }
+  }
+
+  onProductsSearchChange(event: any) {
+    this.searchTerm = event.target.value.trim();
+    this.searchProductsSubject.next(this.searchTerm);
+  }
+
+  private handleSuccess(msg: string) {
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: msg });
+    this.ngxSpinnerService.hide('actionsLoader');
+    this.router.navigate(['/dashboard/offers/vouchers']);
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    this.ngxSpinnerService.hide('actionsLoader');
+    this.errorMessage.set(error.error?.message || 'Error occurred');
+  }
+  clearImage(): void {
+
+    this.submitForm.patchValue({ image: "" });
+
+  }
   onSearchChange(event: Event): void {
+
     const target = event.target as HTMLInputElement;
+
     this.searchTerm = target.value.trim();
+
     console.log(this.searchTerm);
+
     this.searchSubject.next(this.searchTerm);
+
   }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-  onFileSelect(event: any): void {
-    const files = event.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      this.submitForm.patchValue({ image: file });
-    }
-  }
-  clearImage(): void {
-    this.submitForm.patchValue({ image: "" });
   }
 }

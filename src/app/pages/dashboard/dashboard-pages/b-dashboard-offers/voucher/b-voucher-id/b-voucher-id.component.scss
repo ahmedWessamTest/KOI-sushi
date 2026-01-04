@@ -3,9 +3,11 @@
 ::ng-deep .p-calendar {
   width: 100% !important;
 }
+
 ::ng-deep .p-fileupload-buttonbar {
   display: none;
 }
+
 ::ng-deep .jodit-status-bar-link,
 ::ng-deep .jodit-toolbar-button_about {
   display: none;
@@ -13,6 +15,7 @@
 
 ::ng-deep .p-element {
   padding-inline: 0px;
+
   li {
     padding-inline: 10px;
   }

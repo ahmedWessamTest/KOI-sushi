@@ -21,7 +21,7 @@ export class VoucherService {
   }
 
   getSingleVoucher(id: string): Observable<IVoucher> {
-    return this.http.get<IVoucher>(`${WEB_SITE_BASE_URL}vouchers/show/${id}`);
+    return this.http.get<IVoucher>(`${WEB_SITE_BASE_URL}voucher/${id}`);
   }
 
   enableVoucher(id: string): Observable<{ message: string; status: number }> {
