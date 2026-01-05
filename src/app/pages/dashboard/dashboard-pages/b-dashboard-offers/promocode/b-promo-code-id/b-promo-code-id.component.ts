@@ -4,7 +4,6 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  FormArray,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -12,7 +11,6 @@ import {
 import { Category } from '../../../../../../core/Interfaces/d-products/IGetProductsCategories';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
@@ -35,9 +33,7 @@ import {
 } from 'rxjs';
 import { OnlyNumberDirective } from '../../../../../../only-number.directive';
 import { ActiveUser } from '../res/model/activeUser';
-import { PromoCode } from '../res/model/promo-code';
 import { PromoCodeService } from '../res/services/promo-code.service';
-import { IAddProducts } from '../../../../../../core/Interfaces/d-products/IAddProductsResponse';
 import { ProductsService } from '../../../../../../core/services/d-products/products.service';
 import { CategoriesService } from '../../../../../../core/services/h-category/categories.service';
 import { Product } from '../../../../../../core/Interfaces/b-combo/IGetAllComboProducts';
@@ -152,7 +148,6 @@ export class BPromoCodeIdComponent implements OnInit {
     // Enable/disable limit field based on use selection
     this.submitForm.get('use')?.valueChanges.subscribe((value) => {
       const limitControl = this.submitForm.get('limited');
-
       if (value === 'limited') {
         limitControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
@@ -321,10 +316,7 @@ export class BPromoCodeIdComponent implements OnInit {
     this.ngxSpinnerService.show('actionsLoader');
     const formValue = this.submitForm.value;
 
-    // 1. تحويل التاريخ
-    const expirationDate = formValue.expiration_date instanceof Date
-      ? formValue.expiration_date.toISOString().split('T')[0]
-      : formValue.expiration_date;
+    
     const selectedProductsObjects = this.allProducts().filter(p =>
       formValue.products_ids.includes(p.id)
     );
@@ -349,7 +341,7 @@ export class BPromoCodeIdComponent implements OnInit {
       value: Number(formValue.value),
       min_amount: Number(formValue.min_amount),
       apply: formValue.apply,
-      status: formValue.status ? 1 : 0,
+      status: formValue.status,
       expiration_date: formValue.expiration_date instanceof Date
         ? formValue.expiration_date.toISOString().split('T')[0]
         : formValue.expiration_date,

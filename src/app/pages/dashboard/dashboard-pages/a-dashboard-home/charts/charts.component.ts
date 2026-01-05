@@ -66,7 +66,7 @@ export class ChartsComponent {
       datasets: [
         {
           label: "Revenue Comparison",
-          data: [this.Statics()?.totalDeliveredMoney, this.Statics()?.totalCancelledMoney],
+          data: [parseInt(this.Statics()?.totalDeliveredMoney!), parseInt(this.Statics()?.totalCancelledMoney!)],
           backgroundColor: ["#2EB432", "#F44336"], // Swapped: Delivered (green), Cancelled (red)
           borderColor: ["#2EB432", "#F44336"], // Swapped: Delivered (green), Cancelled (red)
           borderWidth: 1,
@@ -101,7 +101,7 @@ export class ChartsComponent {
 
     if (branches && branches.length > 0) {
       this.branchOrderData = branches.map((branch) => ({
-        name: branch.branch_name,
+        name: branch.title_en,
         series: [
           { name: "Delivered Orders", value: branch.delivered_orders },
           { name: "Cancelled Orders", value: branch.cancelled_orders },
@@ -109,7 +109,7 @@ export class ChartsComponent {
       }));
 
       this.branchRevenueData = branches.map((branch) => ({
-        name: branch.branch_name,
+        name: branch.title_en,
         series: [
           { name: "Delivered Revenue", value: branch.delivered_orders_money },
           { name: "Cancelled Revenue", value: branch.cancelled_orders_money },

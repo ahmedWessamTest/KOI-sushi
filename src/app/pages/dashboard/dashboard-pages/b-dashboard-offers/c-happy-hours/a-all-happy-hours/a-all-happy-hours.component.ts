@@ -10,12 +10,10 @@ import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { finalize, timer } from 'rxjs';
 import { ISelectOptions } from '../../../../../../core/Interfaces/core/ISelectOptions';
-import { categoryData } from '../../../../../../core/Interfaces/h-category/IAllCategory';
-import { CategoriesService } from '../../../../../../core/services/h-category/categories.service';
 import { LoadingDataBannerComponent } from '../../../../../../shared/components/loading-data-banner/loading-data-banner.component';
 import { NoDataFoundBannerComponent } from '../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component';
 import { HappyHoursService } from '../../../../../../core/services/c-happy-hours/happy-hours.service';
-import { IHappyHours } from '../../../../../../core/Interfaces/c-happy-hours/ihappy-hours';
+import {  IHappyHour } from '../../../../../../core/Interfaces/c-happy-hours/ihappy-hours';
 
 @Component({
   selector: 'app-a-all-categories',
@@ -36,8 +34,8 @@ import { IHappyHours } from '../../../../../../core/Interfaces/c-happy-hours/iha
   providers: [MessageService],
 })
 export class AAllHappyHoursComponent {
-  happyHoursData: IHappyHours[] = [];
-  filteredHappyHours: IHappyHours[] = [];
+  happyHoursData: IHappyHour[] = [];
+  filteredHappyHours: IHappyHour[] = [];
   loading = false;
 
   private ngxSpinnerService = inject(NgxSpinnerService);
@@ -53,10 +51,11 @@ export class AAllHappyHoursComponent {
   selectedStatus: string = '';
   selectOptions: ISelectOptions[] = [];
   onFilterChange(value: string): void {
+    console.log(value);
+    
     if (value) {
-      // Filter the blogs based on the selected category
       this.filteredHappyHours = this.happyHoursData.filter((ele) => {
-        return ele.is_active.toString().includes(value);
+        return value == '0'?!ele.status:ele.status;
       });
     } else {
       // Reset to original data if no category is selected
@@ -88,7 +87,7 @@ export class AAllHappyHoursComponent {
     this.happyHoursService.getHappyHours().subscribe(
       {next:(response) => {
         console.log('response Happy hours', response);
-        this.happyHoursData = response.data;
+        this.happyHoursData = response.happy_hours;
         this.filteredHappyHours = [...this.happyHoursData];
         this.loading = false;
       },
@@ -104,7 +103,7 @@ export class AAllHappyHoursComponent {
   }
 
   // Toggle Category
-  toggleCategoryStatus(happyHours: IHappyHours) {
+  toggleCategoryStatus(happyHours: IHappyHour) {
     this.ngxSpinnerService.show('actionsLoader');
     this.messageService.clear();
       this.happyHoursService
@@ -117,12 +116,11 @@ export class AAllHappyHoursComponent {
     ).subscribe(
           {
             next:(response) => {
-          happyHours.is_active = response.data.is_active? 1:0; 
           this.messageService.add({
             severity: 'success',
             summary: 'Updated',
             detail: `Happy Hours ${
-              response.data.is_active ? 'Enabled' : 'Disabled'
+              response.happy_hour.status ? 'Enabled' : 'Disabled'
             } successfully`,
           });
         },

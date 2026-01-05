@@ -1,0 +1,152 @@
+<p-card class="p-4">
+  <form
+    [formGroup]="submitForm"
+    (ngSubmit)="saveForm()"
+    class="grid grid-cols-1 md:grid-cols-2 gap-4"
+  >
+    <!-- Value -->
+    <div class="col-span-1">
+      <label for="point_value" class="font-medium block mb-1"
+        >Point value</label
+      >
+      <input
+        id="point_value"
+        type="number"
+        pInputText
+        placeholder="Enter points value"
+        formControlName="point_value"
+        class="w-full"
+        appOnlyNumber
+      />
+      @if(submitForm.get('point_value')?.touched &&
+      submitForm.get('point_value')?.invalid) {
+      <small class="text-red-500">
+        Points value must be a positive number
+      </small>
+      }
+    </div>
+    <!-- send Cap -->
+    <div class="col-span-1">
+      <label for="spend_cap" class="font-medium block mb-1">Send Cap</label>
+      <input
+        id="spend_cap"
+        type="number"
+        pInputText
+        placeholder="Enter Send Cap"
+        formControlName="spend_cap"
+        class="w-full"
+        appOnlyNumber
+      />
+      @if(submitForm.get('spend_cap')?.touched &&
+      submitForm.get('spend_cap')?.invalid) {
+      <small class="text-red-500"> Send Cap must be a positive number </small>
+      }
+    </div>
+    <!-- earn Cap -->
+    <div class="col-span-1">
+      <label for="earn_cap" class="font-medium block mb-1">Earn Cap</label>
+      <input
+        id="earn_cap"
+        type="number"
+        pInputText
+        placeholder="Enter Earn cap"
+        formControlName="earn_cap"
+        class="w-full"
+        appOnlyNumber
+      />
+      @if(submitForm.get('earn_cap')?.touched &&
+      submitForm.get('earn_cap')?.invalid) {
+      <small class="text-red-500"> Earn cap must be a positive number </small>
+      }
+    </div>
+    <!-- spend Percentage -->
+    <div class="col-span-1">
+      <label for="spend_percentage" class="font-medium block mb-1"
+        >Spend Percentage %</label
+      >
+      <input
+        id="spend_percentage"
+        type="number"
+        pInputText
+        placeholder="Enter Spend Percentage"
+        formControlName="spend_percentage"
+        class="w-full"
+        appOnlyNumber
+      />
+      @if(submitForm.get('spend_percentage')?.touched &&
+      submitForm.get('spend_percentage')?.invalid) {
+      <small class="text-red-500">
+        @if(submitForm.get('spend_percentage')?.hasError('required')) { Spend
+        percentage required } @if
+        (submitForm.get('spend_percentage')?.errors?.['max']; as error) { The
+        value {{ error.actual }} is too high! Max allowed is {{ error.max }}%. }
+      </small>
+      }
+    </div>
+    <!-- Exclude category (only if "apply" = "limited") -->
+    <div class="col-span-1">
+      <label for="excludeCategory" class="font-medium block mb-1"
+        >Exclude category</label
+      >
+      <p-multiSelect
+        id="excludeCategory"
+        [options]="allCategory()"
+        (input)="onCategorySearchChange($event)"
+        display="chip"
+        formControlName="categories_ids"
+        optionLabel="title_ar"
+        optionValue="id"
+        defaultLabel="Select Exclude category"
+        [loading]="categoryIsLoading()"
+        class="w-full"
+      />
+    </div>
+    <!-- Exclude products (only if "apply" = "limited") -->
+     @if(allProducts() && allProducts().length > 0){
+       <div class="col-span-1">
+         <label for="excludeProducts" class="font-medium block mb-1"
+           >Exclude products</label
+         >
+   
+         <p-multiSelect
+           [options]="allProducts()"
+           formControlName="products_ids"
+           [loading]="productsIsLoading()"
+           display="chip"
+           optionLabel="title_ar"
+           optionValue="id"
+           [placeholder]="
+             !submitForm.get('category_id')?.value
+               ? 'Please select category first'
+               : 'Select products'
+           "
+           (input)="onProductsSearchChange($event)"
+           class="w-full"
+           appendTo="body"
+         />
+       </div>
+     }
+    <!-- Status -->
+    <div class="col-span-2 flex items-center mt-6">
+      <label class="mr-3 font-medium">Active</label>
+      <p-inputSwitch formControlName="status"></p-inputSwitch>
+    </div>
+
+    <!-- Error Message -->
+    @if(errorMessage()) {
+    <div class="col-span-2">
+      <p class="text-red-600 font-medium">{{ errorMessage() }}</p>
+    </div>
+    }
+    <!-- Submit Button -->
+    <div class="col-span-2 flex justify-end mt-4">
+      <p-button
+        label="Update Loyalty Points"
+        icon="pi pi-save"
+        type="submit"
+        class="btn-main"
+        styleClass="p-button-primary"
+      ></p-button>
+    </div>
+  </form>
+</p-card>

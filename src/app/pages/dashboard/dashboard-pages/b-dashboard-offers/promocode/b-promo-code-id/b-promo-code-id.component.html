@@ -67,19 +67,19 @@
     <div class="col-span-1" *ngIf="submitForm.get('apply')?.value === 'limited'">
       <label for="users" class="font-medium block mb-1">Users</label>
       <p-multiSelect id="users" [options]="allUsers()" (input)="onSearchChange($event)" formControlName="users"
-        optionLabel="name" optionValue="id" defaultLabel="Select users" [loading]="isLoadingUsers()" class="w-full" />
+        optionLabel="name" optionValue="id" defaultLabel="Select users" [loading]="isLoadingUsers()" class="w-full" display="chip" />
     </div>
     <!-- Exclude category (only if "apply" = "limited") -->
     <div class="col-span-1">
       <label for="excludeCategory" class="font-medium block mb-1">Exclude category</label>
-      <p-multiSelect id="excludeCategory" [options]="allCategory()" (input)="onCategorySearchChange($event)"
+      <p-multiSelect id="excludeCategory" [options]="allCategory()" (input)="onCategorySearchChange($event)" display="chip"
         formControlName="categories_ids" optionLabel="title_ar" optionValue="id" defaultLabel="Select Exclude category"
         [loading]="categoryIsLoading()" class="w-full" />
     </div>
     <!-- Exclude products (only if "apply" = "limited") -->
     <div class="col-span-1">
       <label for="excludeProducts" class="font-medium block mb-1">Exclude products</label>
-      <p-multiSelect [options]="allProducts()" formControlName="products_ids" [loading]="productsIsLoading()"
+      <p-multiSelect [options]="allProducts()" formControlName="products_ids" [loading]="productsIsLoading()" display="chip"
         optionLabel="title_ar" optionValue="id"
         [placeholder]="!submitForm.get('category_id')?.value ? 'Please select category first' : 'Select products'"
         (input)="onProductsSearchChange($event)" class="w-full" />

@@ -114,7 +114,6 @@ export class BVoucherIdComponent implements OnInit, OnDestroy {
       products_ids: [[]],
       categories_ids: [[]],
       expiration_date: ['', [Validators.required]],
-      image: ["", Validators.required],
     });
   }
 
@@ -211,7 +210,6 @@ export class BVoucherIdComponent implements OnInit, OnDestroy {
         users: voucher.users?.map((u: any) => u.id) || [],
         categories_ids: catIds,
         products_ids: prodIds,
-        image: voucher.image_url || "" // نضع الرابط في الـ input مؤقتاً
       });
 
       this.fetchProducts();
@@ -276,11 +274,6 @@ export class BVoucherIdComponent implements OnInit, OnDestroy {
       });
     }
 
-    // إضافة الصورة
-    if (formValue.image instanceof File) {
-      formData.append('image', formValue.image);
-    }
-
     // 4. إرسال الطلب
     const request = (this.isEditing && this.voucherId)
       ? this.voucherService.updateVoucher(this.voucherId, formData)
@@ -312,11 +305,7 @@ export class BVoucherIdComponent implements OnInit, OnDestroy {
     });
   }
 
-  onFileSelect(event: any): void {
-    if (event.files?.length > 0) {
-      this.submitForm.patchValue({ image: event.files[0] });
-    }
-  }
+
 
   onProductsSearchChange(event: any) {
     this.searchTerm = event.target.value.trim();
@@ -332,11 +321,6 @@ export class BVoucherIdComponent implements OnInit, OnDestroy {
   private handleError(error: HttpErrorResponse) {
     this.ngxSpinnerService.hide('actionsLoader');
     this.errorMessage.set(error.error?.message || 'Error occurred');
-  }
-  clearImage(): void {
-
-    this.submitForm.patchValue({ image: "" });
-
   }
   onSearchChange(event: Event): void {
 

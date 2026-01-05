@@ -99,7 +99,7 @@ export class DashboardTopBarComponent {
       'Notification' in window &&
       Notification.permission === 'granted'
     ) {
-      const notification = new Notification('Zi Sushi - New Orders!', {
+      const notification = new Notification('KOI Sushi - New Orders!', {
         body: `${newOrderCount} new order(s) received! Click to view.`,
         icon: './assets/images/Login_Logo.png', // Optional: Use your logo
       });
@@ -152,9 +152,9 @@ export class DashboardTopBarComponent {
   }
 
   updateTitle() {
-    const originalTitle = 'Zi Sushi';
+    const originalTitle = 'KOI Sushi';
       if (this.notifications.length > 0) {
-        document.title = `Zi Sushi (${this.notifications.length}) New Orders`;
+        document.title = `KOI Sushi (${this.notifications.length}) New Orders`;
       } else {
         document.title = originalTitle; // Restore original title
       }

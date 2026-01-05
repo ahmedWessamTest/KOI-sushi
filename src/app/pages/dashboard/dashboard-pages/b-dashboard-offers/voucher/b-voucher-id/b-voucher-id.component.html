@@ -65,7 +65,7 @@
 
 
 
-    <div>
+    <!-- <div>
       <div class="p-field">
         <label class="font-medium mb-1 block">Product Image</label>
         <p-fileUpload #fileUpload name="image" accept="image/*" [auto]="true" [chooseLabel]="'Choose Image'"
@@ -89,7 +89,7 @@
         </div>
         }
       </div>
-    </div>
+    </div> -->
     <div class="col-span-1">
       <label for="apply" class="font-medium block mb-1">Apply To</label>
       <p-dropdown id="apply" [options]="applyOptions" formControlName="apply" placeholder="Select apply type"
@@ -110,7 +110,7 @@
     <div class="col-span-1" *ngIf="submitForm.get('apply')?.value === 'specific'">
       <label for="users" class="font-medium block mb-1">Specific Users</label>
       <p-multiSelect id="users" [options]="allUsers()" (input)="onSearchChange($event)" formControlName="users"
-        optionLabel="name" optionValue="id" [loading]="isLoadingUsers()" class="w-full"></p-multiSelect>
+        optionLabel="name" optionValue="id" [loading]="isLoadingUsers()" class="w-full" display="chip"></p-multiSelect>
     </div>
     <div class="col-span-2" *ngIf="errorMessage()">
       <p class="text-red-600 font-medium bg-red-50 p-2 rounded">{{ errorMessage() }}</p>

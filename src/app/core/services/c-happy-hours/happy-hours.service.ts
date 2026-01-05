@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IHappyHours, IHappyHoursResponse, IHappyHoursToggleStatusResponse } from '../../Interfaces/c-happy-hours/ihappy-hours';
+import { IHappyHour, IHappyHoursResponse, IHappyHoursDetails } from '../../Interfaces/c-happy-hours/ihappy-hours';
 import { WEB_SITE_BASE_URL } from '../../constants/WEB_SITE_BASE_UTL';
 
 @Injectable({
@@ -10,19 +10,15 @@ import { WEB_SITE_BASE_URL } from '../../constants/WEB_SITE_BASE_UTL';
 export class HappyHoursService {
   constructor(private http: HttpClient) { }
   getHappyHours():Observable<IHappyHoursResponse> {
-    return this.http.get<IHappyHoursResponse>(`${WEB_SITE_BASE_URL}happy-hours`);
+    return this.http.get<IHappyHoursResponse>(`${WEB_SITE_BASE_URL}happy-hour`);
   }
-  toggleHappyHoursStatus(id:number):Observable<IHappyHoursToggleStatusResponse> {
-    return this.http.post<IHappyHoursToggleStatusResponse>(`${WEB_SITE_BASE_URL}happy-hours/toggle/${id}`,{});
+  toggleHappyHoursStatus(id:number):Observable<IHappyHoursDetails> {
+    return this.http.post<IHappyHoursDetails>(`${WEB_SITE_BASE_URL}happy-hour/${id}/toggle`,{});
   }
-  getHappyHoursById(id:string):Observable<IHappyHours>{
-    return this.http.get<IHappyHours>(`${WEB_SITE_BASE_URL}happy-hours/${id}`);
+  getHappyHoursById(id:string):Observable<IHappyHoursDetails>{
+    return this.http.get<IHappyHoursDetails>(`${WEB_SITE_BASE_URL}happy-hour/${id}`);
   }
-  updateHappyHoursById(data:{
-  start_time: string
-  end_time: string
-  discount_percentage: number
-},id:string|null):Observable<any>{
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}happy-hours/${id}`,data);
+  updateHappyHoursById(data:any,id:number|null):Observable<any>{
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}happy-hour/${id}`,data);
   }
 }

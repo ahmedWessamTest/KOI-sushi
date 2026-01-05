@@ -116,7 +116,7 @@
   <p-card *ngFor="let branch of Statics.branches">
     <div class="flex justify-between">
       <div>
-        <span class="block text-gray-500 font-medium text-lg">{{ branch.branch_name }}</span>
+        <span class="block text-gray-500 font-medium text-lg">{{ branch.title_en }}</span>
         <div class="text-900 text-2xl font-bold">Orders: {{ branch.total_orders }}</div>
         <div class="text-lg text-gray-500">Revenue: {{ branch.total_orders_money | currency : "EGP " }}</div>
         <div class="text-lg text-gray-500">Delivered: {{ branch.delivered_orders }}</div>

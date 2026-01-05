@@ -326,69 +326,6 @@ export const routes: Routes = [
                   },
                 ],
               },
-              /* Vouchers */
-              {
-                path: 'vouchers',
-                loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/voucher.component'
-                  ).then((c) => c.VoucherComponent),
-                data: {
-                  title: 'KOI Sushi',
-                  description: 'Dashboard Page',
-                },
-                children: [
-                  { path: '', redirectTo: 'vouchers-index', pathMatch: 'full' },
-                  {
-                    path: 'vouchers-index',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/a-all-voucher/a-all-voucher.component'
-                      ).then((c) => c.AAllVoucherComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'vouchers-details/:id',
-                    resolve: { voucher: voucherDetailsResolver },
-                    runGuardsAndResolvers: 'always',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-details-voucher/b-details-voucher.component'
-                      ).then((c) => c.BDetailsVoucherComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'vouchers-add',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component'
-                      ).then((c) => c.BVoucherIdComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'vouchers-edit/:id',
-                    resolve: { voucher: voucherDetailsResolver },
-                    runGuardsAndResolvers: 'always',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component'
-                      ).then((c) => c.BVoucherIdComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                ],
-              },
               /* Promo Codes */
               {
                 path: 'promo-codes',
@@ -455,6 +392,81 @@ export const routes: Routes = [
                     },
                   },
                 ],
+              },
+              /* Vouchers */
+              {
+                path: 'vouchers',
+                loadComponent: () =>
+                  import(
+                    './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/voucher.component'
+                  ).then((c) => c.VoucherComponent),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+                children: [
+                  { path: '', redirectTo: 'vouchers-index', pathMatch: 'full' },
+                  {
+                    path: 'vouchers-index',
+                    loadComponent: () =>
+                      import(
+                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/a-all-voucher/a-all-voucher.component'
+                      ).then((c) => c.AAllVoucherComponent),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                  {
+                    path: 'vouchers-details/:id',
+                    resolve: { voucher: voucherDetailsResolver },
+                    runGuardsAndResolvers: 'always',
+                    loadComponent: () =>
+                      import(
+                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-details-voucher/b-details-voucher.component'
+                      ).then((c) => c.BDetailsVoucherComponent),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                  {
+                    path: 'vouchers-add',
+                    loadComponent: () =>
+                      import(
+                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component'
+                      ).then((c) => c.BVoucherIdComponent),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                  {
+                    path: 'vouchers-edit/:id',
+                    resolve: { voucher: voucherDetailsResolver },
+                    runGuardsAndResolvers: 'always',
+                    loadComponent: () =>
+                      import(
+                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component'
+                      ).then((c) => c.BVoucherIdComponent),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                ],
+              },
+              /* Loyalty points */
+              {
+                path: 'loyalty-points',
+                loadComponent: () =>
+                  import(
+                    './pages/dashboard/dashboard-pages/b-dashboard-offers/loyalty-points/loyalty-points.component'
+                  ).then((c) => c.LoyaltyPointsComponent),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                }
               },
               // happy-hours
               {

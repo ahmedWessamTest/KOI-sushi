@@ -58,9 +58,7 @@
         <td class="text-center">{{ happyHours.discount_percentage  }}%</td>
         <td class="text-center">
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
-            [ngModel]="happyHours.is_active"
+            [ngModel]="happyHours.status"
             (onChange)="toggleCategoryStatus(happyHours)"
           ></p-inputSwitch>
         </td>

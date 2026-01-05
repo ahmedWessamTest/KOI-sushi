@@ -196,11 +196,12 @@ export class AAllVoucherComponent {
 
   totalRecords: number = 0;
   rowsPerPage = 10;
-  currentPage = 0;
+  currentPage = 1;
 
   onPageChange(event: any) {
-    this.currentPage = event.page;
     this.rowsPerPage = event.rows;
+    console.log(event);
+    this.currentPage = (event.first / event.rows) + 1
     this.loadVouchers();
   }
 
@@ -209,7 +210,7 @@ export class AAllVoucherComponent {
     this.ngxSpinnerService.show('actionsLoader');
 
     this.voucherService
-      .getAllVouchers(this.currentPage + 1, this.rowsPerPage)
+      .getAllVouchers(this.currentPage, this.rowsPerPage)
       .subscribe(
         (response) => {
           this.ngxSpinnerService.hide('actionsLoader');

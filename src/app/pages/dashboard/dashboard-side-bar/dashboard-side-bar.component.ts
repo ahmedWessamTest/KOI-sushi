@@ -7,7 +7,6 @@ import { DashboardLayoutService } from '../../../core/services/core/dashboard-la
 import { DashboardMenuItemsComponent } from '../dashboard-menu-items/dashboard-menu-items.component';
 import { DialogModule } from "primeng/dialog";
 import { ToastModule } from "primeng/toast";
-import { LoyaltyPointsService } from '../../../core/services/f-loyaltypoints/loyalty-points.service';
 
 @Component({
   selector: 'app-dashboard-side-bar',
@@ -19,15 +18,12 @@ import { LoyaltyPointsService } from '../../../core/services/f-loyaltypoints/loy
 })
 export class DashboardSideBarComponent {
   model: any[] = [];
-  loyaltyPointsStatus:boolean = false;
   isAdmin = false;
   constructor(
     public layoutService: DashboardLayoutService,
     public el: ElementRef,
     private _Router: Router,
     private _ConfirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private _LoyaltyPointsService:LoyaltyPointsService
   ) {}
   showModal = signal<boolean>(false);
   ngOnInit(): void {
@@ -74,12 +70,17 @@ export class DashboardSideBarComponent {
               icon: 'pi pi-fw pi-ticket',
               routerLink: ['/dashboard/offers/vouchers'],
             },
+            // {
+            //   label: 'Loyalty Points',
+            //   icon: 'pi pi-trophy',
+            //   command: () => {this.handleLoyaltyPoints()},
+            //   type:"switch",
+            //   isActiveLoyaltyPoints:this.loyaltyPointsStatus
+            // },
             {
               label: 'Loyalty Points',
               icon: 'pi pi-trophy',
-              command: () => {this.handleLoyaltyPoints()},
-              type:"switch",
-              isActiveLoyaltyPoints:this.loyaltyPointsStatus
+              routerLink: ['/dashboard/offers/loyalty-points'],
             },
             {
               label: 'Happy Hours',
@@ -280,42 +281,5 @@ export class DashboardSideBarComponent {
       reject: () => {},
     });
   }
-  handleLoyaltyPoints() {
-  console.log('Loyalty toggled: ');
-  this._ConfirmationService.confirm({
-      message: `Are you you want ${this.loyaltyPointsStatus? 'deactivate':'activate'} loyalty points`,
-      header: 'Loyalty points confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      rejectLabel: 'No',
-      acceptLabel: 'Yes',
-      closeOnEscape: true,
-      acceptButtonStyleClass: 'p-button-danger mx-2',
-      accept: () => {
-        this.changeLoyaltyPointsStatus();
-      },
-    });
-}
-getLoyaltyPointsStatus():void {
-  this._LoyaltyPointsService.getLoyaltyPointsStatus().subscribe({
-    next:(res) => {
-      this.loyaltyPointsStatus = res.is_active ?? false;
-      this.initSideBar()
-    },
-    error: () => {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'failed when get Loyalty points data', life: 3000 });
-    }
-  })
-}
-changeLoyaltyPointsStatus():void {
-  this._LoyaltyPointsService.toggleLoyaltyPointsStatus().subscribe({
-    next:(res)=>{
-      this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Successfully ${this.loyaltyPointsStatus? 'deactivate':'activate'} loyalty points` });
-      this.loyaltyPointsStatus = res.is_active ?? false;
-      this.initSideBar()
-  },
-  error:()=>{
-  this.messageService.add({ severity: 'error', summary: 'Error', detail: `failed when ${this.loyaltyPointsStatus?"activate":"deactivate"}`, life: 3000 });
-  }
-})
-}
+
 }

@@ -26,14 +26,14 @@ export class VoucherService {
 
   enableVoucher(id: string): Observable<{ message: string; status: number }> {
     return this.http.post<{ message: string; status: number }>(
-      `${WEB_SITE_BASE_URL}vouchers/toggle/${id}`,
+      `${WEB_SITE_BASE_URL}voucher/${id}/toggle`,
       {}
     );
   }
 
   updateVoucher(id: string, voucherData: any): Observable<any> {
     return this.http.post<any>(
-      `${WEB_SITE_BASE_URL}vouchers/update/${id}`,
+      `${WEB_SITE_BASE_URL}voucher/${id}`,
       voucherData
     );
   }

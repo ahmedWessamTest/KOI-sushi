@@ -188,7 +188,7 @@ export class COrdersDetailsComponent {
       printWindow?.document.write(`
         <html>
         <head>
-          <title>Zi Sushi - Order Receipt</title>
+          <title>KOI Sushi - Order Receipt</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; padding: 0; }
             h2 { text-align: center; background-color: #f0f0f0; padding: 10px; margin-top: 0; }
@@ -243,7 +243,7 @@ export class COrdersDetailsComponent {
           <p class="total">Printed on: ${new Date().toLocaleString()}</p>
           <script>
             // Hide the about:blank text by setting the document title
-            document.title = "Zi Sushi - Order Receipt";
+            document.title = "KOI Sushi - Order Receipt";
             // Remove any footer text that might appear
             window.onbeforeprint = function() {
               // Force focus to ensure the browser treats this as the active window

@@ -99,7 +99,7 @@
         <td class="text-center">{{ voucher.id }}</td>
         <td class="text-center">{{ voucher.title_en }}</td>
         <td class="text-center">
-          @if (voucher.type === 'percent') {
+          @if (voucher.type === 'percentage') {
           {{ voucher.value / 100 | percent }}
           } @else {
           {{ voucher.value }} EGP }
@@ -115,8 +115,6 @@
         </td>
         <td class="text-center">
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
             [ngModel]="voucher.status"
             (onChange)="toggleVoucherStatus(voucher)"
           ></p-inputSwitch>

@@ -27,13 +27,11 @@ export class HomeService {
         second_date: dayjs(second_date).format("YYYY-MM-DD"),
       };
     } else if (single_date) {
-      requestBody = { single_date: dayjs(single_date).format("YYYY-MM-DD") };
+      requestBody = { single_date: dayjs(single_date).format("YYYY-MM-DD")};
     }
 
     // Determine the endpoint
-    const endpoint = userData.branch_id
-      ? `${WEB_SITE_BASE_URL}ordershome/${userData.branch_id}`
-      : `${WEB_SITE_BASE_URL}ordershome/all`;
+    const endpoint = `${WEB_SITE_BASE_URL}analytics`
 
     return this.http.post<ISuperAdminResponse>(endpoint, requestBody);
   }
