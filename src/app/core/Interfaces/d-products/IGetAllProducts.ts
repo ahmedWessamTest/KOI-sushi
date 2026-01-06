@@ -1,4 +1,9 @@
 export interface IGetAllProducts {
+  success: boolean
+  products: Products
+}
+
+export interface Products {
   current_page: number
   data: productsData[]
   first_page_url: string
@@ -22,7 +27,10 @@ export interface productsData {
   price: string
   main_image: string
   total_orders: number
-  status: boolean
+  status: boolean;
+  has_options:boolean;
+  is_recommended: boolean;
+  category: Category
 }
 
 export interface Link {
@@ -30,4 +38,9 @@ export interface Link {
   label: string
   page?: number
   active: boolean
+}
+interface Category {
+  id: number
+  title_ar: string
+  title_en: string
 }

@@ -66,7 +66,7 @@ export class ChartsComponent {
       datasets: [
         {
           label: "Revenue Comparison",
-          data: [parseInt(this.Statics()?.totalDeliveredMoney!), parseInt(this.Statics()?.totalCancelledMoney!)],
+          data: [this.Statics()?.totalDeliveredMoney, this.Statics()?.totalCancelledMoney],
           backgroundColor: ["#2EB432", "#F44336"], // Swapped: Delivered (green), Cancelled (red)
           borderColor: ["#2EB432", "#F44336"], // Swapped: Delivered (green), Cancelled (red)
           borderWidth: 1,

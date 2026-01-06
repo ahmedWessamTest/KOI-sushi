@@ -8,7 +8,6 @@
     <span class="d-flex align-items-center">{{ name }}</span>
     } 👋
   </h2>
-
   <div class="relative inline-block">
     <!-- Filter Button -->
     <button
@@ -38,8 +37,32 @@
       </div>
     </div>
   </div>
-</div>
 
+
+<div class="grid lg:grid-cols-3 gap-3">
+   </div>
+</div>
+  @if (Statics && Statics.branches) {
+  <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
+    <button 
+      (click)="onBranchTabChange(0)"
+      [class]="activeBranchId === 0 
+        ? 'px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium' 
+        : 'px-6 py-3 text-gray-500 hover:text-blue-500 transition-all font-medium'">
+      All Branches
+    </button>
+
+    @for (branch of allBranches; track branch.id) {
+      <button 
+        (click)="onBranchTabChange(branch.id)"
+        [class]="activeBranchId === branch.id 
+          ? 'px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-medium whitespace-nowrap' 
+          : 'px-6 py-3 text-gray-500 hover:text-blue-500 transition-all font-medium whitespace-nowrap'">
+        {{ branch.title_en }}
+      </button>
+    }
+  </div>
+}
 <!-- Overall Statistics -->
 <div class="grid lg:grid-cols-3 gap-3">
   <p-card>

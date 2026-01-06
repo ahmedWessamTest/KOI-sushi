@@ -89,26 +89,26 @@ export class DashboardSideBarComponent {
             },
           ],
         },
-        // {
-        //   label: 'Menu',
-        //   items: [
-        //     {
-        //       label: 'Categories',
-        //       icon: 'pi pi-fw pi-list',
-        //       routerLink: ['/dashboard/menu/categories'],
-        //     },
-        //     {
-        //       label: 'Products',
-        //       icon: 'pi pi-fw pi-th-large',
-        //       routerLink: ['/dashboard/menu/products'],
-        //     },
-        //     // {
-        //     //   label: "Add New Product",
-        //     //   icon: "pi pi-fw pi-plus",
-        //     //   routerLink: ["/dashboard/products/add"],
-        //     // },
-        //   ],
-        // },
+        {
+          label: 'Menu',
+          items: [
+            {
+              label: 'Categories',
+              icon: 'pi pi-fw pi-list',
+              routerLink: ['/dashboard/menu/categories'],
+            },
+            {
+              label: 'Products',
+              icon: 'pi pi-fw pi-th-large',
+              routerLink: ['/dashboard/menu/products'],
+            },
+            // {
+            //   label: "Add New Product",
+            //   icon: "pi pi-fw pi-plus",
+            //   routerLink: ["/dashboard/products/add"],
+            // },
+          ],
+        },
         // {
         //   label: 'Orders',
         //   items: [

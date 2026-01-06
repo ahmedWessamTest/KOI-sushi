@@ -15,6 +15,7 @@ import { finalize } from "rxjs";
 import { ISuperAdminResponse } from "../../../../core/Interfaces/m-home/IHomeStatics";
 import { HomeService } from "../../../../core/services/m-home-statics/home.service";
 import { ChartsComponent } from "./charts/charts.component";
+import { log } from "console";
 
 dayjs.extend(isBetween);
 dayjs.extend(customParseFormat);
@@ -38,7 +39,7 @@ dayjs.extend(customParseFormat);
 })
 export class ADashboardHomeComponent {
   private ngxSpinnerService = inject(NgxSpinnerService);
-
+  activeBranchId: number = 0;
 
   @ViewChildren("dateInputs") dateInputs!: QueryList<ElementRef>;
 
@@ -49,22 +50,24 @@ export class ADashboardHomeComponent {
   isAdmin = false;
 
   Statics!: ISuperAdminResponse;
-
+  allBranches: any
   selectedBranch: string = "all";
 
   ngOnInit(): void {
     this.getDashboardData();
       if (JSON.parse(localStorage.getItem("user")!).role === "super-admin") this.isAdmin = true;
       this.name = JSON.parse(localStorage.getItem("user")!).name;
+      
     
   }
 
-  getDashboardData(filterParams: any = {}): void {
+  getDashboardData(filterParams: any = {}): void {    
     this.homeService
       .getHomeStatics(filterParams)
       .pipe(finalize(() => {}))
       .subscribe((data) => {
         this.Statics = data;
+        this.allBranches = data.branches
       });
   }
 
@@ -98,8 +101,9 @@ export class ADashboardHomeComponent {
   applyFilter() {
     this.isDropdownOpen = false; // Close dropdown after applying
     this.ngxSpinnerService.show("actionsLoader");
+    
     this.homeService
-      .getHomeStatics(this.selectedRange.chosenLabel?.split(" - ")[0], this.selectedRange.chosenLabel?.split(" - ")[1])
+      .getHomeStatics(this.selectedRange.chosenLabel?.split(" - ")[0], this.selectedRange.chosenLabel?.split(" - ")[1],"",this.activeBranchId)
       .subscribe((data) => {
         this.ngxSpinnerService.hide("actionsLoader");
         this.Statics = data;
@@ -109,4 +113,11 @@ export class ADashboardHomeComponent {
   onDateSelected(event: any) {
     this.selectedRange = event;
   }
+  
+
+// دالة مخصصة لتغيير الـ Tab
+onBranchTabChange(id: number) {
+  this.activeBranchId = id;
+  this.applyFilter();
+}
 }

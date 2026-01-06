@@ -11,9 +11,10 @@
           <label class="font-medium mb-1 block">Product Image</label>
           <p-fileUpload
             #fileUpload
-            name="image"
+            name="main_image"
             accept="image/*"
             [auto]="true"
+            [maxFileSize]="2000000"
             [chooseLabel]="'Choose Image'"
             [uploadLabel]="'Upload'"
             [styleClass]="'w-full'"
@@ -35,18 +36,57 @@
               </div>
             </ng-template>
           </p-fileUpload>
-          @if (submitForm.get('image')?.invalid && submitForm.get('image')?.touched) {
+          <!-- @if (submitForm.get('main_image')?.invalid && submitForm.get('main_image')?.touched) {
           <div class="p-error">
             <small>Product Image is required.</small>
           </div>
-          }
+          } -->
         </div>
       </div>
-
+      <div class="p-field mt-4">
+  <label class="font-medium mb-1 block">Gallery Images (Multiple)</label>
+  <p-fileUpload
+    #multiFileUpload
+    name="images[]"
+    accept="image/*"
+    [multiple]="true" 
+    [auto]="true"
+    [chooseLabel]="'Add Gallery Images'"
+    (onSelect)="onMultipleFilesSelect($event)"
+    (onRemove)="onMultipleFilesSelect($event)"
+    [showUploadButton]="false" 
+    [showCancelButton]="false"
+    [draggable]="true">
+    
+    <ng-template pTemplate="content">
+      <div 
+        class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition cursor-pointer"
+        (click)="multiFileUpload.choose()"> <i class="pi pi-images text-4xl text-gray-400"></i>
+        
+        @if (submitForm.get('images')?.value?.length > 0) {
+          <p class="text-green-600 mt-2 font-medium">
+            {{ submitForm.get('images')?.value?.length }} images selected
+          </p>
+          <p class="text-gray-400 text-sm">Click to add more or drag & drop</p>
+        } @else {
+          <p class="text-gray-500 mt-2">
+            Drag & drop gallery images or 
+            <span class="text-blue-500 font-bold">click here to browse</span>
+          </p>
+        }
+      </div>
+    </ng-template>
+</p-fileUpload>
+</div>
+      <div class="col-span-1">
+      <label for="value" class="font-medium block mb-1">Price</label>
+      <input id="value" type="number" pInputText placeholder="Enter Prices" formControlName="price"
+        class="w-full" appOnlyNumber />
+      </div>
       <div>
         <label class="font-medium mb-1 block">Product English Name</label>
-        <input type="text" pInputText formControlName="en_food_name" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('en_food_name')?.invalid && submitForm.get('en_food_name')?.touched) {
+        <input type="text" pInputText formControlName="title_en" class="p-inputtext-sm w-full" />
+        @if (submitForm.get('title_en')?.invalid && submitForm.get('title_en')?.touched) {
         <div class="p-error">
           <small>Product English Name is required.</small>
         </div>
@@ -55,8 +95,8 @@
 
       <div>
         <label class="font-medium mb-1 block">Product Arabic Name</label>
-        <input type="text" pInputText formControlName="ar_food_name" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('ar_food_name')?.invalid && submitForm.get('ar_food_name')?.touched) {
+        <input type="text" pInputText formControlName="title_ar" class="p-inputtext-sm w-full" />
+        @if (submitForm.get('title_ar')?.invalid && submitForm.get('title_ar')?.touched) {
         <div class="p-error">
           <small>Product Arabic Name is required.</small>
         </div>
@@ -71,7 +111,7 @@
           styleClass="w-full border border-black/25 rounded-[10px] px-3"
           [options]="categories"
           formControlName="category_id"
-          optionLabel="en_name"
+          optionLabel="title_en"
           optionValue="id" />
         @if (submitForm.get('category_id')?.invalid && submitForm.get('category_id')?.touched) {
         <div class="p-error">
@@ -82,7 +122,7 @@
 
       <div>
         <label class="font-medium mb-1 block">Product English Description</label>
-        <ngx-jodit [options]="{ language: 'en' }" formControlName="en_ingredients"></ngx-jodit>
+        <ngx-jodit [options]="{ language: 'en' }" formControlName="description_en"></ngx-jodit>
         <!-- @if (submitForm.get('en_ingredients')?.invalid && submitForm.get('en_ingredients')?.touched) {
         <div class="p-error">
           <small>Product English Description is required.</small>
@@ -95,94 +135,13 @@
         <ngx-jodit
           dir="rtl"
           [options]="{ language: 'ar', direction: 'rtl' }"
-          formControlName="ar_ingredients"></ngx-jodit>
+          formControlName="description_ar"></ngx-jodit>
         <!-- @if (submitForm.get('ar_ingredients')?.invalid && submitForm.get('ar_ingredients')?.touched) {
         <div class="p-error">
           <small>Product Arabic Description is required.</small>
         </div>
         } -->
       </div>
-
-      <!-- Dynamic Piece Price Inputs -->
-      @if (!submitForm.get('piece_price_state')?.value) {
-      <div>
-        <label class="font-medium mb-1 block">Product Price</label>
-        <input appOnlyNumber type="number" pInputText formControlName="price" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('price')?.invalid && submitForm.get('price')?.touched) {
-        <div class="p-error">
-          <small>Product Price is required.</small>
-        </div>
-        }
-      </div>
-      }
-
-      <!-- InputSwitch State -->
-      <!-- <div class="flex items-center gap-2">
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="state"></p-inputSwitch>
-        <label class="font-medium mb-1 block">Status</label>
-      </div> -->
-
-      <!-- Pieces and Prices Switch -->
-      <div class="flex items-center gap-2">
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="piece_price_state"></p-inputSwitch>
-        <label class="font-medium mb-1 block">Piece Price</label>
-      </div>
-
-      <!-- Dynamic Piece Price Inputs -->
-      @if (submitForm.get('piece_price_state')?.value) {
-      <div formArrayName="piece_price_array">
-        @for (control of (piecePriceArray).controls ; track $index) {
-        <div class="flex items-center gap-2" [formGroup]="control">
-          <input
-            class="flex-grow-1"
-            appOnlyNumber
-            type="number"
-            pInputText
-            formControlName="pieces"
-            placeholder="Pieces Count" />
-          <input
-            class="flex-grow-1"
-            appOnlyNumber
-            type="number"
-            pInputText
-            formControlName="prices"
-            placeholder="Price" />
-          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="removePiecePrice($index)"></button>
-        </div>
-        }
-        <button pButton label="Add More" class="p-button-text" (click)="addPiecePrice()"></button>
-        @if (submitForm.get('piece_price_array')?.invalid && submitForm.get('piece_price_array')?.touched) {
-        <div class="p-error">
-          <small>Piece Price is required.</small>
-        </div>
-        }
-      </div>
-      }
-
-      <!-- Product Choice Switch -->
-      <div class="flex items-center gap-2">
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="product_choice_state"></p-inputSwitch>
-        <label class="font-medium mb-1 block">Choices</label>
-      </div>
-
-      <!-- Dynamic Product Choices Inputs -->
-      @if (submitForm.get('product_choice_state')?.value) {
-      <div formArrayName="product_choice_array">
-        @for (productChoiceArray of productChoiceArray.controls; track productChoiceArray) {
-        <div class="flex items-center gap-2" [formGroup]="productChoiceArray">
-          <input class="flex-grow-1" pInputText formControlName="en_name" placeholder="English Name" />
-          <input class="flex-grow-1" pInputText formControlName="ar_name" placeholder="Arabic Name" />
-          <button pButton icon="pi pi-trash" class="p-button-danger" (click)="removeProductChoice($index)"></button>
-        </div>
-        }
-        <button pButton label="Add More" class="p-button-text" (click)="addProductChoice()"></button>
-        @if (submitForm.get('product_choice_array')?.invalid && submitForm.get('product_choice_array')?.touched) {
-        <div class="p-error">
-          <small>Choices is required.</small>
-        </div>
-        }
-      </div>
-      }
     </form>
 
     @if (errorMessage.length > 0) {

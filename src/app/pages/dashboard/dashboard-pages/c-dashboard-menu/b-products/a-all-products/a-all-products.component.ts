@@ -6,18 +6,18 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { DropdownModule } from "primeng/dropdown";
+import { DropdownChangeEvent, DropdownModule } from "primeng/dropdown";
 import { InputSwitchModule } from "primeng/inputswitch";
 import { Table, TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 import { timer } from "rxjs";
-import { IGetAllProducts, productsData } from "../../../../../../core/Interfaces/d-products/IGetAllProducts";
+import {  productsData } from "../../../../../../core/Interfaces/d-products/IGetAllProducts";
 import { ProductsService } from "../../../../../../core/services/d-products/products.service";
 import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
 import { NoDataFoundBannerComponent } from "../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component";
 import { ISelectOptions } from "../../../../../../core/Interfaces/core/ISelectOptions";
-import { IGetProductsCategories } from "../../../../../../core/Interfaces/d-products/IGetProductsCategories";
 import { WEB_SITE_IMG_URL } from "../../../../../../core/constants/WEB_SITE_BASE_UTL";
+import { Category } from "../../../../../../core/Interfaces/d-products/IGetProductsCategories";
 
 @Component({
   selector: "app-a-all-products",
@@ -41,9 +41,10 @@ import { WEB_SITE_IMG_URL } from "../../../../../../core/constants/WEB_SITE_BASE
   providers: [MessageService],
 })
 export class AAllProductsComponent {
-  products: any[] = [];
-  allCategories!: IGetProductsCategories;
-  filteredProducts: any[] = [];
+  products: productsData[] = [];
+  allCategories!: Category[];
+  selectedCategory:number[] = [];
+  filteredProducts: productsData[] = [];
   categoryData!: {
     value: number;
     label: string;
@@ -57,29 +58,35 @@ export class AAllProductsComponent {
   private productsService = inject(ProductsService);
 
   // Dropdown
-  selectedStatus: string = "";
+  selectedStatus: number | null = null;
+  selectedRecommendation:number | null = null
   selectOptions: ISelectOptions[] = [];
-  onFilterCategoryChange(value: string): void {
-    if (value) {
-      // Filter the blogs based on the selected category
-      this.filteredProducts = this.products.filter((ele) => {
-        return ele.category.en_name.toString().includes(value);
-      });
+  recommendedOptions: ISelectOptions[] = [];
+  onFilterCategoryChange(value: DropdownChangeEvent): void {
+    if(value.value === null) {
+      this.selectedCategory = [];
     } else {
-      // Reset to original data if no category is selected
-      this.filteredProducts = [...this.products];
+      this.selectedCategory = [value.value];
     }
+    this.loadProducts();
   }
-  onFilterChange(value: string): void {
-    if (value) {
-      // Filter the blogs based on the selected category
-      this.filteredProducts = this.products.filter((ele) => {
-        return ele.status.toString().includes(value);
-      });
+  onFilterChange(value: string | null): void {
+    
+    if(value !== null) {
+      this.selectedStatus = Number(value);
     } else {
-      // Reset to original data if no category is selected
-      this.filteredProducts = [...this.products];
+      this.selectedStatus = null
     }
+    this.loadProducts()
+  }
+  onRecommendedFilterChange(value: string | null): void {
+    
+    if(value !== null) {
+      this.selectedRecommendation = Number(value);
+    } else {
+      this.selectedRecommendation = null
+    }
+    this.loadProducts()
   }
 
   initDropDownFilter(): void {
@@ -93,6 +100,17 @@ export class AAllProductsComponent {
         value: "0",
       },
     ];
+    this.recommendedOptions = [
+      {
+        label: "Recommended",
+        value: "1",
+      },
+      {
+        label: "Not recommended",
+        value: "0",
+      },
+
+    ]
   }
 
   ngOnInit() {
@@ -104,11 +122,12 @@ export class AAllProductsComponent {
   // get all categories
   initCategories(): void {
     this.productsService.getAllProductsCategories().subscribe((response) => {
-      this.allCategories = response;
-      this.categoryData = this.allCategories.categories.data.map((category) => ({
+      this.allCategories = response.categories.data;
+      this.categoryData = this.allCategories.map((category) => ({
         value: category.id,
         label: category.title_en,
       }));
+      
     });
   }
 
@@ -117,10 +136,12 @@ export class AAllProductsComponent {
     this.productsService.getAllProducts().subscribe(
       (response: any) => {
         // response.products.data.reverse();
-        this.allProducts = response;
+        this.allProducts = response.products;
         this.totalRecords = response.products.total;
         this.products = response.products.data;
         this.filteredProducts = [...this.products];
+        console.log(this.filteredProducts);
+        
       },
       () => {
         this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load Product" });
@@ -133,28 +154,36 @@ export class AAllProductsComponent {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
 
-    const updatedStatus = Product.status ? 0 : 1; // Toggle between 0 and 1
-    if (updatedStatus) {
+    const updatedStatus = !Product.status; // Toggle between 0 and 1
       this.productsService.enableProduct(Product.id.toString()).subscribe(() => {
-        Product.status = updatedStatus; // Update the UI immediately
         this.messageService.add({
           severity: "success",
           summary: "Updated",
           detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
         });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+        Product.status = updatedStatus;
       });
-    } else {
-      this.productsService.destroyProduct(Product.id.toString()).subscribe(() => {
-        Product.status = updatedStatus; // Update the UI immediately
+      
+    
+  }
+  // Toggle recommended
+  toggleRecommendedStatus(Product: any) {
+    this.ngxSpinnerService.show("actionsLoader");
+    this.messageService.clear();
+
+    const updatedStatus = !Product.is_recommended; // Toggle between 0 and 1
+      this.productsService.toggleProductRecommendation(Product.id.toString()).subscribe(() => {
         this.messageService.add({
           severity: "success",
           summary: "Updated",
-          detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
+          detail: `Recommended ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
         });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+        Product.is_recommended = updatedStatus;
       });
-    }
+      
+    
   }
 
   totalRecords: number = 0;
@@ -164,18 +193,20 @@ export class AAllProductsComponent {
   onPageChange(event: any) {
     this.currentPage = event.first / event.rows + 1; // Convert to 1-based index
     this.rowsPerPage = event.rows;
-    this.loadProducts(this.currentPage, this.rowsPerPage);
+    this.loadProducts();
   }
 
-  loadProducts(page: number, perPage: number) {
+  loadProducts() {
     this.ngxSpinnerService.show("actionsLoader");
-    this.productsService.getAllProducts(page, perPage).subscribe(
+    this.productsService.getAllProducts(this.currentPage, this.rowsPerPage,"",this.selectedCategory,this.selectedStatus,this.selectedRecommendation).subscribe(
       (response: any) => {
         this.ngxSpinnerService.hide("actionsLoader");
         this.allProducts = response;
         this.totalRecords = response.products.total;
         this.products = response.products.data;
         this.filteredProducts = [...this.products];
+        console.log(this.filteredProducts);
+        
       },
       () => {
         this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load Product" });
@@ -197,15 +228,15 @@ export class AAllProductsComponent {
   }
 
   onGlobalFilter(dt: Table, event: any) {
-    const value = event.target.value.toLowerCase();
-    this.filteredProducts = this.products.filter((product) => {
-      return (
-        product.id.toString().includes(value) ||
-        product.en_food_name.toLowerCase().includes(value) ||
-        product.ar_food_name.toLowerCase().includes(value) ||
-        (product.status === 1 ? "active" : "inactive").includes(value)
-      );
-    });
+    // const value = event.target.value.toLowerCase();
+    // this.filteredProducts = this.products.filter((product) => {
+    //   return (
+    //     product.id.toString().includes(value) ||
+    //     product.title_en.toLowerCase().includes(value) ||
+    //     product.title_ar.toLowerCase().includes(value) ||
+    //     (product.status ? "active" : "inactive").includes(value)
+    //   );
+    // });
   }
 
   onSort(event: any) {
@@ -223,15 +254,13 @@ export class AAllProductsComponent {
         valueA = Number(a.id);
         valueB = Number(b.id);
       } else if (field === "en_food_name") {
-        valueA = a.en_food_name;
-        valueB = b.en_food_name;
+        valueA = a.title_ar;
+        valueB = b.title_ar;
       } else if (field === "ar_food_name") {
-        valueA = a.ar_food_name;
-        valueB = b.ar_food_name;
-      } else if (field === "status") {
-        valueA = a.status;
-        valueB = b.status;
-      } else {
+        valueA = a.title_en;
+        valueB = b.title_ar;
+      } 
+       else {
         // Default case
         valueA = (a as any)[field];
         valueB = (b as any)[field];

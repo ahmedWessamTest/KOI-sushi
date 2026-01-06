@@ -27,7 +27,7 @@
     [showCurrentPageReport]="true"
     [lazy]="true"
     (onPage)="onPageChange($event)"
-    [globalFilterFields]="['id', 'en_food_name', 'ar_food_name']"
+    [globalFilterFields]="['id', 'title_en', 'title_ar']"
     [sortMode]="'single'"
     (onSort)="onSort($event)"
     [value]="filteredProducts"
@@ -36,8 +36,8 @@
       <tr>
         <th class="text-center" pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
         <th class="text-center">Image</th>
-        <th class="text-center" pSortableColumn="en_food_name">
-          Name (EN) <p-sortIcon field="en_food_name"></p-sortIcon>
+        <th class="text-center" pSortableColumn="title_en">
+          Name (EN) <p-sortIcon field="title_en"></p-sortIcon>
         </th>
         <th class="text-center">
           <!-- Normal Dropdown without filter icon or overlay -->
@@ -49,11 +49,11 @@
             optionLabel="label"
             styleClass="mx-auto"
             [ngModel]="selectedStatus"
-            optionValue="label"
-            (onChange)="onFilterCategoryChange($event.value); DdCategory.showClear = true"
+            optionValue="value"
+            (onChange)="onFilterCategoryChange($event); DdCategory.showClear = true"
             placeholder="Category (EN)"
             [showClear]="false"
-            [autoZIndex]="true"></p-dropdown>
+            [autoZIndex]="true" appendTo="body"></p-dropdown>
         </th>
         <th class="text-center">
           <!-- Normal Dropdown without filter icon or overlay -->
@@ -61,17 +61,29 @@
             #Dd
             class="mx-auto"
             styleClass="mx-auto"
-            [ngModel]="selectedStatus"
+            [(ngModel)]="selectedStatus"
             [options]="selectOptions"
             optionValue="value"
             (onChange)="onFilterChange($event.value); Dd.showClear = true"
+            (onClear)="onFilterChange(null)"
             placeholder="Status"
-            [showClear]="false"
-            [autoZIndex]="true"></p-dropdown>
+            [showClear]="true"
+            [autoZIndex]="true" appendTo="body"></p-dropdown>
         </th>
         <th class="text-center">Actions</th>
-        <th class="text-center">Pieces & Prices</th>
-        <th class="text-center">Choices</th>
+        <th class="text-center"><p-dropdown
+            #Dd
+            class="mx-auto"
+            styleClass="mx-auto"
+            [(ngModel)]="selectedStatus"
+            [options]="selectOptions"
+            optionValue="value"
+            (onChange)="onRecommendedFilterChange($event.value); Dd.showClear = true"
+            (onClear)="onRecommendedFilterChange(null)"
+            placeholder="Recommended"
+            [showClear]="true"
+            [autoZIndex]="true" appendTo="body"></p-dropdown></th>
+        <th class="text-center">options</th>
         <th class="text-center">View</th>
       </tr>
     </ng-template>
@@ -85,16 +97,16 @@
             height="50"
             style="width: 50px; height: 50px"
             class="rounded-full mx-auto"
-            [ngSrc]="imgUrl+'products/' + product.image"
+            [ngSrc]="product.main_image"
             role="presentation" />
         </td>
-        <td class="text-center">{{ product.en_food_name }}</td>
-        <td class="text-center">{{ product.category.en_name }}</td>
+        <td class="text-center">{{ product.title_en }}</td>
+        <td class="text-center">{{ product.category.title_en }}</td>
         <!-- <td class="text-center">{{ product.price | currency : " EGP " }}</td> -->
         <td class="text-center">
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
+            [trueValue]="true"
+            [falseValue]="false"
             [ngModel]="product.status"
             (onChange)="toggleProductStatus(product)"></p-inputSwitch>
         </td>
@@ -109,21 +121,14 @@
           </a>
         </td>
         <td class="text-center">
-          @if (product.piece_price_state) {
-          <a
-            [routerLink]="['/dashboard/menu/products/products-pice-price', product.id]"
-            target="_blank"
-            pButton
-            rel="noopener noreferrer"
-            class="p-button p-component text-black p-button-text">
-            <span class="p-button-icon pi pi-pen-to-square"></span>
-          </a>
-          } @else {
-          <span>N/A </span>
-          }
+          <p-inputSwitch
+            [trueValue]="true"
+            [falseValue]="false"
+            [ngModel]="product.is_recommended"
+            (onChange)="toggleRecommendedStatus(product)"></p-inputSwitch>
         </td>
         <td class="text-center">
-          @if (product.product_choice_state) {
+          @if (product.has_options) {
           <a
             [routerLink]="['/dashboard/menu/products/products-choice', product.id]"
             target="_blank"

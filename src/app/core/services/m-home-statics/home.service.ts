@@ -13,14 +13,15 @@ export class HomeService {
   http = inject(HttpClient);
 
 
-  getHomeStatics(first_date?: string, second_date?: string, single_date?: string): Observable<ISuperAdminResponse> {
+  getHomeStatics(first_date?: string, second_date?: string, single_date?: string,branch_id?:number): Observable<ISuperAdminResponse> {
+    console.log("from service",branch_id);
+    
     let userData = {} as User;
       userData = JSON.parse(localStorage.getItem("user")!);
     
 
     // Define the request body dynamically
     let requestBody: any = {};
-
     if (first_date && second_date) {
       requestBody = {
         first_date: dayjs(first_date).format("YYYY-MM-DD"),
@@ -29,10 +30,11 @@ export class HomeService {
     } else if (single_date) {
       requestBody = { single_date: dayjs(single_date).format("YYYY-MM-DD")};
     }
-
+    if(branch_id ) {
+      requestBody.branch_id = branch_id;
+    }
     // Determine the endpoint
-    const endpoint = `${WEB_SITE_BASE_URL}analytics`
-
+    const endpoint = `${WEB_SITE_BASE_URL}analytics`    
     return this.http.post<ISuperAdminResponse>(endpoint, requestBody);
   }
 }
