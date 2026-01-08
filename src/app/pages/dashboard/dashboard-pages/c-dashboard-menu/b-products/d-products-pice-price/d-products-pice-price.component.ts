@@ -60,15 +60,15 @@ export class DProductsPicePriceComponent {
   }
 
   loadPiecesPrices(): void {
-    this.activatedRoute.paramMap.subscribe((params) => {
-      this.productsService.getProductById(params.get("id")!).subscribe({
-        next: (products) => {
-          console.log(products);
-          this.picePrices = products.piecesPrices;
-          this.product = products;
-        },
-      });
-    });
+    // this.activatedRoute.paramMap.subscribe((params) => {
+    //   this.productsService.getProductById(params.get("id")!).subscribe({
+    //     next: (products) => {
+    //       console.log(products);
+    //       this.picePrices = products.piecesPrices;
+    //       this.product = products;
+    //     },
+    //   });
+    // });
   }
 
   // Toggle Product

@@ -56,15 +56,15 @@ export class EProductsChoicesComponent {
   }
 
   loadChoices(): void {
-    this.activatedRoute.paramMap.subscribe((params) => {
-      this.productsService.getProductById(params.get("id")!).subscribe({
-        next: (products) => {
-          console.log(products);
-          this.choices = products.choices;
-          this.product = products;
-        },
-      });
-    });
+    // this.activatedRoute.paramMap.subscribe((params) => {
+    //   this.productsService.getProductById(params.get("id")!).subscribe({
+    //     next: (products) => {
+    //       console.log(products);
+    //       this.choices = products.;
+    //       this.product = products;
+    //     },
+    //   });
+    // });
   }
 
   // Toggle Product

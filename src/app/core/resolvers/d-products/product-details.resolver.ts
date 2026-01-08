@@ -1,11 +1,11 @@
 import { ResolveFn } from "@angular/router";
-import { IGetProductById } from "../../Interfaces/d-products/IGetProductById";
 import { ProductsService } from "../../services/d-products/products.service";
 import { NgxSpinnerService } from "ngx-spinner";
 import { inject } from "@angular/core";
 import { finalize, timer } from "rxjs";
+import { productsData } from "../../Interfaces/d-products/IGetAllProducts";
 
-export const productDetailsResolver: ResolveFn<boolean | IGetProductById> = (route, state) => {
+export const productDetailsResolver: ResolveFn<boolean | productsData> = (route, state) => {
   const productsService = inject(ProductsService);
   const ngxSpinnerService = inject(NgxSpinnerService);
   ngxSpinnerService.show("actionsLoader");

@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { WEB_SITE_BASE_URL } from "../../constants/WEB_SITE_BASE_UTL";
-import { IGetAllProducts } from "../../Interfaces/d-products/IGetAllProducts";
+import { IGetAllProducts, productsData } from "../../Interfaces/d-products/IGetAllProducts";
 import { IGetProductsCategories } from "../../Interfaces/d-products/IGetProductsCategories";
 import { IGetProductById } from "../../Interfaces/d-products/IGetProductById";
 import { IAddProducts } from "../../Interfaces/d-products/IAddProductsResponse";
@@ -34,8 +34,8 @@ export class ProductsService {
   getAllProductsCategories() {
     return this.http.get<IGetProductsCategories>(`${WEB_SITE_BASE_URL}categories`,);
   }
-  getProductById(productId: string) {
-    return this.http.get<IGetProductById>(`${WEB_SITE_BASE_URL}products/${productId}`);
+  getProductById(productId: string):Observable<productsData> {
+    return this.http.get<productsData>(`${WEB_SITE_BASE_URL}products/${productId}`);
   }
   addProduct(ProductData: {}) {
     return this.http.post<IAddProducts>(`${WEB_SITE_BASE_URL}products/create`, ProductData);

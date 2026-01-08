@@ -67,13 +67,13 @@ export class CProductsAddComponent {
     this.submitForm = this.fb.group({
       main_image: [""],
       images: [[]],
-      price: ["", Validators.required,Validators.min(0)],
-      category_id: ["", Validators.required],
-      title_en: ["", Validators.required],
-      title_ar: ["", Validators.required],
+      price: ["", [Validators.required,Validators.min(0)]],
+      category_id: ["", [Validators.required]],
+      title_en: ["", [Validators.required]],
+      title_ar: ["", [Validators.required]],
       description_en: [""],
       description_ar: [""],
-      status: [1, Validators.required],
+      status: [1, [Validators.required]],
     });
   }
 

@@ -26,11 +26,14 @@ export interface productsData {
   title_en: string
   price: string
   main_image: string
-  total_orders: number
+  total_orders: number;
+  description_ar: string
+  description_en: string
   status: boolean;
   has_options:boolean;
   is_recommended: boolean;
-  category: Category
+  category: Category;
+  images: Image[]
 }
 
 export interface Link {
@@ -43,4 +46,11 @@ interface Category {
   id: number
   title_ar: string
   title_en: string
+}
+interface Image {
+  id: number
+  product_id: number
+  image: string
+  created_at: string
+  updated_at: string
 }

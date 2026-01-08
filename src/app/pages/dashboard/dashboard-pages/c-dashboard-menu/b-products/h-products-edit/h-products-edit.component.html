@@ -1,23 +1,26 @@
 <p-card class="p-4">
-  <ng-template pTemplate="title">
-    <h2 class="text-xl font-semibold text-gray-800">Edit Product</h2>
-  </ng-template>
+  
 
   <ng-template pTemplate="content">
     <form [formGroup]="submitForm" class="grid md:grid-cols-1 gap-6">
       <!-- Image Upload Section -->
+       @if (isBaseImage) {
+    <div class="relative w-32 h-32 mb-2 border rounded-lg overflow-hidden group">
+      <img [src]="isBaseImage" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+        <span class="text-white text-xs">Current Image</span>
+      </div>
+    </div>
+  }
       <div>
         <div class="p-field">
-          <label class="font-medium mb-1 block"
-            >Product Image @if(isBaseImage.length > 0) {
-            <img src="{{imgUrl}}products/{{ isBaseImage }}" class="w-20 h-20" />
-            }
-          </label>
+          <label class="font-medium mb-1 block">Product Image</label>
           <p-fileUpload
             #fileUpload
-            name="image"
+            name="main_image"
             accept="image/*"
             [auto]="true"
+            [maxFileSize]="2000000"
             [chooseLabel]="'Choose Image'"
             [uploadLabel]="'Upload'"
             [styleClass]="'w-full'"
@@ -39,18 +42,83 @@
               </div>
             </ng-template>
           </p-fileUpload>
-          @if (submitForm.get('image')?.invalid && submitForm.get('image')?.touched) {
+          <!-- @if (submitForm.get('main_image')?.invalid && submitForm.get('main_image')?.touched) {
           <div class="p-error">
             <small>Product Image is required.</small>
           </div>
-          }
+          } -->
         </div>
       </div>
+     @if (existingGalleryImages.length > 0) {
+  <div class="flex flex-wrap gap-3 mb-4">
+    @for (img of existingGalleryImages; track img.id) {
+      <div class="relative w-32 h-32 border rounded-lg overflow-hidden group">
+        <img
+          [src]="img.image"
+          class="w-full h-full object-cover"
+        />
 
+        <!-- overlay -->
+        <div
+          class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-danger p-button-sm"
+            (click)="removeExistingImage(img.id)">
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+      <div class="p-field mt-4">
+  <label class="font-medium mb-1 block">Gallery Images (Multiple)</label>
+  <p-fileUpload
+    #multiFileUpload
+    name="images[]"
+    accept="image/*"
+    [multiple]="true" 
+    [auto]="true"
+    [chooseLabel]="'Add Gallery Images'"
+    (onSelect)="onMultipleFilesSelect($event)"
+    (onRemove)="onMultipleFilesSelect($event)"
+    [showUploadButton]="false" 
+    [showCancelButton]="false"
+    [previewWidth]="0"
+    [draggable]="true">
+    
+    <ng-template pTemplate="content">
+      <div 
+        class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition cursor-pointer"
+        (click)="multiFileUpload.choose()"> <i class="pi pi-images text-4xl text-gray-400"></i>
+        
+        @if (submitForm.get('images')?.value?.length > 0) {
+          <p class="text-green-600 mt-2 font-medium">
+            {{ submitForm.get('images')?.value?.length }} images selected
+          </p>
+          <p class="text-gray-400 text-sm">Click to add more or drag & drop</p>
+        } @else {
+          <p class="text-gray-500 mt-2">
+            Drag & drop gallery images or 
+            <span class="text-blue-500 font-bold">click here to browse</span>
+          </p>
+        }
+      </div>
+    </ng-template>
+</p-fileUpload>
+</div>
+      <div class="col-span-1">
+      <label for="value" class="font-medium block mb-1">Price</label>
+      <input id="value" type="number" pInputText placeholder="Enter Prices" formControlName="price"
+        class="w-full" appOnlyNumber />
+      </div>
       <div>
         <label class="font-medium mb-1 block">Product English Name</label>
-        <input type="text" pInputText formControlName="en_food_name" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('en_food_name')?.invalid && submitForm.get('en_food_name')?.touched) {
+        <input type="text" pInputText formControlName="title_en" class="p-inputtext-sm w-full" />
+        @if (submitForm.get('title_en')?.invalid && submitForm.get('title_en')?.touched) {
         <div class="p-error">
           <small>Product English Name is required.</small>
         </div>
@@ -59,8 +127,8 @@
 
       <div>
         <label class="font-medium mb-1 block">Product Arabic Name</label>
-        <input type="text" pInputText formControlName="ar_food_name" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('ar_food_name')?.invalid && submitForm.get('ar_food_name')?.touched) {
+        <input type="text" pInputText formControlName="title_ar" class="p-inputtext-sm w-full" />
+        @if (submitForm.get('title_ar')?.invalid && submitForm.get('title_ar')?.touched) {
         <div class="p-error">
           <small>Product Arabic Name is required.</small>
         </div>
@@ -75,7 +143,7 @@
           styleClass="w-full border border-black/25 rounded-[10px] px-3"
           [options]="categories"
           formControlName="category_id"
-          optionLabel="en_name"
+          optionLabel="title_en"
           optionValue="id" />
         @if (submitForm.get('category_id')?.invalid && submitForm.get('category_id')?.touched) {
         <div class="p-error">
@@ -86,7 +154,7 @@
 
       <div>
         <label class="font-medium mb-1 block">Product English Description</label>
-        <ngx-jodit [options]="{ language: 'en' }" formControlName="en_ingredients"></ngx-jodit>
+        <ngx-jodit [options]="{ language: 'en' }" formControlName="description_en"></ngx-jodit>
         <!-- @if (submitForm.get('en_ingredients')?.invalid && submitForm.get('en_ingredients')?.touched) {
         <div class="p-error">
           <small>Product English Description is required.</small>
@@ -99,44 +167,15 @@
         <ngx-jodit
           dir="rtl"
           [options]="{ language: 'ar', direction: 'rtl' }"
-          formControlName="ar_ingredients"></ngx-jodit>
+          formControlName="description_ar"></ngx-jodit>
         <!-- @if (submitForm.get('ar_ingredients')?.invalid && submitForm.get('ar_ingredients')?.touched) {
         <div class="p-error">
           <small>Product Arabic Description is required.</small>
         </div>
         } -->
       </div>
-
-      <!-- Dynamic Piece Price Inputs -->
-      @if (!submitForm.get('piece_price_state')?.value) {
-      <div>
-        <label class="font-medium mb-1 block">Product Price</label>
-        <input appOnlyNumber type="number" pInputText formControlName="price" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('price')?.invalid && submitForm.get('price')?.touched) {
-        <div class="p-error">
-          <small>Product Price is required.</small>
-        </div>
-        }
-      </div>
-      }
-
-      <!-- <div class="flex items-center gap-2">
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="state"></p-inputSwitch>
-        <label class="font-medium mb-1 block">Status</label>
-      </div> -->
-
-      <!-- Pieces and Prices Switch -->
-      <div class="flex items-center gap-2">
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="piece_price_state"></p-inputSwitch>
-        <label class="font-medium mb-1 block">Piece Price</label>
-      </div>
-
-      <!-- Product Choice Switch -->
-      <div class="flex items-center gap-2">
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="product_choice_state"></p-inputSwitch>
-        <label class="font-medium mb-1 block">Choices</label>
-      </div>
     </form>
+
     @if (errorMessage.length > 0) {
     <div class="my-3 bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
       <p class="font-bold">Something Wrong!</p>
