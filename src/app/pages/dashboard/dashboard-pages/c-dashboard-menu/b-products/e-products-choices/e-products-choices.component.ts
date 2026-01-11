@@ -35,9 +35,9 @@ import { NoDataFoundBannerComponent } from "../../../../../../shared/components/
   providers: [MessageService],
 })
 export class EProductsChoicesComponent {
-  choices!: Choice[];
+  options!: Choice[];
 
-  product!: IGetProductById;
+  product!: {title_en:string,id:number};
 
   private activatedRoute = inject(ActivatedRoute);
 
@@ -56,32 +56,27 @@ export class EProductsChoicesComponent {
   }
 
   loadChoices(): void {
-    // this.activatedRoute.paramMap.subscribe((params) => {
-    //   this.productsService.getProductById(params.get("id")!).subscribe({
-    //     next: (products) => {
-    //       console.log(products);
-    //       this.choices = products.;
-    //       this.product = products;
-    //     },
-    //   });
-    // });
+    this.activatedRoute.paramMap.subscribe((params) => {
+      this.productsService.getOptions(params.get("id")!).subscribe({
+        next: (response) => {
+          this.product = response.product;
+          this.options = response.productOptions.data
+        },
+      });
+    });
   }
 
   // Toggle Product
-  toggleProductStatus(choices: Choice) {
+  toggleProductStatus(option: Choice) {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
+console.log(option);
 
-    const updatedStatus = choices.status ? 0 : 1; // Toggle between 0 and 1
-    if (updatedStatus) {
+    const updatedStatus = option.status ? 0 : 1; // Toggle between 0 and 1
       this.productsService
-        .updateProductChoices(choices.id.toString(), {
-          pieces: choices.en_name,
-          prices: choices.ar_name,
-          status: 1,
-        })
+        .toggleOptionStatus(this.product.id,option.id)
         .subscribe(() => {
-          choices.status = updatedStatus; // Update the UI immediately
+          option.status = Boolean(updatedStatus); // Update the UI immediately
           this.messageService.add({
             severity: "success",
             summary: "Updated",
@@ -89,27 +84,11 @@ export class EProductsChoicesComponent {
           });
           timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
         });
-    } else {
-      this.productsService
-        .updateProductChoices(choices.id.toString(), {
-          pieces: choices.en_name,
-          prices: choices.ar_name,
-          status: 0,
-        })
-        .subscribe(() => {
-          choices.status = updatedStatus; // Update the UI immediately
-          this.messageService.add({
-            severity: "success",
-            summary: "Updated",
-            detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-          });
-          timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-        });
-    }
+    
   }
 
   editPicePrice(picePrice: any) {
     localStorage.setItem("choices", JSON.stringify(picePrice));
-    this.route.navigate([`/dashboard/menu/products/products-choice-edit/${this.product.product.id}`]);
+    this.route.navigate([`/dashboard/menu/products/products-choice-edit/${this.product.id}`]);
   }
 }

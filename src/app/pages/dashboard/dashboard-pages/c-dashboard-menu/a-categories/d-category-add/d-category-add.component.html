@@ -5,10 +5,55 @@
 
   <ng-template pTemplate="content">
     <form [formGroup]="submitForm" class="grid md:grid-cols-2 gap-4">
+      @if (isBaseImage) {
+    <div class="relative w-32 h-32 mb-2 border rounded-lg overflow-hidden group">
+      <img [src]="isBaseImage" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+        <span class="text-white text-xs">Current Image</span>
+      </div>
+    </div>
+  }
+      <div class="col-span-2">
+        <div class="p-field">
+          <label class="font-medium mb-1 block">Product Image</label>
+          <p-fileUpload
+            #fileUpload
+            name="image"
+            accept="image/*"
+            [auto]="true"
+            [maxFileSize]="2000000"
+            [chooseLabel]="'Choose Image'"
+            [uploadLabel]="'Upload'"
+            [styleClass]="'w-full'"
+            [cancelLabel]="'Cancel'"
+            (onRemove)="clearImage()"
+            [showUploadButton]="false"
+            [showCancelButton]="false"
+            [customUpload]="true"
+            (onSelect)="onFileSelect($event)"
+            [draggable]="true">
+            <ng-template pTemplate="content">
+              <div
+                class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-main-500 transition">
+                <i class="pi pi-cloud-upload text-4xl text-gray-400"></i>
+                <p class="text-gray-500 mt-2">
+                  Drag & drop an image or
+                  <span class="text-blue-500 cursor-pointer" (click)="fileUpload.choose()">click to select</span>
+                </p>
+              </div>
+            </ng-template>
+          </p-fileUpload>
+          <!-- @if (submitForm.get('main_image')?.invalid && submitForm.get('main_image')?.touched) {
+          <div class="p-error">
+            <small>Product Image is required.</small>
+          </div>
+          } -->
+        </div>
+      </div>
       <div class="flex flex-col">
         <label class="font-medium">English Name</label>
-        <input type="text" pInputText formControlName="en_name" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('en_name')?.invalid && submitForm.get('en_name')?.touched) {
+        <input type="text" pInputText formControlName="title_en" class="p-inputtext-sm w-full" />
+        @if (submitForm.get('title_en')?.invalid && submitForm.get('title_en')?.touched) {
         <div class="p-error">
           <small>English Name is required.</small>
         </div>
@@ -17,18 +62,18 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Arabic Name</label>
-        <input type="text" pInputText formControlName="ar_name" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('ar_name')?.invalid && submitForm.get('ar_name')?.touched) {
+        <input type="text" pInputText formControlName="title_ar" class="p-inputtext-sm w-full" />
+        @if (submitForm.get('title_ar')?.invalid && submitForm.get('title_ar')?.touched) {
         <div class="p-error">
           <small>Arabic Name is required.</small>
         </div>
         }
       </div>
 
-      <!-- <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2">
         <label class="font-medium">Status</label>
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="state"></p-inputSwitch>
-      </div> -->
+        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="status"></p-inputSwitch>
+      </div>
     </form>
   </ng-template>
 

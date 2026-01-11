@@ -14,9 +14,16 @@ export class VoucherService {
   http = inject(HttpClient);
 
 
-  getAllVouchers(page: number = 1, limit: number = 10): Observable<IVouchers> {
-    return this.http.get<IVouchers>(
-      `${WEB_SITE_BASE_URL}voucher?limit=${limit}&page=${page}`
+  getAllVouchers(page: number = 1, limit: number = 10,selectedType?:string | null,selectedStatus?:string | null): Observable<IVouchers> {
+    console.log(selectedType);
+    console.log(selectedStatus);
+    
+    
+    const requestBody:any = {page,limit};
+    if(selectedType) requestBody.type = selectedType
+    if(selectedStatus !== null && selectedStatus !== undefined) requestBody.status = Boolean(Number(selectedStatus))
+    return this.http.post<IVouchers>(
+      `${WEB_SITE_BASE_URL}voucher`,requestBody
     );
   }
 

@@ -39,6 +39,7 @@
     (onSort)="onSort($event)"
     [globalFilterFields]="['id', 'code', 'value', 'type', 'apply', 'use']"
     responsiveLayout="scroll"
+    
   >
     <ng-template pTemplate="header">
       <tr>
@@ -65,6 +66,7 @@
             placeholder="Type"
             [showClear]="true"
             [autoZIndex]="true"
+            [appendTo]="'body'"
           ></p-dropdown>
         </th>
         <th class="text-center" pSortableColumn="apply">
@@ -87,6 +89,7 @@
             placeholder="Status"
             [showClear]="true"
             [autoZIndex]="true"
+            [appendTo]="'body'"
           ></p-dropdown>
         </th>
         <th class="text-center">Actions</th>
@@ -99,7 +102,7 @@
         <td class="text-center">{{ voucher.id }}</td>
         <td class="text-center">{{ voucher.code }}</td>
         <td class="text-center">
-          @if (voucher.type === 'percent') {
+          @if (voucher.type === 'percentage') {
           {{ voucher.value / 100 | percent }}
           } @else {
           {{ voucher.value }} EGP }

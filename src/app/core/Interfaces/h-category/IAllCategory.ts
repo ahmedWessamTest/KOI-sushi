@@ -20,8 +20,8 @@ export interface Categories {
 
 export interface categoryData {
   id: number;
-  en_name: string;
-  ar_name: string;
+  title_ar: string;
+  title_en: string;
   state: number;
   created_at: string;
   updated_at: string;

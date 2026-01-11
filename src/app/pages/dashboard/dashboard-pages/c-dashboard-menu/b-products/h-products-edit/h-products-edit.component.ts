@@ -1,3 +1,4 @@
+import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
@@ -26,10 +27,10 @@ import { OnlyNumberDirective } from '../../../../../../only-number.directive';
 import { WEB_SITE_IMG_URL } from '../../../../../../core/constants/WEB_SITE_BASE_UTL';
 import { productsData } from '../../../../../../core/Interfaces/d-products/IGetAllProducts';
 interface productImages {
-  image:string,
-  id:number,
-  isNew:boolean,
-  file?:File
+  image: string;
+  id: number;
+  isNew: boolean;
+  file?: File;
 }
 @Component({
   selector: 'app-h-products-edit',
@@ -64,6 +65,8 @@ export class HProductsEditComponent {
 
   private ngxSpinnerService = inject(NgxSpinnerService);
   existingGalleryImages: productImages[]= [];
+  newGalleryImages: File[] = [];
+deletedImagesIds: number[] = [];
   private router = inject(Router);
 
   private messageService = inject(MessageService);
@@ -87,15 +90,21 @@ export class HProductsEditComponent {
       status: [1, [Validators.required]],
     });
   }
-  removeExistingImage(id: number) {
-    console.log(id);
-    console.log(this.existingGalleryImages)
-    this.existingGalleryImages =
-    this.existingGalleryImages.filter(img => img.id !== id);
-    console.log(this.existingGalleryImages);
-    this.submitForm.get("images")?.setValue(this.existingGalleryImages);
-    
+  removeExistingImage(image: productImages) {
+
+  if (!image.isNew) {
+    this.deletedImagesIds.push(image.id);
   }
+
+  this.existingGalleryImages =
+    this.existingGalleryImages.filter(img => img.id !== image.id);
+
+  if (image.isNew && image.file) {
+    this.newGalleryImages =
+      this.newGalleryImages.filter(file => file !== image.file);
+  }
+}
+
   ngOnInit() {
     this.initializeForm();
     this.categories =
@@ -120,7 +129,6 @@ export class HProductsEditComponent {
       
     this.submitForm.patchValue({
       main_image: product.main_image,
-      images: product.images,
       price: product.price,
       category_id: product.category_id,
       title_en:product.title_en,
@@ -143,9 +151,13 @@ export class HProductsEditComponent {
     this.messageService.clear();
 
     Object.keys(this.submitForm.value).forEach((key) => {
-      if (key !== "main_image" && key !== "images") {
+      if(key === "status") {
+        const numVal = Number(this.submitForm.value[key])
+        fd.append(key, numVal.toString());
+      } else if (key !== "main_image" && key !== "images") {
         fd.append(key, this.submitForm.value[key]);
       }
+      
     });
 
     if (typeof this.submitForm.get("main_image")?.value == "object") {
@@ -153,11 +165,16 @@ export class HProductsEditComponent {
     } else {
       fd.delete("main_image");
     }
-    const extraImages = this.submitForm.get("images")?.value;
+    const extraImages = this.submitForm.get("images")?.value.filter((image:productImages) => {
+      return !this.deletedImagesIds.includes(image.id)
+    });
     console.log(extraImages);
     
-  if (Array.isArray(extraImages)) {
-    extraImages.forEach((file: File) => {
+    this.deletedImagesIds.forEach(id => {
+    fd.append('delete_images[]', id.toString());
+  });
+  if (this.newGalleryImages.length > 0) {
+    this.newGalleryImages.forEach((file: File) => {
       fd.append("images[]", file); 
     });
   }
@@ -192,24 +209,19 @@ export class HProductsEditComponent {
     this.submitForm.patchValue({ main_image: '' });
   }
   private tempImageId = -1;
-  onMultipleFilesSelect(event: any): void {
-    console.log(this.submitForm.get("images")?.value);
-    console.log(event.currentFiles);
-    
-    const files: File[] = event.currentFiles;
-    console.log(files);
-    
-    files.forEach(file => {
+  onMultipleFilesSelect(event: any): void {    
+  const files: File[] = event.currentFiles;
+  files.forEach(file => {
+    this.newGalleryImages.push(file);
+    // preview فقط
     this.existingGalleryImages.push({
       id: this.tempImageId--,
       image: URL.createObjectURL(file),
-      isNew:true,
+      isNew: true,
       file
     });
+    this.submitForm.get('images')?.patchValue(this.newGalleryImages)
   });
-  console.log(this.existingGalleryImages);
-  this.submitForm.patchValue({ images: this.existingGalleryImages });
-  console.log(this.submitForm.get("images")?.value);
-  
-  }
+}
+
 }

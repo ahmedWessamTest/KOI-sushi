@@ -19,9 +19,7 @@ export class ProductsService {
 
   categoryId = signal(0);
 
-  getAllProducts(page: number = 1, perPage: number = 10, search?: string, category_ids?: number[],selectedStatus?:number | null,selectedRecommendation?:number | null):Observable<IGetAllProducts> {
-    console.log(selectedStatus);
-    
+  getAllProducts(page: number = 1, perPage: number = 10, search?: string, category_ids?: number[],selectedStatus?:number | null,selectedRecommendation?:number | null):Observable<IGetAllProducts> {    
     const requestBody:any = {};
     if(page) requestBody.page = page;
     if(perPage) requestBody.limit = perPage;
@@ -32,16 +30,21 @@ export class ProductsService {
     return this.http.post<IGetAllProducts>(`${WEB_SITE_BASE_URL}products`, requestBody);
   }
   getAllProductsCategories() {
-    return this.http.get<IGetProductsCategories>(`${WEB_SITE_BASE_URL}categories`,);
+    return this.http.post<IGetProductsCategories>(`${WEB_SITE_BASE_URL}categories`,{all:true});
   }
   getProductById(productId: string):Observable<productsData> {
     return this.http.get<productsData>(`${WEB_SITE_BASE_URL}products/${productId}`);
   }
+  getOptions(productId:string,page:number = 1, limit:number = 10,selectedStatus?:number | null):Observable<any> {
+    const requestBody:any = {page,limit};
+    if(selectedStatus !== null && selectedStatus !== undefined) requestBody.status = Boolean(selectedStatus);
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}products/${productId}/options`,requestBody);
+  }
   addProduct(ProductData: {}) {
     return this.http.post<IAddProducts>(`${WEB_SITE_BASE_URL}products/create`, ProductData);
   }
-  updateProduct(CategoryId: string, ProductData: {}) {
-    return this.http.post<IUpdateProductsResponse>(`${WEB_SITE_BASE_URL}product_update/${CategoryId}`, ProductData);
+  updateProduct(productId: string, ProductData: {}) {
+    return this.http.post<IUpdateProductsResponse>(`${WEB_SITE_BASE_URL}products/${productId}`, ProductData);
   }
   destroyProduct(CategoryId: string) {
     return this.http.post<IToggleProduct>(`${WEB_SITE_BASE_URL}product_destroy/${CategoryId}`, {});
@@ -52,16 +55,15 @@ export class ProductsService {
   toggleProductRecommendation(productId: string) {
     return this.http.post<IToggleProduct>(`${WEB_SITE_BASE_URL}products/${productId}/recommendations`, {});
   }
-  updateProductChoices(ChoiceId: string, choiceBody: {}) {
-    return this.http.post<IUpdateChoiceResponse>(`${WEB_SITE_BASE_URL}updatechoices/${ChoiceId}`, choiceBody);
+  toggleOptionStatus(productId: number,optionId:number) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}products/${productId}/options/${optionId}/toggle`, {});
   }
-  storeProductChoices(productId: string, choiceBody: {}) {
-    return this.http.post<IAddChoicesResponse>(`${WEB_SITE_BASE_URL}storechoices/${productId}`, choiceBody);
+  addOption(productId: string,data: any) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}products/${productId}/options/create`, data);
   }
-  updateProductPics(piceId: string, choiceBody: {}) {
-    return this.http.post<IUpdateChoiceResponse>(`${WEB_SITE_BASE_URL}updatepieces/${piceId}`, choiceBody);
+  updateOption(productId: string,optionId:string,data: any) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}products/${productId}/options/${optionId}`, data);
   }
-  storeProductPics(CategoryId: string, choiceBody: {}) {
-    return this.http.post<IAddChoicesResponse>(`${WEB_SITE_BASE_URL}storepieces/${CategoryId}`, choiceBody);
-  }
+
+ 
 }

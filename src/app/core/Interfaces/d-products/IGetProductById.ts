@@ -7,13 +7,13 @@ export interface IGetProductById {
 }
 
 export interface Choice {
-  id: number;
-  product_id: number;
-  en_name: string;
-  ar_name: string;
-  status: number;
-  created_at: string;
-  updated_at: string;
+  id: number
+  product_id: number
+  title_ar: string
+  title_en: string
+  price: string
+  image: string
+  status: boolean
 }
 
 export interface PiecesPrice {

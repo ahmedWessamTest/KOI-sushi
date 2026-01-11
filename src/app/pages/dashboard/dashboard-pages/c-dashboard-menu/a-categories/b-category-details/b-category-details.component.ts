@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -9,7 +9,7 @@ import { ICategoryById } from "../../../../../../core/Interfaces/h-category/ICat
 @Component({
   selector: "app-b-category-details",
   standalone: true,
-  imports: [DatePipe, TagModule, CommonModule, CardModule, ButtonModule, RouterLink],
+  imports: [ TagModule, CommonModule, CardModule, ButtonModule, RouterLink],
   templateUrl: "./b-category-details.component.html",
   styleUrl: "./b-category-details.component.scss",
 })

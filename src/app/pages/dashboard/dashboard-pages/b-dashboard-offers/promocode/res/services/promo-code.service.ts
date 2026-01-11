@@ -15,13 +15,15 @@ export class PromoCodeService {
 
   getAllPromoCodes(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    selectedType?:string | null,
+    selectedStatus?:string | null
   ): Observable<IAllPromoCodes> {
-    return this.http.get<IAllPromoCodes>(
-      `${WEB_SITE_BASE_URL}promo-code`,{params:{
-        limit,
-        page
-      }}
+    const requestBody:any = {page,limit};
+    if(selectedType) requestBody.type = selectedType
+    if(selectedStatus !== null && selectedStatus !== undefined) requestBody.status = Boolean(Number(selectedStatus))
+    return this.http.post<IAllPromoCodes>(
+      `${WEB_SITE_BASE_URL}promo-code`,requestBody
     );
   }
 

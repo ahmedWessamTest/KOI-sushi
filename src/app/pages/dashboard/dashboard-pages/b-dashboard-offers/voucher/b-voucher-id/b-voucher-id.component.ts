@@ -179,7 +179,7 @@ export class BVoucherIdComponent implements OnInit, OnDestroy {
     ).subscribe((response: any) => {
       // ندمج المنتجات الجديدة مع القديمة المختارة لضمان بقاء الـ Labels في حالة التعديل
       const currentProducts = this.allProducts();
-      const newProducts = response.products || [];
+      const newProducts = response.products.data || [];
       const merged = [...newProducts];
       currentProducts.forEach(p => {
         if (!merged.find(m => m.id === p.id)) merged.push(p);

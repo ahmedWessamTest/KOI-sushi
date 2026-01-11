@@ -167,9 +167,7 @@ export class CProductsAddComponent {
   onFileSelect(event: any): void {
     const files = event.files;
     if (files && files.length > 0) {
-      const file = files[0];
-      console.log(file);
-      
+      const file = files[0];      
       this.submitForm.patchValue({ main_image: file });
     }
   }

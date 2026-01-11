@@ -1,9 +1,9 @@
-@if (product) {
+@if (options) {
 <div class="card">
   <div class="flex justify-between items-center mb-3">
-    <h2 class="text-2xl font-semibold">{{ product.product.en_food_name }} Choices Control</h2>
+    <h2 class="text-2xl font-semibold">{{ product.title_en }} Choices Control</h2>
     <div class="flex gap-5 items-center">
-      @if (choices.length > 0) {
+      @if (options.length > 0) {
       <button
         icon="pi pi-angle-double-left"
         pButton
@@ -12,38 +12,39 @@
         [routerLink]="['/dashboard/menu/products/']"></button>
       }
       <p-button
-        [routerLink]="['/dashboard/menu/products/products-choice-add', product.product.id]"
+        [routerLink]="['/dashboard/menu/products/products-choice-add', product.id]"
         label="Add Choice"
         icon="pi pi-plus"
         class="btn-main text-white"></p-button>
     </div>
   </div>
 
-  <p-table [value]="choices" [loading]="loading" responsiveLayout="scroll">
+  <p-table [value]="options" [loading]="loading" responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center">ID</th>
-        <th class="text-center">Name ( EN )</th>
         <th class="text-center">Name ( AR )</th>
+        <th class="text-center">Name ( EN )</th>
+        <th class="text-center">Type</th>
         <th class="text-center">Status</th>
         <th class="text-center">Actions</th>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-choice>
+    <ng-template pTemplate="body" let-option>
       <tr>
-        <td class="text-center">{{ choice.id }}</td>
-        <td class="text-center">{{ choice.en_name }}</td>
-        <td class="text-center">{{ choice.ar_name }}</td>
+        <td class="text-center">{{ option.id }}</td>
+        <td class="text-center">{{ option.title_ar }}</td>
+        <td class="text-center">{{ option.title_en }}</td>
+        <td class="text-center">{{ option.type }}</td>
         <td class="text-center">
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
-            [ngModel]="choice.status"
-            (onChange)="toggleProductStatus(choice)"></p-inputSwitch>
+
+            [ngModel]="option.status"
+            (onChange)="toggleProductStatus(option)"></p-inputSwitch>
         </td>
         <td class="text-center">
-          <p-button (onClick)="editPicePrice(choice)" icon="pi pi-pencil" class="p-button-text"></p-button>
+          <p-button (onClick)="editPicePrice(option)" icon="pi pi-pencil" class="p-button-text"></p-button>
         </td>
       </tr>
     </ng-template>
@@ -61,7 +62,7 @@
                 pButton
                 label="Back"
                 class="p-button-text"
-                [routerLink]="['/dashboard/menu/products/products-details', product.product.id]"></button>
+                [routerLink]="['/dashboard/menu/products/products-details', product.id]"></button>
             </div>
           </div>
         </td>

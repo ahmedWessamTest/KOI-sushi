@@ -77,17 +77,17 @@ export class FPicePriceAddComponent {
     const pricePriceData: IAddCategoryBody = this.submitForm.value;
 
     if (this.isEditing && this.productId) {
-      this.productsService.updateProductPics(this.piceDetails.id.toString(), pricePriceData).subscribe(() => {
-        this.router.navigate(["/dashboard/menu/products/products-pice-price/" + this.productId]);
-        this.messageService.add({ severity: "success", summary: "Updated", detail: "Category updated successfully" });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-      });
+      // this.productsService.updateProductPics(this.piceDetails.id.toString(), pricePriceData).subscribe(() => {
+      //   this.router.navigate(["/dashboard/menu/products/products-pice-price/" + this.productId]);
+      //   this.messageService.add({ severity: "success", summary: "Updated", detail: "Category updated successfully" });
+      //   timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+      // });
     } else {
-      this.productsService.storeProductPics(this.productId!, pricePriceData).subscribe(() => {
-        this.router.navigate(["/dashboard/menu/products/products-pice-price/" + this.productId]);
-        this.messageService.add({ severity: "success", summary: "Added", detail: "Category added successfully" });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-      });
+      // this.productsService.storeProductPics(this.productId!, pricePriceData).subscribe(() => {
+      //   this.router.navigate(["/dashboard/menu/products/products-pice-price/" + this.productId]);
+      //   this.messageService.add({ severity: "success", summary: "Added", detail: "Category added successfully" });
+      //   timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+      // });
     }
   }
 }

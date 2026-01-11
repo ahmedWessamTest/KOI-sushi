@@ -287,8 +287,10 @@ export class BPromoCodeIdComponent implements OnInit {
         takeUntil(this.destroy$)
       ).subscribe({
         next: (response: any) => {
+          console.log(response);
+          
           // تحديث الـ Signal بالمنتجات الجديدة
-          this.allProducts.set(response.products);
+          this.allProducts.set(response.products.data);
         }
       });
   }

@@ -148,122 +148,106 @@ export const routes: Routes = [
                   },
                 ],
               },
-              {
-                path: 'combo',
-                loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/b-combo-boxes-offers.component'
-                  ).then((c) => c.BComboBoxesOffersComponent),
-                data: {
-                  title: 'KOI Sushi',
-                  description: 'Dashboard Page',
-                },
-                children: [
-                  { path: '', redirectTo: 'combo-index', pathMatch: 'full' },
-                  {
-                    path: 'combo-index',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/a-combo-boxes-all/a-combo-boxes-all.component'
-                      ).then((c) => c.AComboBoxesAllComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'combo-details/:id',
-                    resolve: { comboOffers: comboDetailsResolver },
-                    runGuardsAndResolvers: 'always',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/b-combo-boxes-details/b-combo-boxes-details.component'
-                      ).then((c) => c.BComboBoxesDetailsComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'combo-add',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/c-combo-boxes-add/c-combo-boxes-add.component'
-                      ).then((c) => c.CComboBoxesAddComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                    resolve: { category: productsCategoriesResolver },
-                    runGuardsAndResolvers: 'always',
-                  },
-                  {
-                    path: 'combo-edit/:id',
-                    resolve: {
-                      comboOffers: comboDetailsResolver,
-                      category: productsCategoriesResolver,
-                    },
-                    runGuardsAndResolvers: 'always',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/c-combo-boxes-add/c-combo-boxes-add.component'
-                      ).then((c) => c.CComboBoxesAddComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'limits-details/:id',
-                    resolve: {
-                      category: productsCategoriesResolver,
-                      products: comboProductsResolver,
-                    },
-                    runGuardsAndResolvers: 'always',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/d-combo-boxes-limits-details/d-combo-boxes-limits-details.component'
-                      ).then((c) => c.DComboBoxesLimitsDetailsComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'limits-add/:id',
-                    resolve: {
-                      comboOffers: comboDetailsResolver,
-                      category: productsCategoriesResolver,
-                      products: comboProductsResolver,
-                    },
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/e-combo-boxes-limits-add/e-combo-boxes-limits-add.component'
-                      ).then((c) => c.EComboBoxesLimitsAddComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                  {
-                    path: 'limits-edit/:id',
-                    resolve: {
-                      comboOffers: comboDetailsResolver,
-                      category: productsCategoriesResolver,
-                      products: comboProductsResolver,
-                    },
-                    runGuardsAndResolvers: 'always',
-                    loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/e-combo-boxes-limits-add/e-combo-boxes-limits-add.component'
-                      ).then((c) => c.EComboBoxesLimitsAddComponent),
-                    data: {
-                      title: 'KOI Sushi',
-                      description: 'Dashboard Page',
-                    },
-                  },
-                ],
-              },
+              // {
+              //   path: 'combo',
+              //   loadComponent: () =>
+              //     import(
+              //       './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/b-combo-boxes-offers.component'
+              //     ).then((c) => c.BComboBoxesOffersComponent),
+              //   data: {
+              //     title: 'KOI Sushi',
+              //     description: 'Dashboard Page',
+              //   },
+              //   children: [
+              //     { path: '', redirectTo: 'combo-index', pathMatch: 'full' },
+              //     {
+              //       path: 'combo-index',
+              //       loadComponent: () =>
+              //         import(
+              //           './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/a-combo-boxes-all/a-combo-boxes-all.component'
+              //         ).then((c) => c.AComboBoxesAllComponent),
+              //       data: {
+              //         title: 'KOI Sushi',
+              //         description: 'Dashboard Page',
+              //       },
+              //     },
+              //     {
+              //       path: 'combo-details/:id',
+              //       resolve: { comboOffers: comboDetailsResolver },
+              //       runGuardsAndResolvers: 'always',
+              //       loadComponent: () =>
+              //         import(
+              //           './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/b-combo-boxes-details/b-combo-boxes-details.component'
+              //         ).then((c) => c.BComboBoxesDetailsComponent),
+              //       data: {
+              //         title: 'KOI Sushi',
+              //         description: 'Dashboard Page',
+              //       },
+              //     },
+              //     {
+              //       path: 'combo-add',
+              //       loadComponent: () =>
+              //         import(
+              //           './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/c-combo-boxes-add/c-combo-boxes-add.component'
+              //         ).then((c) => c.CComboBoxesAddComponent),
+              //       data: {
+              //         title: 'KOI Sushi',
+              //         description: 'Dashboard Page',
+              //       },
+              //       resolve: { category: productsCategoriesResolver },
+              //       runGuardsAndResolvers: 'always',
+              //     },
+              //     {
+              //       path: 'combo-edit/:id',
+              //       resolve: {
+              //         comboOffers: comboDetailsResolver,
+              //         category: productsCategoriesResolver,
+              //       },
+              //       runGuardsAndResolvers: 'always',
+              //       loadComponent: () =>
+              //         import(
+              //           './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/c-combo-boxes-add/c-combo-boxes-add.component'
+              //         ).then((c) => c.CComboBoxesAddComponent),
+              //       data: {
+              //         title: 'KOI Sushi',
+              //         description: 'Dashboard Page',
+              //       },
+              //     },
+              //     {
+              //       path: 'limits-details/:id',
+              //       resolve: {
+              //         category: productsCategoriesResolver,
+              //         products: comboProductsResolver,
+              //       },
+              //       runGuardsAndResolvers: 'always',
+              //       loadComponent: () =>
+              //         import(
+              //           './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/d-combo-boxes-limits-details/d-combo-boxes-limits-details.component'
+              //         ).then((c) => c.DComboBoxesLimitsDetailsComponent),
+              //       data: {
+              //         title: 'KOI Sushi',
+              //         description: 'Dashboard Page',
+              //       },
+              //     },
+              //     {
+              //       path: 'limits-add/:id',
+              //       resolve: {
+              //         comboOffers: comboDetailsResolver,
+              //         category: productsCategoriesResolver,
+              //         products: comboProductsResolver,
+              //       },
+              //       loadComponent: () =>
+              //         import(
+              //           './pages/dashboard/dashboard-pages/b-dashboard-offers/b-combo-boxes-offers/e-combo-boxes-limits-add/e-combo-boxes-limits-add.component'
+              //         ).then((c) => c.EComboBoxesLimitsAddComponent),
+              //       data: {
+              //         title: 'KOI Sushi',
+              //         description: 'Dashboard Page',
+              //       },
+              //     },
+                  
+              //   ],
+              // },
               {
                 path: 'coupons',
                 loadComponent: () =>
@@ -705,7 +689,6 @@ export const routes: Routes = [
                       description: 'Dashboard Page',
                     },
                     resolve: {
-                      categories: productsCategoriesResolver,
                       products: productDetailsResolver,
                     },
                     runGuardsAndResolvers: 'always',
@@ -724,7 +707,6 @@ export const routes: Routes = [
                     },
                     resolve: {
                       products: productDetailsResolver,
-                      categories: productsCategoriesResolver,
                     },
                     runGuardsAndResolvers: 'always',
                   },

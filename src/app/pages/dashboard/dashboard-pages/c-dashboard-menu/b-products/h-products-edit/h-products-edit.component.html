@@ -66,7 +66,7 @@
             pButton
             icon="pi pi-trash"
             class="p-button-rounded p-button-danger p-button-sm"
-            (click)="removeExistingImage(img.id)">
+            (click)="removeExistingImage(img)">
           </button>
         </div>
       </div>
@@ -78,6 +78,7 @@
   <label class="font-medium mb-1 block">Gallery Images (Multiple)</label>
   <p-fileUpload
     #multiFileUpload
+    class="multi-file"
     name="images[]"
     accept="image/*"
     [multiple]="true" 
@@ -85,9 +86,9 @@
     [chooseLabel]="'Add Gallery Images'"
     (onSelect)="onMultipleFilesSelect($event)"
     (onRemove)="onMultipleFilesSelect($event)"
-    [showUploadButton]="false" 
+    [showUploadButton]="false"
     [showCancelButton]="false"
-    [previewWidth]="0"
+    previewWidth="0"
     [draggable]="true">
     
     <ng-template pTemplate="content">
@@ -95,9 +96,9 @@
         class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition cursor-pointer"
         (click)="multiFileUpload.choose()"> <i class="pi pi-images text-4xl text-gray-400"></i>
         
-        @if (submitForm.get('images')?.value?.length > 0) {
+        @if (existingGalleryImages.length > 0) {
           <p class="text-green-600 mt-2 font-medium">
-            {{ submitForm.get('images')?.value?.length }} images selected
+            {{ existingGalleryImages.length }} images selected
           </p>
           <p class="text-gray-400 text-sm">Click to add more or drag & drop</p>
         } @else {

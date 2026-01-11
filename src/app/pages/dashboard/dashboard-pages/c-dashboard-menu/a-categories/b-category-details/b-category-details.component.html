@@ -8,19 +8,19 @@
       <!-- English & Arabic Names -->
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">English Name</label>
-        <p class="text-gray-900 font-semibold">{{ categoryData.category.en_name }}</p>
+        <p class="text-gray-900 font-semibold">{{ categoryData.data.title_en }}</p>
       </div>
 
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">Arabic Name</label>
-        <p class="text-gray-900 font-semibold">{{ categoryData.category.ar_name }}</p>
+        <p class="text-gray-900 font-semibold">{{ categoryData.data.title_ar }}</p>
       </div>
 
       <!-- Status -->
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">Status</label>
-        <p-tag [severity]="categoryData.category.state ? 'success' : 'danger'" class="w-fit">
-          {{ categoryData.category.state ? "Active" : "Inactive" }}
+        <p-tag [severity]="categoryData.data.status ? 'success' : 'danger'" class="w-fit">
+          {{ categoryData.data.status ? "Active" : "Inactive" }}
         </p-tag>
       </div>
 
@@ -49,7 +49,7 @@
         pButton
         label="Edit Category"
         class="p-button-primary btn-main px-3"
-        [routerLink]="['/dashboard/menu/categories/categories-edit', categoryData.category.id]"></button>
+        [routerLink]="['/dashboard/menu/categories/categories-edit', categoryData.data.id]"></button>
     </div>
   </ng-template>
 </p-card>

@@ -61,10 +61,11 @@
             [options]="selectTypeOptions"
             optionValue="value"
             (onChange)="onTypeFilterChange($event.value)"
-            (onClear)="onTypeFilterChange('')"
+            (onClear)="onTypeFilterChange(null)"
             placeholder="Type"
             [showClear]="true"
             [autoZIndex]="true"
+            [appendTo]="'body'"
           ></p-dropdown>
         </th>
         <th class="text-center" pSortableColumn="apply">
@@ -83,10 +84,11 @@
             [options]="selectStatusOptions"
             optionValue="value"
             (onChange)="onStatusFilterChange($event.value)"
-            (onClear)="onStatusFilterChange('')"
+            (onClear)="onStatusFilterChange(null)"
             placeholder="Status"
             [showClear]="true"
             [autoZIndex]="true"
+            [appendTo]="'body'"
           ></p-dropdown>
         </th>
         <th class="text-center">Actions</th>

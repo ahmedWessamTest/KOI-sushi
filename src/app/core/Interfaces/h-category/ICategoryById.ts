@@ -1,13 +1,14 @@
 export interface ICategoryById {
-  category: Category;
-  success: string;
+  success: boolean
+  data: Category
 }
 
 export interface Category {
-  id: number;
-  en_name: string;
-  ar_name: string;
-  state: number;
-  created_at: string;
-  updated_at: string;
+  id: number
+  title_ar: string
+  title_en: string
+  image: string
+  status: boolean
+  created_at: string
+  updated_at: string
 }

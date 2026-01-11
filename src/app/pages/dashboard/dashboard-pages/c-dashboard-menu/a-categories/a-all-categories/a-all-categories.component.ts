@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { Table, TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
@@ -48,19 +48,13 @@ export class AAllCategoriesComponent {
   globalFilterValue: string = '';
 
   // Dropdown
-  selectedStatus: string = '';
+  selectedStatus: number | null = null;
   selectOptions: ISelectOptions[] = [];
-  onFilterChange(value: string): void {
-    if (value) {
-      // Filter the blogs based on the selected category
-      this.filteredCategories = this.categories.filter((ele) => {
-        return ele.state.toString().includes(value);
-      });
-    } else {
-      // Reset to original data if no category is selected
-      this.filteredCategories = [...this.categories];
-    }
-  }
+  onFilterChange(event: DropdownChangeEvent) {
+  this.selectedStatus = event !== null ? Number(event) : null;  
+  this.loadCategories();
+}
+
 
   initDropDownFilter(): void {
     this.selectOptions = [
@@ -77,30 +71,10 @@ export class AAllCategoriesComponent {
 
   ngOnInit() {
     this.initDropDownFilter();
-    this.fetchData();
+    this.loadCategories();
   }
 
-  // get All Category
-  fetchData() {
-    this.loading = true;
-    this.categoriesService.getAllCategories().subscribe(
-      (response) => {
-        console.log('response getAllCategories', response);
-        this.totalRecords = response.categories.total;
-        this.categories = response.categories.data.reverse();
-        this.filteredCategories = [...this.categories];
-        this.loading = false;
-      },
-      () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load Category',
-        });
-        this.loading = false;
-      }
-    );
-  }
+
 
   // Toggle Category
   toggleCategoryStatus(category: categoryData) {
@@ -148,45 +122,36 @@ export class AAllCategoriesComponent {
   currentPage = 1;
 
   onPageChange(event: any) {
-    this.currentPage = Math.floor(event.first / event.rows) + 1;
+  this.currentPage = event.first / event.rows + 1; 
     this.rowsPerPage = event.rows;
-    this.loadCategories(this.currentPage, this.rowsPerPage);
-  }
+  this.loadCategories();
+}
 
-  loadCategories(page: number, perPage: number) {
-    this.loading = true;
-    this.ngxSpinnerService.show('actionsLoader');
+  loadCategories() {
+  this.loading = true;
 
-    this.categoriesService.getAllCategories(page, perPage).subscribe(
-      (response) => {
-        this.ngxSpinnerService.hide('actionsLoader');
+  this.categoriesService
+    .getAllCategories(this.currentPage, this.rowsPerPage, this.selectedStatus)
+    .subscribe({
+      next: (response) => {
         this.categories = response.categories.data;
-        this.filteredCategories = [...this.categories];
+        this.filteredCategories = [...this.categories]
         this.totalRecords = response.categories.total;
-
-        // Apply local sorting if a sort field is selected
-        if (this.sortField) {
-          this.sortLocally();
-        }
-
-        // Apply local filtering if there's a filter value
-        if (this.globalFilterValue) {
-          this.filterLocally();
-        }
-
+        console.log(this.totalRecords);
+        
         this.loading = false;
       },
-      (error) => {
-        this.ngxSpinnerService.hide('actionsLoader');
+      error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Failed to load Category',
         });
         this.loading = false;
-      }
-    );
-  }
+      },
+    });
+}
+
 
   // Add local sorting method
   onSort(event: any) {
@@ -247,8 +212,8 @@ export class AAllCategoriesComponent {
     this.filteredCategories = this.categories.filter((category) => {
       return (
         category.id.toString().includes(searchTerm) ||
-        category.en_name.toLowerCase().includes(searchTerm) ||
-        category.ar_name.toLowerCase().includes(searchTerm) ||
+        category.title_en.toLowerCase().includes(searchTerm) ||
+        category.title_ar.toLowerCase().includes(searchTerm) ||
         (category.state ? 'enabled' : 'disabled').includes(searchTerm)
       );
     });

@@ -52,21 +52,31 @@ export class AAllPromoCodeComponent {
   private promoCodeService = inject(PromoCodeService);
 
   // Dropdown for Status
-  selectedStatus: string = '';
+  selectedStatus: string | null = null;
   selectStatusOptions: ISelectOptions[] = [];
 
   // Dropdown for Type
-  selectedType: string = '';
+  selectedType: string | null = null;
   selectTypeOptions: ISelectOptions[] = [];
 
-  onStatusFilterChange(value: string): void {
-    this.selectedStatus = value;
-    this.applyFilters();
+  onStatusFilterChange(value: string | null): void {
+    console.log(value);
+    
+    if(value !== null) {
+      this.selectedStatus = value;
+    } else {
+      this.selectedStatus = null;
+    }
+    this.loadPromoCode()
   }
 
-  onTypeFilterChange(value: string): void {
-    this.selectedType = value;
-    this.applyFilters();
+  onTypeFilterChange(value: string | null): void {
+    if(value !== null) {
+      this.selectedType = value;
+    } else {
+      this.selectedType = null
+    }
+    this.loadPromoCode()
   }
 
   applyFilters(): void {
@@ -81,20 +91,6 @@ export class AAllPromoCodeComponent {
           promocode.value.toString().includes(this.currentSearchTerm) ||
           promocode.type.toLowerCase().includes(this.currentSearchTerm)
         );
-      });
-    }
-
-    // Apply status filter
-    if (this.selectedStatus) {
-      filtered = filtered.filter((ele) => {
-        return ele.status.toString() === this.selectedStatus;
-      });
-    }
-
-    // Apply type filter
-    if (this.selectedType) {
-      filtered = filtered.filter((ele) => {
-        return ele.type.toLowerCase() === this.selectedType.toLowerCase();
       });
     }
 
@@ -120,7 +116,7 @@ export class AAllPromoCodeComponent {
       },
       {
         label: 'Percentage',
-        value: 'percent',
+        value: 'percentage',
       },
     ];
   }
@@ -213,7 +209,7 @@ export class AAllPromoCodeComponent {
     this.loading = true;
     this.ngxSpinnerService.show('actionsLoader');
     this.promoCodeService
-      .getAllPromoCodes(this.currentPage, this.rowsPerPage)
+      .getAllPromoCodes(this.currentPage, this.rowsPerPage,this.selectedType,this.selectedStatus)
       .subscribe(
         (response) => {
           this.ngxSpinnerService.hide('actionsLoader');

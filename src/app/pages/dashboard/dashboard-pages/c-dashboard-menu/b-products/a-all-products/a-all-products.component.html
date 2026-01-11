@@ -128,7 +128,6 @@
             (onChange)="toggleRecommendedStatus(product)"></p-inputSwitch>
         </td>
         <td class="text-center">
-          @if (product.has_options) {
           <a
             [routerLink]="['/dashboard/menu/products/products-choice', product.id]"
             target="_blank"
@@ -137,9 +136,6 @@
             class="p-button p-component text-black p-button-text">
             <span class="p-button-icon pi pi-list"></span>
           </a>
-          } @else {
-          <span>N/A </span>
-          }
         </td>
         <td class="text-center">
           <button

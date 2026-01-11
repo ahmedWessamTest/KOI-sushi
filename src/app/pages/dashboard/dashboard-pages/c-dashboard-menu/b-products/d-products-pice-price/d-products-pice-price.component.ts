@@ -78,37 +78,37 @@ export class DProductsPicePriceComponent {
 
     const updatedStatus = picePrice.status ? 0 : 1; // Toggle between 0 and 1
     if (updatedStatus) {
-      this.productsService
-        .updateProductPics(picePrice.id.toString(), {
-          pieces: picePrice.prices,
-          prices: picePrice.prices,
-          status: 1,
-        })
-        .subscribe(() => {
-          picePrice.status = updatedStatus; // Update the UI immediately
-          this.messageService.add({
-            severity: "success",
-            summary: "Updated",
-            detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-          });
-          timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-        });
+      // this.productsService
+      //   .updateProductPics(picePrice.id.toString(), {
+      //     pieces: picePrice.prices,
+      //     prices: picePrice.prices,
+      //     status: 1,
+      //   })
+      //   .subscribe(() => {
+      //     picePrice.status = updatedStatus; // Update the UI immediately
+      //     this.messageService.add({
+      //       severity: "success",
+      //       summary: "Updated",
+      //       detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
+      //     });
+      //     timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+      //   });
     } else {
-      this.productsService
-        .updateProductPics(picePrice.id.toString(), {
-          pieces: picePrice.prices,
-          prices: picePrice.prices,
-          status: 0,
-        })
-        .subscribe(() => {
-          picePrice.status = updatedStatus; // Update the UI immediately
-          this.messageService.add({
-            severity: "success",
-            summary: "Updated",
-            detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-          });
-          timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-        });
+      // this.productsService
+      //   .updateProductPics(picePrice.id.toString(), {
+      //     pieces: picePrice.prices,
+      //     prices: picePrice.prices,
+      //     status: 0,
+      //   })
+      //   .subscribe(() => {
+      //     picePrice.status = updatedStatus; // Update the UI immediately
+      //     this.messageService.add({
+      //       severity: "success",
+      //       summary: "Updated",
+      //       detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
+      //     });
+      //     timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+      //   });
     }
   }
 
