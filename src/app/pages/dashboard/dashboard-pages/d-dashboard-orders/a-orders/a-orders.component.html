@@ -85,6 +85,7 @@
       [value]="orders"
       responsiveLayout="scroll"
       sortField="order_date"
+      columnResizeMode="expand"
       [sortOrder]="-1"
     >
       <ng-template pTemplate="header">
@@ -100,7 +101,7 @@
             Time <p-sortIcon field="order_time" />
           </th>
           <th>Branch</th>
-          <th pSortableColumn="sub_location_title">
+          <th pSortableColumn="sub_location_title" pResizableColumn>
             Area <p-sortIcon field="sub_location_title" />
           </th>
           <th pSortableColumn="total_price">
@@ -113,19 +114,18 @@
       </ng-template>
 
       <ng-template pTemplate="body" let-order>
-        @if (order.status !== "cancelled" && order.status !== 'delivered') {
         <tr>
           <td>{{ order.id }}</td>
           <td>{{ order?.user?.name || "" }}</td>
-          <td>{{ order.order_date }}</td>
-          <td>{{ order.order_time }}</td>
+          <td>{{ order.created_at | date }}</td>
+          <td>{{ order.created_at | date:'HH:mm' }}</td>
           <td>
-            {{ order.branch.en_branch_location }}
+            {{ order.branch?.title_en ?? ''  }}
           </td>
-          <td [title]="order.sub_location_title" class="max-w-fit">
-            {{ order.sub_location_title | slice : 0 : 50 }}
+          <td [title]="order.address.address" class="max-w-fit">
+            {{ order.address.address }}
           </td>
-          <td>{{ order.total_price.toFixed(2) }}</td>
+          <td>{{ order.total_price }}</td>
           <td class="text-center">
             <a
               class="view"
@@ -167,7 +167,7 @@
             ></p-button>
           </td>
         </tr>
-        }
+        
       </ng-template>
 
       <ng-template pTemplate="emptymessage">

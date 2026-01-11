@@ -17,15 +17,8 @@ export class OrdersService {
 
   orderStatus = ["placed", "confirmed", "on the way", "delivered", "cancelled"];
 
-  getAllOrders(userId: string = "all") {
-      if (JSON.parse(localStorage.getItem("user")!).id) {
-        userId = JSON.parse(localStorage.getItem("user")!).id;
-      }
-    return this.http.get<IAllOrders>(`${WEB_SITE_BASE_URL}order_index`, {
-      params: {
-        user_id: userId,
-      },
-    });
+  getAllOrders() {
+    return this.http.post<IAllOrders>(`${WEB_SITE_BASE_URL}orders`, {});
   }
   getCurrentOrders(userId: string = "all") {
       if (JSON.parse(localStorage.getItem("user")!).branch_id) {

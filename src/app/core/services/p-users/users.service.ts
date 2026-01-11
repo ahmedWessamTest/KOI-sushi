@@ -13,7 +13,7 @@ export class UsersService {
   constructor(private http: HttpClient) {}
 
   getAllUsers(page: number = 1, perPage: number = 10) {
-    return this.http.get<IGetAllUsers>(`${WEB_SITE_BASE_URL}user_index?page=${page}&limit=${perPage}`);
+    return this.http.get<IGetAllUsers>(`${WEB_SITE_BASE_URL}users?page=${page}&limit=${perPage}`);
   }
 
   getUserById(userId: string) {

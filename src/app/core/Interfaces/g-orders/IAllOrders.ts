@@ -1,83 +1,62 @@
 export interface IAllOrders {
-  orders: OrderData[];
+  success: boolean
+  orders: Orders
 }
 
-// export interface Orders {
-//   current_page: number;
-//   data: OrderData[];
-//   first_page_url: string;
-//   from: number;
-//   last_page: number;
-//   last_page_url: string;
-//   next_page_url: string;
-//   path: string;
-//   per_page: number;
-//   prev_page_url: null;
-//   to: number;
-//   total: number;
-// }
-
+export interface Orders {
+  current_page: number
+  data: OrderData[]
+  first_page_url: string
+  from: any
+  last_page: number
+  last_page_url: string
+  links: Link[]
+  next_page_url: any
+  path: string
+  per_page: number
+  prev_page_url: any
+  to: any
+  total: number
+}
+export interface Link {
+  url?: string
+  label: string
+  page?: number
+  active: boolean
+}
 export interface OrderData {
-  id: number;
-  user_id: number;
-  branch_id: number;
-  address_id: null;
-  address_information: null;
-  location_id: null;
-  location_title: null;
-  sub_location_id: null;
-  sub_location_title: null;
-  total_price: number;
-  sub_total: null | number;
-  confirmed_by_user: number;
-  status: string;
-  combo_id: null;
-  combo_name: null;
-  promo_code_id: null;
-  order_date: string;
-  order_time: null | string;
-  created_at: string;
-  updated_at: string;
-  date: string;
-  time: string;
-  branch: Branches;
-  user: User | null;
+   id: number
+  user_id: number
+  branch_id: number
+  address_id: number
+  sub_total_price: string
+  delivery_fee: string
+  tax: string
+  total_price: string
+  status: string
+  payment_method: string
+  created_at: string
+  updated_at: string
+  user: User
+  branch: Branch
+  address: Address
 }
 
 export interface User {
-  id: number;
-  name: string;
-  phone: string;
-  email: string;
-  email_verified_at: null;
-  role: string;
-  branch_id: number;
-  google_id: null;
-  apple_id: null;
-  device_token: null;
-  admin_status: number;
-  deactive_status: number;
-  delete_status: number;
-  forget_code: null;
-  verify_code: null;
-  verify_status: null;
-  created_at: string;
-  updated_at: string;
+  id: number
+  name: string
+  email: string
+  phone: string
+}
+export interface Branch {
+  id: number
+  title_ar: string
+  title_en: string
 }
 
-export interface Branches {
-  id: number;
-  en_branch_location: string;
-  ar_branch_location: string;
-  en_branch_city: string;
-  ar_branch_city: string;
-  en_branch_address: string;
-  ar_branch_address: string;
-  branch_phone_1: string;
-  branch_phone_2: string;
-  branch_phone_3: string;
-  location_url: null;
-  status: number;
-  created_at: string;
-  updated_at: string;
+export interface Address {
+  id: number
+  type: string
+  address: string
+  phone_primary: string
 }

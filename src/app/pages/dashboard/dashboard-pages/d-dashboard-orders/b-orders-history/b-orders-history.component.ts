@@ -76,14 +76,14 @@ export class BOrdersHistoryComponent implements OnInit {
     this.ordersService.getAllOrders().subscribe({
       next: (data) => {
         this.allOrders = data;
-        this.filteredOrders = data.orders.filter((order) => {
+        this.filteredOrders = data.orders.data.filter((order) => {
           return order.status == 'cancelled' || order.status == 'delivered';
         });
 
-        // Sort by order_date in descending order (latest first)
+        // Sort by created_at in descending order (latest first)
         this.filteredOrders.sort((a, b) => {
-          const dateA = new Date(a.order_date).getTime();
-          const dateB = new Date(b.order_date).getTime();
+          const dateA = new Date(a.created_at).getTime();
+          const dateB = new Date(b.created_at).getTime();
           return dateB - dateA; // Descending order
         });
 
@@ -105,41 +105,41 @@ export class BOrdersHistoryComponent implements OnInit {
   }
 
   updateOrderStatus(order: OrderData, isStatus: boolean) {
-    this.ngxSpinnerService.show('actionsLoader');
-    this.messageService.clear('orderStatusMessage');
-    this.ordersService
-      .updateOrderStatus(order.id.toString(), order.status, isStatus)
-      .subscribe({
-        next: (response) => {
-          timer(200).subscribe(() =>
-            this.ngxSpinnerService.hide('actionsLoader')
-          );
-          order = response.order;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Status Updated',
-            detail: `Order status changed to "${order.status}"`,
-            life: 3000,
-            key: 'orderStatusMessage',
-          });
-          if (!isStatus) {
-            this.removeOrder(response.order.id);
-          }
-        },
-        error: (err) => {
-          timer(200).subscribe(() =>
-            this.ngxSpinnerService.hide('actionsLoader')
-          );
-          console.error('Error updating status', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Update Failed',
-            detail: 'Could not update order status.',
-            life: 3000,
-            key: 'orderStatusMessage',
-          });
-        },
-      });
+    // this.ngxSpinnerService.show('actionsLoader');
+    // this.messageService.clear('orderStatusMessage');
+    // this.ordersService
+    //   .updateOrderStatus(order.id.toString(), order.status, isStatus)
+    //   .subscribe({
+    //     next: (response) => {
+    //       timer(200).subscribe(() =>
+    //         this.ngxSpinnerService.hide('actionsLoader')
+    //       );
+    //       order = response.;
+    //       this.messageService.add({
+    //         severity: 'success',
+    //         summary: 'Status Updated',
+    //         detail: `Order status changed to "${order.status}"`,
+    //         life: 3000,
+    //         key: 'orderStatusMessage',
+    //       });
+    //       if (!isStatus) {
+    //         this.removeOrder(response.order.id);
+    //       }
+    //     },
+    //     error: (err) => {
+    //       timer(200).subscribe(() =>
+    //         this.ngxSpinnerService.hide('actionsLoader')
+    //       );
+    //       console.error('Error updating status', err);
+    //       this.messageService.add({
+    //         severity: 'error',
+    //         summary: 'Update Failed',
+    //         detail: 'Could not update order status.',
+    //         life: 3000,
+    //         key: 'orderStatusMessage',
+    //       });
+    //     },
+    //   });
   }
 
   removeOrder(orderId: number) {
@@ -214,10 +214,10 @@ export class BOrdersHistoryComponent implements OnInit {
       this.orders = [...this.filteredOrders];
     }
 
-    // Maintain sorting by order_date in descending order after filtering
+    // Maintain sorting by created_at in descending order after filtering
     this.orders.sort((a, b) => {
-      const dateA = new Date(a.order_date).getTime();
-      const dateB = new Date(b.order_date).getTime();
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
       return dateB - dateA; // Descending order
     });
   }
@@ -250,10 +250,10 @@ export class BOrdersHistoryComponent implements OnInit {
   clear(dt: Table): void {
     this.orders = [...this.filteredOrders];
 
-    // Maintain sorting by order_date in descending order
+    // Maintain sorting by created_at in descending order
     this.orders.sort((a, b) => {
-      const dateA = new Date(a.order_date).getTime();
-      const dateB = new Date(b.order_date).getTime();
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
       return dateB - dateA; // Descending order
     });
 
@@ -319,17 +319,17 @@ export class BOrdersHistoryComponent implements OnInit {
       const endDate = dayjs(this.selectedRange.endDate).format('YYYY-MM-DD');
 
       this.orders = this.orders.filter((order) => {
-        const orderDate = dayjs(order.order_date).format('YYYY-MM-DD');
+        const orderDate = dayjs(order.created_at).format('YYYY-MM-DD');
         return orderDate >= startDate && orderDate <= endDate;
       });
     } else {
       this.orders = this.filteredOrders;
     }
 
-    // Maintain sorting by order_date in descending order after filtering
+    // Maintain sorting by created_at in descending order after filtering
     this.orders.sort((a, b) => {
-      const dateA = new Date(a.order_date).getTime();
-      const dateB = new Date(b.order_date).getTime();
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
       return dateB - dateA; // Descending order
     });
 

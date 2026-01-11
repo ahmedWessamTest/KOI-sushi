@@ -56,8 +56,8 @@ export class AAllUsersComponent {
   fetchData(): void {
     this.usersService.getAllUsers().subscribe({
       next: (response) => {
-        this.users = response.rows.data;
-        this.selectedUsers = response.rows.data.filter((user) => user.admin_status === 1);
+        this.users = response.data.data;
+        this.selectedUsers = response.data.data;
       },
     });
   }
@@ -123,10 +123,10 @@ export class AAllUsersComponent {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
 
-    const updatedStatus = usersData.admin_status ? 0 : 1; // Toggle between 0 and 1
+    const updatedStatus = usersData.status ; // Toggle between 0 and 1
     if (updatedStatus) {
-      this.usersService.updateUser(usersData.id.toString(), { admin_status: updatedStatus }).subscribe(() => {
-        usersData.admin_status = updatedStatus; // Update the UI immediately
+      this.usersService.updateUser(usersData.id.toString(), { status: Number(updatedStatus) }).subscribe(() => {
+        usersData.status = updatedStatus; // Update the UI immediately
         this.messageService.add({
           severity: "success",
           summary: "Updated",
@@ -135,8 +135,8 @@ export class AAllUsersComponent {
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
       });
     } else {
-      this.usersService.updateUser(usersData.id.toString(), { admin_status: updatedStatus }).subscribe(() => {
-        usersData.admin_status = updatedStatus; // Update the UI immediately
+      this.usersService.updateUser(usersData.id.toString(), { status: Number(updatedStatus) }).subscribe(() => {
+        usersData.status = updatedStatus; // Update the UI immediately
         this.messageService.add({
           severity: "success",
           summary: "Updated",
@@ -163,7 +163,7 @@ export class AAllUsersComponent {
     this.usersService.getAllUsers(page, perPage).subscribe({
       next: (response) => {
         this.ngxSpinnerService.hide("actionsLoader");
-        this.users = response.rows.data;
+        this.users = response.data.data;
       },
     });
   }

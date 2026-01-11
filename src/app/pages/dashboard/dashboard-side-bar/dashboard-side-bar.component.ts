@@ -109,31 +109,31 @@ export class DashboardSideBarComponent {
             // },
           ],
         },
-        // {
-        //   label: 'Orders',
-        //   items: [
-        //     {
-        //       label: 'Order Management',
-        //       icon: 'pi pi-fw pi-truck',
-        //       routerLink: ['/dashboard/orders/orders'],
-        //     },
-        //     {
-        //       label: 'Order History',
-        //       icon: 'pi pi-fw pi-history',
-        //       routerLink: ['/dashboard/orders/history'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   label: 'Users',
-        //   items: [
-        //     {
-        //       label: 'Manage Users',
-        //       icon: 'pi pi-fw pi-users',
-        //       routerLink: ['/dashboard/users'],
-        //     },
-        //   ],
-        // },
+        {
+          label: 'Orders',
+          items: [
+            {
+              label: 'Order Management',
+              icon: 'pi pi-fw pi-truck',
+              routerLink: ['/dashboard/orders/orders'],
+            },
+            {
+              label: 'Order History',
+              icon: 'pi pi-fw pi-history',
+              routerLink: ['/dashboard/orders/history'],
+            },
+          ],
+        },
+        {
+          label: 'Users',
+          items: [
+            {
+              label: 'Manage Users',
+              icon: 'pi pi-fw pi-users',
+              routerLink: ['/dashboard/users'],
+            },
+          ],
+        },
         // {
         //   label: 'Pages',
         //   items: [

@@ -15,7 +15,7 @@ export class BranchesService {
   constructor(private http: HttpClient) {}
 
   getAllBranches() {
-    return this.http.get<IAllBranches>(`${WEB_SITE_BASE_URL}branch_index`);
+    return this.http.get<IAllBranches>(`${WEB_SITE_BASE_URL}branches`);
   }
   getBranchById(branchId: string) {
     return this.http.get<IBranchById>(`${WEB_SITE_BASE_URL}branch_data/${branchId}`);
