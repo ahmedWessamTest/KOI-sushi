@@ -1,30 +1,98 @@
 export interface IOrderById {
-  order: Order;
-  orderdetails: Orderdetail[];
+ success: boolean
+  order: Orderdetail
 }
 
 export interface Orderdetail {
-  id: number;
-  order_id: number;
-  product_id: number;
-  product_piece_price_id: null;
-  product_name: null;
-  pieces: null | number;
-  price: number;
-  quantity: number;
-  offer: number;
-  state: number;
-  en_choice_name: null;
-  created_at: string;
-  updated_at: string;
-  
+  id: number
+  user_id: number
+  branch_id: number
+  address_id: number
+  promo_code_id: any
+  promo_code_discount: string
+  voucher_id: any
+  voucher_discount: string
+  loyalty_applied_points: number
+  loyalty_earned_points: number
+  loyalty_points_discount: number
+  happy_hours_discount: string
+  sub_total_price: string
+  delivery_fee: string
+  tax: string;
+  tax_percentage:string;
+  total_price: string
+  delivery_time_minutes: number
+  payment_method: string
+  note: string
+  status: string
+  confirmed_by: any
+  created_at: string
+  updated_at: string
+  user: User
+  branch: Branch
+  address: Address
+  items: Item[]
+  promo_code: any
+  voucher: any
 }
-
+export interface Branch {
+  title_en: string
+  id: number
+}
+export interface Address {
+  id: number
+  user_id: number
+  region_id: number
+  type: string
+  address: string
+  phone_primary: string
+  phone_secondary: string
+  note: string
+  status: boolean
+  created_at: string
+  updated_at: string
+  floor: string
+  apartment: string
+  region: Region
+}
+export interface Product {
+  title_en: string
+  id: number
+  main_image: string
+  has_options: boolean
+  is_recommended: boolean
+}
+export interface Region {
+  title_en: string
+  id: number
+  delivery_fee: string
+  governorate:Governorate
+}
+ interface Governorate {
+  title_en: string
+  id: number
+}
+export interface Item {
+  id: number
+  order_id: number
+  product_id: number
+  product_option_id: any
+  combo_offer_id: any
+  combo_group_id: any
+  price: string
+  quantity: number
+  created_at: string
+  updated_at: string
+  product: Product
+  product_option: any
+  combo_offer: any
+}
 export interface Order {
   id: number;
   user_id: number;
   branch_id: number;
   address_id: number;
+  address: Address
   address_information: null;
   location_id: null;
   location_title: null;
@@ -95,22 +163,8 @@ export interface Sublocationinfo {
 }
 
 export interface User {
-  id: number;
-  name: string;
-  phone: string;
-  email: string;
-  email_verified_at: null;
-  role: string;
-  branch_id: number;
-  google_id: null;
-  apple_id: null;
-  device_token: null;
-  admin_status: number;
-  deactive_status: number;
-  delete_status: number;
-  forget_code: null;
-  verify_code: null;
-  verify_status: null;
-  created_at: string;
-  updated_at: string;
+  id: number
+  name: string
+  email: string
+  phone: string
 }

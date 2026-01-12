@@ -52,7 +52,7 @@ export class CAllBranchesComponent {
     this.loading = true;
     this.branchesService.getAllBranches().subscribe(
       (response) => {
-        this.branches = response.branches.data.reverse();
+        // this.branches = response.data.reverse();
         this.loading = false;
       },
       () => {

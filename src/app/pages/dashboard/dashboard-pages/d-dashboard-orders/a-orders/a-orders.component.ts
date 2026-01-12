@@ -49,7 +49,7 @@ export class AOrdersComponent implements OnInit {
   orders: OrderData[] = [];
   filteredOrders: OrderData[] = [];
   allOrders!: IAllOrders;
-  statusSteps = ['placed', 'confirmed', 'on the way', 'delivered'];
+  statusSteps = ['requested', 'preparing', 'out_for_delivery', 'delivered'];
   searchValue: string = '';
   allBranches!: IAllBranches;
   totalRecords!: number;
@@ -58,12 +58,13 @@ export class AOrdersComponent implements OnInit {
   private ngxSpinnerService = inject(NgxSpinnerService);
   private activatedRoute = inject(ActivatedRoute);
   messageService = inject(MessageService);
-
+  rowsPerPage = 10;
+  currentPage = 1;
   // Date Filter Properties
   isDropdownOpen = false;
   selectedRange: any = {
-    startDate: dayjs().subtract(7, 'day').toDate(),
-    endDate: dayjs().toDate(),
+    startDate: null,
+    endDate: null,
   };
 
   datePresets: any = {
@@ -107,7 +108,7 @@ export class AOrdersComponent implements OnInit {
   }
 
   loadOrders() {
-    this.ordersService.getAllOrders().subscribe({
+    this.ordersService.getAllOrders(this.currentPage,this.rowsPerPage,this.selectedRange.startDate,this.selectedRange.endDate).subscribe({
       next: (data) => {
         this.allOrders = data
         this.filteredOrders = this.allOrders.orders.data
@@ -120,6 +121,8 @@ export class AOrdersComponent implements OnInit {
         console.log(this.orders);
         
         this.totalRecords = this.allOrders.orders.total;
+        console.log(this.totalRecords);
+        
       },
       error: (err) => console.error('Failed to load orders', err),
     });
@@ -134,28 +137,7 @@ export class AOrdersComponent implements OnInit {
     this.orders = [...this.filteredOrders];
     this.isDropdownOpen = false;
     this.ngxSpinnerService.show('actionsLoader');
-
-    if (this.selectedRange?.startDate && this.selectedRange?.endDate) {
-      const startDate = dayjs(this.selectedRange.startDate).format(
-        'YYYY-MM-DD'
-      );
-      const endDate = dayjs(this.selectedRange.endDate).format('YYYY-MM-DD');
-
-      this.orders = this.orders.filter((order) => {
-        const orderDate = dayjs(order.created_at).format('YYYY-MM-DD');
-        return orderDate >= startDate && orderDate <= endDate;
-      });
-    } else {
-      this.orders = this.filteredOrders;
-    }
-
-    // Maintain sorting by order_date in descending order after filtering
-    this.orders.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return dateB - dateA; // Descending order
-    });
-
+    this.loadOrders()
     timer(300).subscribe(() => this.ngxSpinnerService.hide('actionsLoader'));
   }
 
@@ -167,19 +149,11 @@ export class AOrdersComponent implements OnInit {
 
   clear(dt: Table): void {
     dt.reset();
-    this.orders = [...this.filteredOrders];
-
-    // Maintain sorting by order_date in descending order
-    this.orders.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      return dateB - dateA; // Descending order
-    });
-
     this.selectedRange = {
-      startDate: dayjs().subtract(7, 'day').toDate(),
-      endDate: dayjs().toDate(),
+      startDate: null,
+      endDate: null,
     };
+    this.loadOrders()
   }
 
   getStatusIndex(status: string): number {
@@ -191,50 +165,69 @@ export class AOrdersComponent implements OnInit {
   }
 
   updateOrderStatus(order: OrderData, isStatus: boolean) {
-    // this.ngxSpinnerService.show('actionsLoader');
-    // this.messageService.clear('orderStatusMessage');
-    // this.ordersService
-    //   .updateOrderStatus(order.id.toString(), order.status, isStatus)
-    //   .subscribe({
-    //     next: (response) => {
-    //       timer(200).subscribe(() =>
-    //         this.ngxSpinnerService.hide('actionsLoader')
-    //       );
-    //       order = response.order;
-    //       this.messageService.add({
-    //         severity: 'success',
-    //         summary: 'Status Updated',
-    //         detail: `Order status changed to "${order.status}"`,
-    //         life: 3000,
-    //         key: 'orderStatusMessage',
-    //       });
-    //       if (!isStatus) {
-    //         this.removeOrder(response.order.id);
-    //       }
-    //     },
-    //     error: (err) => {
-    //       timer(200).subscribe(() =>
-    //         this.ngxSpinnerService.hide('actionsLoader')
-    //       );
-    //       console.error('Error updating status', err);
-    //       this.messageService.add({
-    //         severity: 'error',
-    //         summary: 'Update Failed',
-    //         detail: 'Could not update order status.',
-    //         life: 3000,
-    //         key: 'orderStatusMessage',
-    //       });
-    //     },
-    //   });
-  }
+  const previousStatus = order.status; // 🔴 احفظ الحالة القديمة
+
+  this.ngxSpinnerService.show('actionsLoader');
+  this.messageService.clear('orderStatusMessage');
+
+  this.ordersService
+    .updateOrderStatus(order.id.toString(), order.status, isStatus)
+    .subscribe({
+      next: (response) => {
+        timer(200).subscribe(() =>
+          this.ngxSpinnerService.hide('actionsLoader')
+        );
+
+        const newStatus = response.order.status;
+
+        if (newStatus === 'delivered') {
+          this.removeOrder(response.order.id);
+        } else {
+          order.status = newStatus;
+        }
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Status Updated',
+          detail: `Order status changed to "${newStatus}"`,
+          life: 3000,
+          key: 'orderStatusMessage',
+        });
+
+        if (!isStatus) {
+          this.removeOrder(response.order.id);
+        }
+      },
+
+      error: (err) => {
+        // 🔁 rollback
+        order.status = previousStatus;
+
+        timer(200).subscribe(() =>
+          this.ngxSpinnerService.hide('actionsLoader')
+        );
+
+        console.error('Error updating status', err);
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Update Failed',
+          detail: 'Could not update order status.',
+          life: 3000,
+          key: 'orderStatusMessage',
+        });
+      },
+    });
+}
+
 
   removeOrder(orderId: number) {
     this.orders = this.orders.filter((order) => order.id !== orderId);
   }
 
   findBranches(id: number): string | undefined {
-    return this.allBranches.branches.data.find((e) => e.id === id)
-      ?.en_branch_city;
+    return this.allBranches.data.find((e) => e.id === id)
+      ?.title_en;
   }
   getStatusClass(status: string): string {
     switch (status) {
@@ -251,33 +244,23 @@ export class AOrdersComponent implements OnInit {
     }
   }
   getAvailableStatusOptions(currentStatus: string) {
-    const statusWithIcons = [
-      { label: 'Placed', value: 'placed', icon: 'pi pi-inbox text-yellow-500' },
-      {
-        label: 'Confirmed',
-        value: 'confirmed',
-        icon: 'pi pi-check-circle text-blue-500',
-      },
-      {
-        label: 'On The Way',
-        value: 'on the way',
-        icon: 'pi pi-truck text-orange-500',
-      },
-      {
-        label: 'Delivered',
-        value: 'delivered',
-        icon: 'pi pi-box text-green-500',
-      },
-    ];
+  const statusWithIcons = [
+    { label: 'Placed', value: 'requested', icon: 'pi pi-inbox text-yellow-500' },
+    { label: 'Preparing', value: 'preparing', icon: 'pi pi-check-circle text-blue-500' },
+    { label: 'On The Way', value: 'out_for_delivery', icon: 'pi pi-truck text-orange-500' },
+    { label: 'Delivered', value: 'delivered', icon: 'pi pi-box text-green-500' },
+  ];
 
-    const currentIndex = this.statusSteps.indexOf(currentStatus);
+  const currentIndex = statusWithIcons.findIndex(
+    status => status.value === currentStatus
+  );
 
-    // ✅ Disable previous steps
-    return statusWithIcons.map((status, index) => ({
-      ...status,
-      disabled: index < currentIndex,
-    }));
-  }
+  return statusWithIcons.map((status, index) => ({
+    ...status,
+    disabled: index < currentIndex,
+  }));
+}
+
 
   getPagination(): number[] {
     if (this.totalRecords === 0) return [0];
@@ -329,5 +312,11 @@ export class AOrdersComponent implements OnInit {
         value: '0',
       },
     ];
+  }
+  onPageChange(event: any) {
+    this.rowsPerPage = event.rows;
+    console.log(event);
+    this.currentPage = (event.first / event.rows) + 1
+    this.loadOrders();
   }
 }

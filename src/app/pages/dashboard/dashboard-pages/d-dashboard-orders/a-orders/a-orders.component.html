@@ -71,8 +71,10 @@
     <p-table
       #dt
       [paginator]="true"
-      [rows]="10"
+      [rows]="rowsPerPage"
       [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onPage)="onPageChange($event)"
       [rowsPerPageOptions]="getPagination()"
       [showCurrentPageReport]="true"
       [globalFilterFields]="[
@@ -94,15 +96,15 @@
           <th pSortableColumn="user.name">
             User <p-sortIcon field="user.name" />
           </th>
-          <th pSortableColumn="order_date">
-            Date <p-sortIcon field="order_date" />
+          <th pSortableColumn="created_at">
+            Date <p-sortIcon field="created_at" />
           </th>
-          <th pSortableColumn="order_time">
-            Time <p-sortIcon field="order_time" />
+          <th pSortableColumn="created_at">
+            Time <p-sortIcon field="created_at" />
           </th>
           <th>Branch</th>
-          <th pSortableColumn="sub_location_title" pResizableColumn>
-            Area <p-sortIcon field="sub_location_title" />
+          <th pSortableColumn="address.address" pResizableColumn>
+            Area <p-sortIcon field="address.address" />
           </th>
           <th pSortableColumn="total_price">
             Price <p-sortIcon field="total_price" />
@@ -116,11 +118,11 @@
       <ng-template pTemplate="body" let-order>
         <tr>
           <td>{{ order.id }}</td>
-          <td>{{ order?.user?.name || "" }}</td>
+          <td>{{ order?.user?.name || "N/A" }}</td>
           <td>{{ order.created_at | date }}</td>
           <td>{{ order.created_at | date:'HH:mm' }}</td>
           <td>
-            {{ order.branch?.title_en ?? ''  }}
+            {{ order.branch?.title_en ?? 'N/A'  }}
           </td>
           <td [title]="order.address.address" class="max-w-fit">
             {{ order.address.address }}

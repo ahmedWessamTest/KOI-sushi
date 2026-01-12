@@ -864,7 +864,6 @@ export const routes: Routes = [
                 },
                 resolve: {
                   orderDetails: orderDetailsResolver,
-                  branches: allBranchesResolver,
                 },
                 runGuardsAndResolvers: 'always',
               },

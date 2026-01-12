@@ -73,7 +73,7 @@ export class BOrdersHistoryComponent implements OnInit {
   }
 
   loadOrders() {
-    this.ordersService.getAllOrders().subscribe({
+    this.ordersService.getAllOrders(this.selectedRange.startDate.format('YYYY-MM-DD'),this.selectedRange.endDate.format('YYYY-MM-DD')).subscribe({
       next: (data) => {
         this.allOrders = data;
         this.filteredOrders = data.orders.data.filter((order) => {
@@ -147,8 +147,8 @@ export class BOrdersHistoryComponent implements OnInit {
   }
 
   findBranches(id: number): string | undefined {
-    return this.allBranches.branches.data.find((e) => e.id === id)
-      ?.en_branch_city;
+    return this.allBranches.data.find((e) => e.id === id)
+      ?.title_en;
   }
   getStatusClass(status: string): string {
     switch (status) {

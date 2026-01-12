@@ -196,7 +196,6 @@ export class AAllVoucherComponent {
 
   onPageChange(event: any) {
     this.rowsPerPage = event.rows;
-    console.log(event);
     this.currentPage = (event.first / event.rows) + 1
     this.loadVouchers();
   }

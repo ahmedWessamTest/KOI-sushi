@@ -16,12 +16,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { timer } from 'rxjs';
 import {
+  Address,
   Addressinfo,
   IOrderById,
+  Item,
   Orderdetail,
   Promo,
 } from '../../../../../core/Interfaces/g-orders/IOrderById';
-import { IAllBranches } from '../../../../../core/Interfaces/j-branches/IAllBranches';
 import { OrdersService } from '../../../../../core/services/g-orders/orders.service';
 import { LoadingDataBannerComponent } from '../../../../../shared/components/loading-data-banner/loading-data-banner.component';
 import { User } from './../../../../../core/Interfaces/g-orders/IAllOrders';
@@ -51,10 +52,9 @@ export class COrdersDetailsComponent {
   order!: IOrderById;
 
   userDetails: User[] = [];
-  userAddress: Addressinfo[] = [];
+  userAddress: Address[] = [];
   userPromoCode: Promo[] = [];
-  userOrders: Orderdetail[] = [];
-  allBranches!: IAllBranches;
+  userOrders: Item[] = [];
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -80,8 +80,10 @@ export class COrdersDetailsComponent {
   /*******  10010e65-ab5f-4a88-9102-22e57d276945  *******/
   fetchData(): void {
     this.order = this.activatedRoute.snapshot.data['orderDetails'];
+    console.log(this.order);
+    
     const userPhone = this.order.order.user?.phone;
-    const addressPhone = this.order.order.addressinfo?.phone;
+    const addressPhone = this.order.order.user.phone;
 
     if (userPhone && addressPhone) {
       this.userPhones =
@@ -94,15 +96,14 @@ export class COrdersDetailsComponent {
     this.userPromoCode = [];
     this.userDetails = [];
     this.userAddress = [];
+    console.log(this.order.order.user);
+    
     this.userDetails.push(this.order.order.user);
-    this.userAddress.push(this.order.order.addressinfo);
-    if (this.order.order.promo) {
-      this.userPromoCode.push(this.order.order.promo);
+    this.userAddress.push(this.order.order.address);
+    if (this.order.order.promo_code) {
+      this.userPromoCode.push(this.order.order.promo_code);
     }
-    console.log('allllllllllll orders ', this.order.order.combo_id);
-    console.log('allllllllllll orders ', this.order.order);
-    this.userOrders = this.order.orderdetails;
-    this.allBranches = this.activatedRoute.snapshot.data['branches'];
+    this.userOrders = this.order.order.items;    
   }
 
   backToOrders(): void {
@@ -113,31 +114,12 @@ export class COrdersDetailsComponent {
     }
   }
 
-  findBranches(id: number): string | undefined {
-    return this.allBranches.branches.data.find((e) => e.id === id)
-      ?.en_branch_city;
-  }
 
-  getItemDescription(item: Orderdetail): string {
-    let details = [];
 
-    if (item.quantity) {
-      details.push(`${item.quantity}x`);
-    }
+ 
 
-    if (item.pieces) {
-      details.push(`${item.pieces} pcs`);
-    }
-
-    if (item.product_name) {
-      details.push(item.product_name);
-    }
-
-    return details.join(' ');
-  }
-
-  getTotalPrice(orderdetails: Orderdetail[]): number {
-    return orderdetails.reduce((sum, item) => sum + item.price, 0);
+  getTotalPrice(orderdetails: Orderdetail): number {
+    return Number(orderdetails.total_price);
   }
 
   printOrderReceipt() {
@@ -145,15 +127,15 @@ export class COrdersDetailsComponent {
 
     // Extract values from order object
     const order = this.order.order; // Assuming order is available in the component
-    const subtotal = order.sub_total;
+    const subtotal = order.sub_total_price;
     const totalPrice = order.total_price;
-    const serviceCharge = order.service_money;
-    const delivery = order.delivry_value;
+    // const serviceCharge = order.service_value;
+    const delivery = order.delivery_fee;
     const happy = order.happy_hours_discount;
-    const ziDiscount = order.zi_points_discount;
-    const orderNote = order.note_text;
+    const ziDiscount = order.loyalty_points_discount;
+    const orderNote = order.note;
 
-    const vat = order.taxes_money; // Extracted from total
+    const vat = order.tax; // Extracted from total
 
     if (receiptContent) {
       const printWindow = window.open(
@@ -174,11 +156,11 @@ export class COrdersDetailsComponent {
             </tr>`
             : '',
         ziDiscountRow:
-          this.convertStringToNumber(ziDiscount) !== 0
+          ziDiscount
             ? `
     <tr>
       <td>Zi Points:</td>
-      <td>${this.convertStringToNumber(ziDiscount)}</td>
+      <td>${ziDiscount}</td>
     </tr>
   `
             : '',
@@ -219,12 +201,9 @@ export class COrdersDetailsComponent {
           <table>
             <tr>
               <td>Subtotal:</td>
-              <td>${subtotal.toFixed(2)} EGP</td>
+              <td>${subtotal} EGP</td>
             </tr>
-            <tr>
-              <td>Service Charge:</td>
-              <td>${serviceCharge}</td>
-            </tr>
+            
             <tr>
               <td>VAT:</td>
               <td>${vat}</td>
@@ -237,7 +216,7 @@ export class COrdersDetailsComponent {
             ${Object.values(printedReceiptRows).filter(Boolean).join('')}
             <tr>
               <td><strong>Total:</strong></td>
-              <td><strong>${totalPrice.toFixed(2)} EGP</strong></td>
+              <td><strong>${totalPrice} EGP</strong></td>
             </tr>
           </table>
           <p class="total">Printed on: ${new Date().toLocaleString()}</p>
@@ -261,21 +240,21 @@ export class COrdersDetailsComponent {
     }
   }
 
-  statusSteps = ['placed', 'confirmed', 'on the way', 'delivered', 'cancelled'];
+  statusSteps = ['requested', 'preparing', 'out_for_delivery', 'delivered', 'canceled'];
   private ordersService = inject(OrdersService);
   messageService = inject(MessageService);
   private ngxSpinnerService = inject(NgxSpinnerService);
   getStatusClass(status: string): string {
     switch (status) {
-      case 'placed':
+      case 'requested':
         return 'bg-yellow-200 text-yellow-800'; // Light Yellow
-      case 'confirmed':
+      case 'preparing':
         return 'bg-blue-200 text-blue-800'; // Light Blue
-      case 'on the way':
+      case 'out_for_delivery':
         return 'bg-orange-200 text-orange-800'; // Light Orange
       case 'delivered':
         return 'bg-green-200 text-green-800'; // Light Green
-      case 'cancelled':
+      case 'canceled':
         return 'bg-red-200 text-green-800'; // Light Green
       default:
         return ''; // Default (no styling)
@@ -283,15 +262,15 @@ export class COrdersDetailsComponent {
   }
   getAvailableStatusOptions(currentStatus: string) {
     const statusWithIcons = [
-      { label: 'Placed', value: 'placed', icon: 'pi pi-inbox text-yellow-500' },
+      { label: 'Placed', value: 'requested', icon: 'pi pi-inbox text-yellow-500' },
       {
-        label: 'Confirmed',
-        value: 'confirmed',
+        label: 'Preparing',
+        value: 'preparing',
         icon: 'pi pi-check-circle text-blue-500',
       },
       {
-        label: 'On The Way',
-        value: 'on the way',
+        label: 'Out For Delivery',
+        value: 'out_for_delivery',
         icon: 'pi pi-truck text-orange-500',
       },
       {
@@ -300,8 +279,8 @@ export class COrdersDetailsComponent {
         icon: 'pi pi-box text-green-500',
       },
       {
-        label: 'cancelled',
-        value: 'cancelled',
+        label: 'Cancele',
+        value: 'canceled',
         icon: 'pi pi-times text-green-500',
       },
     ];
