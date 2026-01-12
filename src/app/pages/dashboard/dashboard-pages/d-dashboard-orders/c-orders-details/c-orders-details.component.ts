@@ -256,6 +256,8 @@ export class COrdersDetailsComponent {
         return 'bg-green-200 text-green-800'; // Light Green
       case 'canceled':
         return 'bg-red-200 text-green-800'; // Light Green
+      case 'failed':
+        return 'bg-red-200 text-green-800'; // Light Green
       default:
         return ''; // Default (no styling)
     }
@@ -281,13 +283,15 @@ export class COrdersDetailsComponent {
       {
         label: 'Cancele',
         value: 'canceled',
-        icon: 'pi pi-times text-green-500',
+        icon: 'pi pi-times text-red-500',
       },
+      { label: 'Failed', value: 'failed', icon: 'pi pi-times-circle text-red-500' },
     ];
 
-    const currentIndex = this.statusSteps.indexOf(currentStatus);
-
-    // ✅ Disable previous steps
+    const currentIndex = statusWithIcons.findIndex(
+      status => status.value === currentStatus
+    );
+  
     return statusWithIcons.map((status, index) => ({
       ...status,
       disabled: index < currentIndex,

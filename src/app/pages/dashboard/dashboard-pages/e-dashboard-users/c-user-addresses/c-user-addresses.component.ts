@@ -27,13 +27,12 @@ export class CUserAddressesComponent {
   }
 
   fetchData(): void {
-    this.userAddresses = this.activatedRoute.snapshot.data["userData"].row.addresses;
+    this.userAddresses = this.activatedRoute.snapshot.data["LocationsData"].data;
+    console.log(this.userAddresses);
+    
     this.userData = this.activatedRoute.snapshot.data["userData"];
     const LocationsData = this.activatedRoute.snapshot.data["LocationsData"];
-    this.Locations = LocationsData.locations;
+    this.Locations = LocationsData.data;
   }
 
-  findLocations(id: number): string | undefined {
-    return this.Locations.find((e) => e.id === id)?.en_location;
-  }
 }

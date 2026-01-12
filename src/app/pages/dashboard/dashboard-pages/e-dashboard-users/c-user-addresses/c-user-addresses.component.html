@@ -1,7 +1,7 @@
 @if (userAddresses.length > 0) {
 <div class="card">
   <div class="flex justify-between items-center">
-    <h2 class="text-2xl font-semibold mb-4">{{ userData.row.name }} Addresses</h2>
+    <h2 class="text-2xl font-semibold mb-4">{{ userData.data.name }} Addresses</h2>
     <div class="flex justify-end">
       <button
         icon="pi pi-angle-double-left"
@@ -12,20 +12,22 @@
     </div>
   </div>
 
-  <p-table [value]="userAddresses" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+  <p-table [value]="userAddresses" [paginator]="false" [rows]="5" responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center">Address ID</th>
         <th class="text-center">City</th>
         <th class="text-center">Address</th>
+        <th class="text-center">Floor</th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-address>
       <tr>
         <td class="text-center">{{ address.id }}</td>
-        <td class="text-center">{{ findLocations(address.location_id) }}</td>
+        <td class="text-center">{{ address.region.title_en }}</td>
         <td class="text-center">{{ address.address }}</td>
+        <td class="text-center">{{ address?.floor ?? 'N/A' }}</td>
       </tr>
     </ng-template>
   </p-table>

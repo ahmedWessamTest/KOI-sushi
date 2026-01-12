@@ -50,16 +50,7 @@ export class DashboardSideBarComponent {
         {
           label: 'Offers',
           items: [
-            // {
-            //   label: 'Hot Box Offers',
-            //   icon: 'pi pi-fw pi-bolt',
-            //   routerLink: ['/dashboard/offers/boxes'],
-            // },
-            // {
-            //   label: 'Free Choice Offer',
-            //   icon: 'pi pi-fw pi-box',
-            //   routerLink: ['/dashboard/offers/combo'],
-            // },
+
             {
               label: 'Promo Codes',
               icon: 'pi pi-fw pi-qrcode',
@@ -102,11 +93,6 @@ export class DashboardSideBarComponent {
               icon: 'pi pi-fw pi-th-large',
               routerLink: ['/dashboard/menu/products'],
             },
-            // {
-            //   label: "Add New Product",
-            //   icon: "pi pi-fw pi-plus",
-            //   routerLink: ["/dashboard/products/add"],
-            // },
           ],
         },
         {
@@ -134,26 +120,26 @@ export class DashboardSideBarComponent {
             },
           ],
         },
-        // {
-        //   label: 'Pages',
-        //   items: [
-        //     {
-        //       label: 'Tutorial',
-        //       icon: 'pi pi-fw pi-list-check',
-        //       routerLink: ['/dashboard/pages/tutorial'],
-        //     },
-        //     {
-        //       label: 'About Us',
-        //       icon: 'pi pi-fw pi-info-circle',
-        //       routerLink: ['/dashboard/pages/about-us'],
-        //     },
-        //     {
-        //       label: 'Privacy Policy',
-        //       icon: 'pi pi-fw pi-lock',
-        //       routerLink: ['/dashboard/pages/privacy-policy'],
-        //     },
-        //   ],
-        // },
+        {
+          label: 'Pages',
+          items: [
+            {
+              label: 'Tutorial',
+              icon: 'pi pi-fw pi-list-check',
+              routerLink: ['/dashboard/pages/tutorial'],
+            },
+            {
+              label: 'About Us',
+              icon: 'pi pi-fw pi-info-circle',
+              routerLink: ['/dashboard/pages/about-us'],
+            },
+            {
+              label: 'Privacy Policy',
+              icon: 'pi pi-fw pi-lock',
+              routerLink: ['/dashboard/pages/privacy-policy'],
+            },
+          ],
+        },
         // {
         //   label: 'Areas',
         //   items: [

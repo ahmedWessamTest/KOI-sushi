@@ -253,8 +253,8 @@
       <ng-template pTemplate="body" let-item let-i="rowIndex">
         <tr>
           <td class="text-center">{{ i + 1 }}</td>
-          <td class="text-center">{{ item.product.title_en }}</td>
-          <td class="text-center">{{ item.quantity }}</td>
+          <td class="text-center">{{ item?.product?.title_en }}</td>
+          <td class="text-center">{{ item?.quantity }}</td>
           <td class="text-center">
             {{ item.price * item.quantity | currency : " EGP " }}
           </td>
@@ -413,9 +413,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of userOrders">
-          <td class="border p-2">{{ item.product.title_en }}</td>
-          <td class="border p-2">{{ item.quantity }}</td>
-          <td class="border p-2">{{ item.price | currency : " EGP " }}</td>
+          <td class="border p-2">{{ item?.product?.title_en }}</td>
+          <td class="border p-2">{{ item?.quantity }}</td>
+          <td class="border p-2">{{ item?.price | currency : " EGP " }}</td>
         </tr>
       </tbody>
     </table>

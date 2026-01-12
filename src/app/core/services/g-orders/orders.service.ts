@@ -51,4 +51,14 @@ export class OrdersService {
   getNewOrders() {
     return this.http.get(`${WEB_SITE_BASE_URL}checkavail/1`);
   }
+  getOrdersHistory(page: number = 1, limit: number = 10,date_from?:string,date_to?:string ) {
+    let requestBody: any = {limit,page};
+        if (date_from && date_to) {
+          requestBody = {...requestBody,
+            date_from: dayjs(date_from).format("YYYY-MM-DD"),
+            date_to: dayjs(date_to).format("YYYY-MM-DD"),
+          };
+        }
+    return this.http.post<IAllOrders>(`${WEB_SITE_BASE_URL}orders/history`, requestBody);
+  }
 }

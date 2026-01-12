@@ -14,7 +14,7 @@ import { InputSwitchModule } from "primeng/inputswitch";
 import { LoadingDataBannerComponent } from "../../../../../shared/components/loading-data-banner/loading-data-banner.component";
 import { ToastModule } from "primeng/toast";
 import { RouterLink } from "@angular/router";
-import { ISelectOptions } from "../../../../../core/Interfaces/core/ISelectOptions";
+import { MultiSelectModule } from "primeng/multiselect";
 
 @Component({
   selector: "app-a-all-users",
@@ -30,12 +30,18 @@ import { ISelectOptions } from "../../../../../core/Interfaces/core/ISelectOptio
     LoadingDataBannerComponent,
     ToastModule,
     RouterLink,
-  ],
+    MultiSelectModule,
+],
   templateUrl: "./a-all-users.component.html",
   styleUrl: "./a-all-users.component.scss",
   providers: [ConfirmationService, MessageService],
 })
 export class AAllUsersComponent {
+  userStatusOptions = [
+  { label: 'Active', key: 'is_active' },
+  { label: 'Verified', key: 'is_verified' },
+  { label: 'Deleted', key: 'is_deleted' },
+]
   users: usersData[] = [];
   selectedUsers: usersData[] = [];
 
@@ -50,17 +56,9 @@ export class AAllUsersComponent {
   private usersService = inject(UsersService);
 
   ngOnInit(): void {
-    this.fetchData();
+    this.loadUsers();
   }
 
-  fetchData(): void {
-    this.usersService.getAllUsers().subscribe({
-      next: (response) => {
-        this.users = response.data.data;
-        this.selectedUsers = response.data.data;
-      },
-    });
-  }
 
   onGlobalFilter(dt: Table, event: any) {
     const value = event.target.value;
@@ -125,7 +123,7 @@ export class AAllUsersComponent {
 
     const updatedStatus = usersData.status ; // Toggle between 0 and 1
     if (updatedStatus) {
-      this.usersService.updateUser(usersData.id.toString(), { status: Number(updatedStatus) }).subscribe(() => {
+      this.usersService.toggleUserStatus(usersData.id.toString()).subscribe(() => {
         usersData.status = updatedStatus; // Update the UI immediately
         this.messageService.add({
           severity: "success",
@@ -134,17 +132,7 @@ export class AAllUsersComponent {
         });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
       });
-    } else {
-      this.usersService.updateUser(usersData.id.toString(), { status: Number(updatedStatus) }).subscribe(() => {
-        usersData.status = updatedStatus; // Update the UI immediately
-        this.messageService.add({
-          severity: "success",
-          summary: "Updated",
-          detail: `User ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-        });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-      });
-    }
+    } 
   }
 
   totalRecords: number = 0;
@@ -152,18 +140,21 @@ export class AAllUsersComponent {
   currentPage = 1;
 
   onPageChange(event: any) {
-    this.currentPage = event.first / event.rows + 1; // Convert to 1-based index
     this.rowsPerPage = event.rows;
-    this.loadProducts(this.currentPage, this.rowsPerPage);
+    this.currentPage = (event.first / event.rows) + 1
+    this.loadUsers();
   }
 
-  loadProducts(page: number, perPage: number) {
+  loadUsers() {
     this.ngxSpinnerService.show("actionsLoader");
 
-    this.usersService.getAllUsers(page, perPage).subscribe({
+    this.usersService.getAllUsers(this.currentPage, this.rowsPerPage).subscribe({
       next: (response) => {
         this.ngxSpinnerService.hide("actionsLoader");
         this.users = response.data.data;
+        this.totalRecords = response.data.total;
+        console.log(this.totalRecords);
+        
       },
     });
   }
@@ -193,11 +184,13 @@ export class AAllUsersComponent {
 
       accept: () => {
         this.ngxSpinnerService.show("actionsLoader");
+        console.log(this.selectedUsers);
+        
         const SelectedUsers = this.selectedUsers.map((user) => user.id);
-        let data = { users_ids: SelectedUsers, admin_status: 0 };
-        console.log(SelectedUsers);
-        this.usersService.disableSelectedUsers("1", data).subscribe((response) => {
-          this.loadProducts(this.currentPage, this.rowsPerPage);
+        let data = { users: SelectedUsers, status: false };
+        this.usersService.disableSelectedUsers(data).subscribe((response) => {
+          this.loadUsers();
+          this.selectedUsers = [];
         });
       },
       reject: () => {},
@@ -216,13 +209,55 @@ export class AAllUsersComponent {
       accept: () => {
         this.ngxSpinnerService.show("actionsLoader");
         const SelectedUsers = this.selectedUsers.map((user) => user.id);
-        let data = { users_ids: SelectedUsers, admin_status: 1 };
-        console.log(SelectedUsers);
-        this.usersService.disableSelectedUsers("1", data).subscribe((response) => {
-          this.loadProducts(this.currentPage, this.rowsPerPage);
+        let data = { users: SelectedUsers, status: true };
+        this.usersService.enableSelectedUsers(data).subscribe((response) => {
+          this.loadUsers();
+          this.selectedUsers = [];
         });
       },
       reject: () => {},
     });
   }
+  getUserStatusModel(user: usersData): string[] {
+  const selected: string[] = [];
+
+  // if (user.is_active) selected.push('is_active');
+  // if (user.is_verified) selected.push('is_verified');
+  // if (user.is_deleted) selected.push('is_deleted');
+
+  return selected;
+}
+onUserStatusChange(user: usersData, event: any) {
+  const selectedKeys: string[] = event.value;
+
+  const payload: any = {};
+
+  payload.is_active = selectedKeys.includes('is_active');
+  payload.is_verified = selectedKeys.includes('is_verified');
+  payload.is_deleted = selectedKeys.includes('is_deleted');
+
+  this.ngxSpinnerService.show('actionsLoader');
+
+  // this.usersService.updateUser(user.id.toString(), payload).subscribe({
+  //   next: () => {
+  //     // sync UI
+  //     user.is_active = payload.is_active;
+  //     user.is_verified = payload.is_verified;
+  //     user.is_deleted = payload.is_deleted;
+
+  //     this.messageService.add({
+  //       severity: 'success',
+  //       summary: 'Updated',
+  //       detail: 'User status updated'
+  //     });
+
+  //     this.ngxSpinnerService.hide('actionsLoader');
+  //   },
+  //   error: () => {
+  //     this.ngxSpinnerService.hide('actionsLoader');
+  //   }
+  // });
+}
+
+
 }

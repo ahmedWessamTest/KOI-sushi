@@ -29,7 +29,6 @@ import {
   switchMap,
   takeUntil,
   tap,
-  timer,
 } from 'rxjs';
 
 import { OnlyNumberDirective } from '../../../../../../only-number.directive';

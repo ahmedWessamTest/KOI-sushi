@@ -231,11 +231,11 @@ export class AOrdersComponent implements OnInit {
   }
   getStatusClass(status: string): string {
     switch (status) {
-      case 'placed':
+      case 'requested':
         return 'bg-yellow-200 text-yellow-800'; // Light Yellow
-      case 'confirmed':
+      case 'preparing':
         return 'bg-blue-200 text-blue-800'; // Light Blue
-      case 'on the way':
+      case 'out_for_delivery':
         return 'bg-orange-200 text-orange-800'; // Light Orange
       case 'delivered':
         return 'bg-green-200 text-green-800'; // Light Green
@@ -318,5 +318,53 @@ export class AOrdersComponent implements OnInit {
     console.log(event);
     this.currentPage = (event.first / event.rows) + 1
     this.loadOrders();
+  }
+   onSort(event: any) {
+    const { field, order } = event;
+    
+    this.filteredOrders.sort((a: any, b: any) => {
+      let valueA = a[field];
+      let valueB = b[field];
+      if(field === 'user') {
+        valueA = valueA?.name;
+        valueB = valueB?.name;
+      }
+      if(field === 'address') {
+        valueA = valueA?.address;
+        valueB = valueB?.address;
+      }
+
+      if (order === -1) {
+        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+      } else {
+        return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+      }
+    });
+  }
+  currentSearchTerm: string = '';
+  applyFilters(): void {
+    let filtered = [...this.orders];
+
+    // Apply search term filter
+    if (this.currentSearchTerm) {
+      filtered = filtered.filter((order) => {
+        return (
+          order.id.toString().includes(this.currentSearchTerm) ||
+          order.user?.name.toLowerCase().includes(this.currentSearchTerm) ||
+          order.total_price.toString().includes(this.currentSearchTerm) 
+        );
+      });
+    }
+
+    this.filteredOrders = filtered;
+  }
+  onGlobalFilter(table: Table, event: Event) {
+
+    this.currentSearchTerm = (
+      event.target as HTMLInputElement
+    ).value.toLowerCase();
+    console.log(this.currentSearchTerm);
+    this.applyFilters()
+    table.filterGlobal(this.currentSearchTerm, 'contains');
   }
 }

@@ -15,7 +15,7 @@ export class TutorialService {
   constructor(private http: HttpClient) {}
 
   getAllTutorial() {
-    return this.http.get<IGetAllTutorials>(`${WEB_SITE_BASE_URL}toutrial_index`);
+    return this.http.get<IGetAllTutorials>(`${WEB_SITE_BASE_URL}toutrial`);
   }
   getTutorialById(tutorialId: string) {
     return this.http.get<IGetTutorialById>(`${WEB_SITE_BASE_URL}toutrial_data/${tutorialId}`);

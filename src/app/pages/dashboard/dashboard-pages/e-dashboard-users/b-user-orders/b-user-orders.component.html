@@ -1,7 +1,7 @@
 @if (userOrders) {
 <div class="card">
   <div class="flex justify-between items-center">
-    <h2 class="text-2xl font-semibold mb-4">{{ userData.row.name }} Orders</h2>
+    <h2 class="text-2xl font-semibold mb-4">{{ userData.data.name }} Orders</h2>
     <div class="flex justify-end">
       <button
         icon="pi pi-angle-double-left"
@@ -14,8 +14,7 @@
   </div>
   <p-table
     [value]="userOrders"
-    [paginator]="true"
-    [rows]="5"
+    [paginator]="false"
     responsiveLayout="scroll"
   >
     <ng-template pTemplate="header">
@@ -31,11 +30,11 @@
       <tr>
         <td class="text-center">{{ order.id }}</td>
         <td class="text-center">
-          {{ order.total_price.toFixed(2) | currency : " EGP " }}
+          {{ order.total_price | currency : " EGP " }}
         </td>
         <td class="text-center">{{ order.status }}</td>
         <td class="text-center">
-          {{ order.order_date | date : "medium" }}
+          {{ order.created_at | date : "medium" }}
         </td>
       </tr>
     </ng-template>

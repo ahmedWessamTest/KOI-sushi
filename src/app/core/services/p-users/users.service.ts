@@ -15,20 +15,26 @@ export class UsersService {
   getAllUsers(page: number = 1, perPage: number = 10) {
     return this.http.get<IGetAllUsers>(`${WEB_SITE_BASE_URL}users?page=${page}&limit=${perPage}`);
   }
+  getUserAddress(id: string) {
+    return this.http.get<any>(`${WEB_SITE_BASE_URL}users/${id}/addresses`);
+  }
+  getUserOrders(id: string) {
+    return this.http.get<any>(`${WEB_SITE_BASE_URL}users/${id}/orders`);
+  }
 
   getUserById(userId: string) {
-    return this.http.get<IGetUserById>(`${WEB_SITE_BASE_URL}user_show/${userId}`);
+    return this.http.get<IGetUserById>(`${WEB_SITE_BASE_URL}users/${userId}`);
   }
 
-  updateUser(userId: string, userData: IUpdateUserBody) {
-    return this.http.post<IUpdateUserResponse>(`${WEB_SITE_BASE_URL}user_update/${userId}`, userData);
+  toggleUserStatus(userId: string) {
+    return this.http.post<IUpdateUserResponse>(`${WEB_SITE_BASE_URL}users/${userId}/toggle`,{});
   }
 
-  enableSelectedUsers(userId: string, userData: {}) {
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}user_update/${userId}`, userData);
+  enableSelectedUsers(userData: {}) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple`, userData);
   }
 
-  disableSelectedUsers(userId: string, userData: {}) {
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}user_update/${userId}`, userData);
+  disableSelectedUsers(userData: {}) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple`, userData);
   }
 }

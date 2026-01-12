@@ -35,10 +35,9 @@ export class BUserOrdersComponent {
   }
 
   fetchData(): void {
-    this.userOrders = this.activatedRoute.snapshot.data["userData"].row.confirmed_orders;
+    this.userOrders = this.activatedRoute.snapshot.data["userOrders"].data;
     this.userData = this.activatedRoute.snapshot.data["userData"];
     console.log(this.userData);
-    console.log(this.userData.row);
     console.log(this.userOrders);
   }
 }

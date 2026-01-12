@@ -12,12 +12,11 @@
       <span class="p-input-icon-right">
         <i class="pi pi-search"></i>
         <input
-          #search
           class="mb-0"
           type="text"
           pInputText
           placeholder="Search orders boxes..."
-          (input)="dt.filterGlobal(search.value, 'contains')"
+          (input)="onGlobalFilter(dt, $event)"
         />
       </span>
     </div>
@@ -77,24 +76,26 @@
       (onPage)="onPageChange($event)"
       [rowsPerPageOptions]="getPagination()"
       [showCurrentPageReport]="true"
+      [sortMode]="'single'"
+    (onSort)="onSort($event)"
       [globalFilterFields]="[
         'id',
-        'user.name',
-        'order_date',
+        'name',
+        'created_at',
         'total_price',
-        'sub_location_title'
+        'address.address'
       ]"
-      [value]="orders"
+      [value]="filteredOrders"
       responsiveLayout="scroll"
-      sortField="order_date"
+      sortField="created_at"
       columnResizeMode="expand"
       [sortOrder]="-1"
     >
       <ng-template pTemplate="header">
         <tr>
           <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
-          <th pSortableColumn="user.name">
-            User <p-sortIcon field="user.name" />
+          <th pSortableColumn="user">
+            User <p-sortIcon field="user" />
           </th>
           <th pSortableColumn="created_at">
             Date <p-sortIcon field="created_at" />
@@ -103,8 +104,8 @@
             Time <p-sortIcon field="created_at" />
           </th>
           <th>Branch</th>
-          <th pSortableColumn="address.address" pResizableColumn>
-            Area <p-sortIcon field="address.address" />
+          <th pSortableColumn="address" pResizableColumn>
+            Area <p-sortIcon field="address" />
           </th>
           <th pSortableColumn="total_price">
             Price <p-sortIcon field="total_price" />

@@ -15,6 +15,7 @@
     [(selection)]="selectedUsers"
     [value]="users"
     [paginator]="totalRecords"
+    [lazy]="true"
     [rows]="rowsPerPage"
     [rowsPerPageOptions]="getPagination()"
     [totalRecords]="totalRecords"
@@ -30,6 +31,7 @@
         <th class="text-center" pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
         <th class="text-center" pSortableColumn="phone">Phone <p-sortIcon field="role"></p-sortIcon></th>
         <th class="text-center" pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+        <th class="text-center" pSortableColumn="controls">Activate Users<p-sortIcon field="controls"></p-sortIcon></th>
         <th class="text-center">Actions</th>
       </tr>
     </ng-template>
@@ -47,11 +49,15 @@
         </td>
         <td class="text-center">
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
-            [ngModel]="user.admin_status"
+            [ngModel]="user.status"
             (onChange)="toggleUsersStatus(user)"></p-inputSwitch>
         </td>
+        <td class="text-center">
+          <p-inputSwitch
+            [ngModel]="user.status"
+            (onChange)="toggleUsersStatus(user)"></p-inputSwitch>
+        </td>
+        
         <td class="flex justify-center gap-1 mx-auto">
           <p-button
             [routerLink]="['/dashboard/users/users-address', user.id]"

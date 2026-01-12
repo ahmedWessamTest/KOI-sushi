@@ -21,6 +21,7 @@ import { promoCodeDetailsResolver } from './pages/dashboard/dashboard-pages/b-da
 import { voucherDetailsResolver } from './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/res/guards/voucher.guard';
 import { JInternetConnectionComponent } from './pages/dashboard/dashboard-pages/j-internet-connection/j-internet-connection.component';
 import { HappyHoursEditResolver } from './core/resolvers/c-happy-hours/happy-hours-edit.resolver';
+import { userOrdersResolver } from './core/resolvers/p-users/user-orders.resolver';
 
 export const routes: Routes = [
   // Auth
@@ -836,7 +837,6 @@ export const routes: Routes = [
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
                 },
-                resolve: { branches: allBranchesResolver },
                 runGuardsAndResolvers: 'always',
               },
               {
@@ -911,7 +911,7 @@ export const routes: Routes = [
               },
               {
                 path: 'users-orders/:id',
-                resolve: { userData: usersDetailsResolver },
+                resolve: { userData: usersDetailsResolver,userOrders:userOrdersResolver },
                 runGuardsAndResolvers: 'always',
                 loadComponent: () =>
                   import(
