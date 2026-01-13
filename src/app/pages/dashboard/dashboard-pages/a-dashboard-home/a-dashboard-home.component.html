@@ -42,7 +42,7 @@
 <div class="grid lg:grid-cols-3 gap-3">
    </div>
 </div>
-  @if (Statics && Statics.branches) {
+  @if (Statics && Statics.branches && isAdmin) {
   <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
     <button 
       (click)="onBranchTabChange(0)"
