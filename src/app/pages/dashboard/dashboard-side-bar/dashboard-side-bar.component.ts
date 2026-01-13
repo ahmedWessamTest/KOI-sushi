@@ -160,26 +160,26 @@ export class DashboardSideBarComponent {
             },
           ],
         },
-        // {
-        //   label: 'Contact Us',
-        //   items: [
-        //     {
-        //       label: 'Manage Branches',
-        //       icon: 'pi pi-fw pi-home',
-        //       routerLink: ['/dashboard/contact-us/branches'],
-        //     },
-        //     {
-        //       label: 'Social Media',
-        //       icon: 'pi pi-fw pi-share-alt',
-        //       routerLink: ['/dashboard/contact-us/social-links'],
-        //     },
-        //     {
-        //       label: 'Inbox',
-        //       icon: 'pi pi-fw pi-envelope',
-        //       routerLink: ['/dashboard/contact-us/messages'],
-        //     },
-        //   ],
-        // },
+        {
+          label: 'Contact Us',
+          items: [
+            {
+              label: 'Manage Branches',
+              icon: 'pi pi-fw pi-home',
+              routerLink: ['/dashboard/contact-us/branches'],
+            },
+            {
+              label: 'Social Media',
+              icon: 'pi pi-fw pi-share-alt',
+              routerLink: ['/dashboard/contact-us/social-links'],
+            },
+            {
+              label: 'Inbox',
+              icon: 'pi pi-fw pi-envelope',
+              routerLink: ['/dashboard/contact-us/messages'],
+            },
+          ],
+        },
         {
           label: 'Settings',
           items: [
@@ -197,41 +197,32 @@ export class DashboardSideBarComponent {
       ];
     } else {
       this.model = [
-        // {
-        //   label: 'Home',
-        //   items: [
-        //     {
-        //       label: 'Dashboard',
-        //       icon: 'pi pi-fw pi-chart-bar',
-        //       routerLink: ['/dashboard'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   label: 'Orders',
-        //   items: [
-        //     {
-        //       label: 'Track Orders',
-        //       icon: 'pi pi-fw pi-truck',
-        //       routerLink: ['/dashboard/orders/orders'],
-        //     },
-        //     {
-        //       label: 'Order History',
-        //       icon: 'pi pi-fw pi-history',
-        //       routerLink: ['/dashboard/orders/history'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   label: 'Notifications',
-        //   items: [
-        //     {
-        //       label: 'Send Notifications',
-        //       icon: 'pi pi-fw pi-mobile',
-        //       routerLink: ['/dashboard/notifications'],
-        //     },
-        //   ],
-        // },
+        {
+          label: 'Home',
+          items: [
+            {
+              label: 'Dashboard',
+              icon: 'pi pi-fw pi-chart-bar',
+              routerLink: ['/dashboard'],
+            },
+          ],
+        },
+        {
+          label: 'Orders',
+          items: [
+            {
+              label: 'Track Orders',
+              icon: 'pi pi-fw pi-truck',
+              routerLink: ['/dashboard/orders/orders'],
+            },
+            {
+              label: 'Order History',
+              icon: 'pi pi-fw pi-history',
+              routerLink: ['/dashboard/orders/history'],
+            },
+          ],
+        },
+
         {
           label: 'Settings',
           items: [

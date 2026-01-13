@@ -26,8 +26,8 @@ export class MessageDetailsComponent {
     this.message = this.activatedRoute.snapshot.data["message"];
     if (this.message) {
       this.messageDetails = [
-        { label: `Email: ${this.message.row.email}`, icon: "pi pi-envelope" },
-        { label: `Phone: ${this.message.row.phone}`, icon: "pi pi-phone" },
+        { label: `Email: ${this.message.email}`, icon: "pi pi-envelope" },
+        { label: `Phone: ${this.message.phone}`, icon: "pi pi-phone" },
       ];
     }
   }

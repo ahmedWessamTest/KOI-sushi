@@ -12,9 +12,9 @@ export class SocialLinksService {
   constructor(private http: HttpClient) {}
 
   getSocialMediaLinks(): Observable<ISocialMediaLinks> {
-    return this.http.get<ISocialMediaLinks>(`${WEB_SITE_BASE_URL}contactinfoindex`);
+    return this.http.get<ISocialMediaLinks>(`${WEB_SITE_BASE_URL}social-links`);
   }
   updateSocialMediaLinks(socialMedia: ISocialMediaUpdate): Observable<{ success: string }> {
-    return this.http.post<{ success: string }>(`${WEB_SITE_BASE_URL}contactinfoupdate/1`, socialMedia);
+    return this.http.post<{ success: string }>(`${WEB_SITE_BASE_URL}social-links`, socialMedia);
   }
 }

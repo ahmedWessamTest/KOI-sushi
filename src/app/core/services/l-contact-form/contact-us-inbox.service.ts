@@ -11,10 +11,10 @@ import { IGetMessageById } from "../../Interfaces/l-contact-form/IGetMessageById
 export class ContactUsInboxService {
   constructor(private http: HttpClient) {}
 
-  getContactUsMessages() {
-    return this.http.get<IGetAllMessages>(`${WEB_SITE_BASE_URL}feedback_index`);
+  getContactUsMessages(page: number = 1, perPage: number = 10) {
+    return this.http.get<IGetAllMessages>(`${WEB_SITE_BASE_URL}contact-us?page=${page}&limit=${perPage}`);
   }
   getContactUsMessagesById(messageId: string) {
-    return this.http.get<IGetMessageById>(`${WEB_SITE_BASE_URL}feedback_data/${messageId}`);
+    return this.http.get<IGetMessageById>(`${WEB_SITE_BASE_URL}contact-us/${messageId}`);
   }
 }

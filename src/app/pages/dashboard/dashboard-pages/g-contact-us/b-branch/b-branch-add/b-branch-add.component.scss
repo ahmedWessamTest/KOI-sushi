@@ -1,0 +1,8 @@
+::ng-deep .p-dropdown,
+::ng-deep .p-multiselect,
+::ng-deep .p-calendar {
+  width: 100% !important;
+}
+::ng-deep .p-fileupload-buttonbar {
+  display: none;
+}

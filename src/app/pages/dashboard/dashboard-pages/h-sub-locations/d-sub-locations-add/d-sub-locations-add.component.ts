@@ -67,6 +67,7 @@ export class DSubLocationsAddComponent {
   constructor() {
     this.subLocationForm = this.fb.group({
       title_en: ["", Validators.required],
+      delivery_time: ["", Validators.required],
       title_ar: ["", Validators.required],
       governorate_id: ["", Validators.required],
       delivery_fee: ["", Validators.required],
@@ -91,6 +92,7 @@ export class DSubLocationsAddComponent {
 patchFormValues(data:any) {
   this.subLocationForm.patchValue({
     title_en: data.title_en,
+    delivery_time: data.delivery_time,
       title_ar: data.title_ar,
       governorate_id: data.governorate.id,
       delivery_fee: data.delivery_fee,

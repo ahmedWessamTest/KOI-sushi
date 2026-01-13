@@ -43,7 +43,8 @@ export interface IBranch {
 
 export interface ILocation {
   id: number
-  delivery_fee:string
+  delivery_fee:string;
+  delivery_time:string
   title_ar: string
   title_en: string
   status: boolean

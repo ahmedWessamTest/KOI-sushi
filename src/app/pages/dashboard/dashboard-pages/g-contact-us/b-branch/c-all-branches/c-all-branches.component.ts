@@ -10,7 +10,7 @@ import { InputSwitchModule } from "primeng/inputswitch";
 import { TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 import { timer } from "rxjs";
-import { BranchesData } from "../../../../../../core/Interfaces/j-branches/IAllBranches";
+import { Branches, BranchesData } from "../../../../../../core/Interfaces/j-branches/IAllBranches";
 import { BranchesService } from "../../../../../../core/services/j-branches/branches.service";
 import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
 @Component({
@@ -33,7 +33,7 @@ import { LoadingDataBannerComponent } from "../../../../../../shared/components/
   providers: [MessageService],
 })
 export class CAllBranchesComponent {
-  branches: BranchesData[] = [];
+  branches: Branches[] = [];
 
   loading = false;
 
@@ -52,7 +52,7 @@ export class CAllBranchesComponent {
     this.loading = true;
     this.branchesService.getAllBranches().subscribe(
       (response) => {
-        // this.branches = response.data.reverse();
+        this.branches = response.data;
         this.loading = false;
       },
       () => {
@@ -63,13 +63,12 @@ export class CAllBranchesComponent {
   }
 
   // Toggle Branches
-  toggleBranchStatus(branch: BranchesData) {
+  toggleBranchStatus(branch: any) {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
 
-    const updatedStatus = branch.status ? 0 : 1; // Toggle between 0 and 1
-    if (updatedStatus) {
-      this.branchesService.enableBranch(branch.id.toString()).subscribe(() => {
+    const updatedStatus = !branch.status; // Toggle between 0 and 1
+      this.branchesService.toggleBranch(branch.id.toString()).subscribe(() => {
         branch.status = updatedStatus; // Update the UI immediately
         this.messageService.add({
           severity: "success",
@@ -78,16 +77,5 @@ export class CAllBranchesComponent {
         });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
       });
-    } else {
-      this.branchesService.destroyBranch(branch.id.toString()).subscribe(() => {
-        branch.status = updatedStatus; // Update the UI immediately
-        this.messageService.add({
-          severity: "success",
-          summary: "Updated",
-          detail: `Branch ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-        });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-      });
-    }
   }
 }

@@ -18,18 +18,18 @@ export class BranchesService {
     return this.http.get<IAllBranches>(`${WEB_SITE_BASE_URL}branches`);
   }
   getBranchById(branchId: string) {
-    return this.http.get<IBranchById>(`${WEB_SITE_BASE_URL}branch_data/${branchId}`);
+    return this.http.get<IBranchById>(`${WEB_SITE_BASE_URL}branches/${branchId}`);
   }
-  addBranch(branchData: IAddBranchBody) {
-    return this.http.post<IAddBranch>(`${WEB_SITE_BASE_URL}branch_store`, branchData);
+  addBranch(branchData: FormData) {
+    return this.http.post<IAddBranch>(`${WEB_SITE_BASE_URL}branches`, branchData);
   }
-  updateBranch(branchId: string, branchData: IAddBranchBody) {
-    return this.http.post<IUpdateBranch>(`${WEB_SITE_BASE_URL}branch_update/${branchId}`, branchData);
+  updateBranch(branchId: string, branchData: FormData) {
+    return this.http.post<IUpdateBranch>(`${WEB_SITE_BASE_URL}branches/${branchId}`, branchData);
   }
   destroyBranch(branchId: string) {
     return this.http.post<IToggleBranch>(`${WEB_SITE_BASE_URL}branch_destroy/${branchId}`, {});
   }
-  enableBranch(branchId: string) {
-    return this.http.post<IToggleBranch>(`${WEB_SITE_BASE_URL}branch_enable/${branchId}`, {});
+  toggleBranch(branchId: string) {
+    return this.http.post<IToggleBranch>(`${WEB_SITE_BASE_URL}branches/${branchId}/toggle`, {});
   }
 }

@@ -21,7 +21,10 @@
         <label class="font-medium text-gray-600">Price</label>
         <p class="text-gray-900 font-semibold">{{ location.delivery_fee| currency : " EGP " }}</p>
       </div>
-
+      <div class="flex flex-col">
+        <label class="font-medium text-gray-600">Delivery Time</label>
+        <p class="text-gray-900 font-semibold">{{ location.delivery_time}}</p>
+      </div>
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">City</label>
         <p class="text-gray-900 font-semibold">{{ location.governorate.title_en }}</p>
@@ -32,6 +35,7 @@
         <label class="font-medium text-gray-600">Branch</label>
         <p class="text-gray-900 font-semibold">{{ location.branch.title_en}}</p>
       </div>
+      
 
       <!-- Status -->
       <div class="flex flex-col">

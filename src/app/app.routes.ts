@@ -849,7 +849,6 @@ export const routes: Routes = [
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
                 },
-                resolve: { branches: allBranchesResolver },
                 runGuardsAndResolvers: 'always',
               },
               {

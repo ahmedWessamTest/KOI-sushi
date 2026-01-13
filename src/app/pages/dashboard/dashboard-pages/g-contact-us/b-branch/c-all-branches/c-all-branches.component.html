@@ -27,14 +27,12 @@
     <ng-template pTemplate="body" let-branch>
       <tr>
         <td>{{ branch.id }}</td>
-        <td>{{ branch.en_branch_location }}</td>
-        <td>{{ branch.en_branch_city }}</td>
-        <td>{{ branch.en_branch_address }}</td>
-        <td>{{ branch.branch_phone_1 }}</td>
+        <td>{{ branch.title_ar }}</td>
+        <td>{{ branch.title_en }}</td>
+        <td>{{ branch.address_en }}</td>
+        <td>{{ branch.phone_primary }}</td>
         <td>
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
             [ngModel]="branch.status"
             (onChange)="toggleBranchStatus(branch)"></p-inputSwitch>
         </td>

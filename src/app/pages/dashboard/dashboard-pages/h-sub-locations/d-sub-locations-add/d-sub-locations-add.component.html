@@ -34,6 +34,15 @@
         </div>
         }
       </div>
+      <div class="flex flex-col">
+        <label class="font-medium mb-3">Delivery Time</label>
+        <input required appOnlyNumber pInputText formControlName="delivery_time" class="p-inputtext-sm w-full" />
+        @if (subLocationForm.get('delivery_time')?.invalid && subLocationForm.get('delivery_time')?.touched) {
+        <div class="p-error">
+          <small>Delivery Time is required.</small>
+        </div>
+        }
+      </div>
 
       <div class="flex flex-col">
         <label class="font-medium mb-3">City</label>

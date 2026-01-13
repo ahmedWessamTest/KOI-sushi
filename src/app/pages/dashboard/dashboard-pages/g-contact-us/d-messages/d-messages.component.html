@@ -15,8 +15,14 @@
   <p-table
     #table
     [paginator]="true"
-    [rows]="1000"
+    [totalRecords]="totalRecords"
+    [(rows)]="rowsPerPage"
+    [rowsPerPageOptions]="getPagination()"
+    [showCurrentPageReport]="true"
+    responsiveLayout="scroll"
+    (onPage)="onPageChange($event)"
     [value]="emails"
+    [lazy]="true"
     [styleClass]="'min-h-[50vh] flex justify-between flex-col'"
     [responsive]="true"
     [sortField]="'created_at'"
@@ -45,7 +51,7 @@
     <ng-template pTemplate="body" let-email>
       <tr>
         <td class="text-center">{{ email.id }}</td>
-        <td class="text-center">{{ email.full_name }}</td>
+        <td class="text-center">{{ email.name }}</td>
         <td class="text-center">
           <span pTooltip="{{ email.message }}" [tooltipPosition]="'top'">
             {{ email.message | slice : 0 : 20

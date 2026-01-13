@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
-import { IBranchById } from "../../../../../../core/Interfaces/j-branches/IBranchById";
+import { Branches } from "../../../../../../core/Interfaces/j-branches/IBranchById";
 
 @Component({
   selector: "app-a-branch-details",
@@ -16,9 +16,9 @@ import { IBranchById } from "../../../../../../core/Interfaces/j-branches/IBranc
 export class ABranchDetailsComponent {
   private ActivatedRoute = inject(ActivatedRoute);
 
-  branchData!: IBranchById;
+  branchData!: Branches;
 
   ngOnInit(): void {
-    this.branchData = this.ActivatedRoute.snapshot.data["branch"];
+    this.branchData = this.ActivatedRoute.snapshot.data["branch"].data;
   }
 }

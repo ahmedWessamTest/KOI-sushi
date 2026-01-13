@@ -4,7 +4,7 @@
       <span class="user-avatar">
         <i class="pi pi-user"></i>
       </span>
-      <h2>{{ message.row.full_name }}</h2>
+      <h2>{{ message.name }}</h2>
     </div>
 
     <p-listbox [options]="messageDetails" class="message-list">
@@ -18,12 +18,12 @@
 
     <div class="message-body">
       <h3>Message</h3>
-      <p>{{ message.row.message }}</p>
+      <p>{{ message.message }}</p>
     </div>
 
     <div class="message-footer">
       <span class="created-at">
-        <i class="pi pi-clock"></i> Received on: {{ message.row.created_at | date : "medium" }}</span
+        <i class="pi pi-clock"></i> Received on: {{ message.created_at | date : "medium" }}</span
       >
     </div>
   </div>

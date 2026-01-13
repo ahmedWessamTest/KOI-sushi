@@ -1,13 +1,10 @@
 export interface IGetMessageById {
-  row: Row;
+  id: number
+  name: string
+  email: string
+  phone: string
+  message: string
+  created_at: string
+  updated_at: string
 }
 
-export interface Row {
-  id: number;
-  full_name: string;
-  email: string;
-  phone: string;
-  message: string;
-  created_at: string;
-  updated_at: string;
-}

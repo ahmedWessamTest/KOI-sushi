@@ -32,8 +32,8 @@ export class ASocialMediaLinksComponent implements OnInit {
     this.isLoading = true;
     this.socialLinksService.getSocialMediaLinks().subscribe({
       next: (response: ISocialMediaLinks) => {
-        if (response && response.rows) {
-          this.socialMediaLinks = this.convertResponseToLinks(response.rows);
+        if (response && response.data) {
+          this.socialMediaLinks = this.convertResponseToLinks(response.data);
         }
         this.isLoading = false;
       },
@@ -45,16 +45,16 @@ export class ASocialMediaLinksComponent implements OnInit {
   }
 
   // Convert API response into UI-friendly structure
-  convertResponseToLinks(contact: ISocialMediaLinks["rows"]): any[] {
+  convertResponseToLinks(contact: ISocialMediaLinks["data"]): any[] {
     return [
-      { key: "tweet_link", label: "Twitter", icon: "pi-twitter", url: contact.tweet_link || "" },
-      { key: "snap_link", label: "Snapchat", icon: "pi-comment", url: contact.snap_link || "" },
-      { key: "insta_link", label: "Instagram", icon: "pi-instagram", url: contact.insta_link || "" },
-      { key: "watus_link", label: "WhatsApp", icon: "pi-whatsapp", url: contact.watus_link || "" },
-      { key: "tiktok_link", label: "TikTok", icon: "pi-tiktok", url: contact.tiktok_link || "" },
-      { key: "face_link", label: "Facebook", icon: "pi-facebook", url: contact.face_link || "" },
-      { key: "linked_link", label: "LinkedIn", icon: "pi-linkedin", url: contact.linked_link || "" },
-      { key: "main_email", label: "Email", icon: "pi-envelope", url: contact.main_email || "" },
+      { key: "twitter", label: "Twitter", icon: "pi-twitter", url: contact.twitter || "" },
+      { key: "snapchat", label: "Snapchat", icon: "pi-comment", url: contact.snapchat || "" },
+      { key: "instagram", label: "Instagram", icon: "pi-instagram", url: contact.instagram || "" },
+      { key: "whatsapp", label: "WhatsApp", icon: "pi-whatsapp", url: contact.whatsapp || "" },
+      { key: "tiktok", label: "TikTok", icon: "pi-tiktok", url: contact.tiktok || "" },
+      { key: "facebook", label: "Facebook", icon: "pi-facebook", url: contact.facebook || "" },
+      { key: "linkedin", label: "LinkedIn", icon: "pi-linkedin", url: contact.linkedin || "" },
+      { key: "email", label: "Email", icon: "pi-envelope", url: contact.email || "" },
     ].filter((link) => link.url !== null); // Remove null values
   }
 
@@ -78,14 +78,14 @@ export class ASocialMediaLinksComponent implements OnInit {
   // Convert UI input back to API format
   convertLinksToRequestBody(links: any[]): ISocialMediaUpdate {
     const requestBody: ISocialMediaUpdate = {
-      tweet_link: "",
-      snap_link: "",
-      insta_link: "",
-      watus_link: "",
-      tiktok_link: "",
-      face_link: "",
-      linked_link: "",
-      main_email: "",
+      twitter: "",
+      snapchat: "",
+      instagram: "",
+      whatsapp: "",
+      tiktok: "",
+      facebook: "",
+      linkedin: "",
+      email: "",
     };
 
     links.forEach((link) => {

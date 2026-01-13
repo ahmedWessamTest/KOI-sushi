@@ -1,31 +1,47 @@
 <p-card class="p-4">
   <ng-template pTemplate="title">
-    <h2 class="text-xl font-semibold text-gray-800">{{ isEditing ? "Edit Branch" : "Add Branch" }}</h2>
+    <h2 class="text-xl font-semibold text-gray-800">
+      {{ isEditing ? "Edit Branch" : "Add Branch" }}
+    </h2>
   </ng-template>
 
   <ng-template pTemplate="content">
     <form [formGroup]="branchForm" class="grid md:grid-cols-2 gap-6">
       <div class="flex flex-col">
         <label class="font-medium">English Location</label>
-        <input type="text" pInputText required formControlName="en_branch_location" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('en_branch_location')?.invalid && branchForm.get('en_branch_location')?.touched) {
+        <input
+          type="text"
+          pInputText
+          required
+          formControlName="title_en"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('title_en')?.invalid &&
+        branchForm.get('title_en')?.touched) {
         <div class="p-error">
-          <small>English Location is required.</small>
+          <small>English location is required.</small>
         </div>
         }
       </div>
 
       <div class="flex flex-col">
-        <label class="font-medium">Arabic Location</label>
-        <input type="text" pInputText required formControlName="ar_branch_location" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('ar_branch_location')?.invalid && branchForm.get('ar_branch_location')?.touched) {
+        <label class="font-medium">Branch Name(Ar)</label>
+        <input
+          type="text"
+          pInputText
+          required
+          formControlName="title_ar"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('title_ar')?.invalid &&
+        branchForm.get('title_ar')?.touched) {
         <div class="p-error">
-          <small>Arabic Location is required.</small>
+          <small>Arabic location is required.</small>
         </div>
         }
       </div>
 
-      <div class="flex flex-col">
+      <!-- <div class="flex flex-col">
         <label class="font-medium">English City</label>
         <input type="text" pInputText required formControlName="en_branch_city" class="p-inputtext-sm w-full" />
         @if (branchForm.get('en_branch_city')?.invalid && branchForm.get('en_branch_city')?.touched) {
@@ -33,9 +49,9 @@
           <small>English City is required.</small>
         </div>
         }
-      </div>
+      </div> -->
 
-      <div class="flex flex-col">
+      <!-- <div class="flex flex-col">
         <label class="font-medium">Arabic City</label>
         <input type="text" pInputText required formControlName="ar_branch_city" class="p-inputtext-sm w-full" />
         @if (branchForm.get('ar_branch_city')?.invalid && branchForm.get('ar_branch_city')?.touched) {
@@ -43,12 +59,19 @@
           <small>Arabic City is required.</small>
         </div>
         }
-      </div>
+      </div> -->
 
       <div class="flex flex-col">
         <label class="font-medium">English Address</label>
-        <input type="text" pInputText required formControlName="en_branch_address" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('en_branch_address')?.invalid && branchForm.get('en_branch_address')?.touched) {
+        <input
+          type="text"
+          pInputText
+          required
+          formControlName="address_en"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('address_en')?.invalid &&
+        branchForm.get('address_en')?.touched) {
         <div class="p-error">
           <small>English Address is required.</small>
         </div>
@@ -57,8 +80,15 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Arabic Address</label>
-        <input type="text" pInputText required formControlName="ar_branch_address" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('ar_branch_address')?.invalid && branchForm.get('ar_branch_address')?.touched) {
+        <input
+          type="text"
+          pInputText
+          required
+          formControlName="address_ar"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('address_ar')?.invalid &&
+        branchForm.get('address_ar')?.touched) {
         <div class="p-error">
           <small>Arabic Address is required.</small>
         </div>
@@ -67,18 +97,37 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Location URL</label>
-        <input type="text" pInputText required formControlName="location_url" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('location_url')?.invalid && branchForm.get('location_url')?.touched) {
+
+        <input
+          type="text"
+          pInputText
+          formControlName="location_url"
+          class="p-inputtext-sm w-full"
+        />
+
+        @if ( branchForm.get('location_url')?.touched &&
+        branchForm.get('location_url')?.invalid ) {
         <div class="p-error">
+          @if (branchForm.get('location_url')?.errors?.['required']) {
           <small>Location URL is required.</small>
+          } @if (branchForm.get('location_url')?.errors?.['pattern']) {
+          <small>Please enter a valid location URL.</small>
+          }
         </div>
         }
       </div>
 
       <div class="flex flex-col">
         <label class="font-medium">Phone 1</label>
-        <input appOnlyNumber type="text" pInputText formControlName="branch_phone_1" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('branch_phone_1')?.invalid && branchForm.get('branch_phone_1')?.touched) {
+        <input
+          appOnlyNumber
+          type="text"
+          pInputText
+          formControlName="phone_primary"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('phone_primary')?.invalid &&
+        branchForm.get('phone_primary')?.touched) {
         <div class="p-error">
           <small>Phone 1 must be a valid Egyptian phone number.</small>
         </div>
@@ -87,8 +136,15 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Phone 2</label>
-        <input appOnlyNumber type="text" pInputText formControlName="branch_phone_2" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('branch_phone_2')?.invalid && branchForm.get('branch_phone_2')?.touched) {
+        <input
+          appOnlyNumber
+          type="text"
+          pInputText
+          formControlName="phone_secondary"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('phone_secondary')?.invalid &&
+        branchForm.get('phone_secondary')?.touched) {
         <div class="p-error">
           <small>Phone 2 must be a valid Egyptian phone number.</small>
         </div>
@@ -97,8 +153,15 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Phone 3</label>
-        <input appOnlyNumber type="text" pInputText formControlName="branch_phone_3" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('branch_phone_3')?.invalid && branchForm.get('branch_phone_3')?.touched) {
+        <input
+          appOnlyNumber
+          type="text"
+          pInputText
+          formControlName="phone_tertiary"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('phone_tertiary')?.invalid &&
+        branchForm.get('phone_tertiary')?.touched) {
         <div class="p-error">
           <small>Phone 3 must be a valid Egyptian phone number.</small>
         </div>
@@ -106,8 +169,15 @@
       </div>
       <div class="flex flex-col">
         <label class="font-medium">English Disable Message</label>
-        <input type="text" pInputText required formControlName="en_close_message" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('en_close_message')?.invalid && branchForm.get('en_close_message')?.touched) {
+        <input
+          type="text"
+          pInputText
+          required
+          formControlName="disable_en"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('disable_en')?.invalid &&
+        branchForm.get('disable_en')?.touched) {
         <div class="p-error">
           <small>English Disable Message is required.</small>
         </div>
@@ -116,19 +186,140 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Arabic Disable Message</label>
-        <input type="text" pInputText required formControlName="ar_close_message" class="p-inputtext-sm w-full" />
-        @if (branchForm.get('ar_close_message')?.invalid && branchForm.get('ar_close_message')?.touched) {
+        <input
+          type="text"
+          pInputText
+          required
+          formControlName="disable_ar"
+          class="p-inputtext-sm w-full"
+        />
+        @if (branchForm.get('disable_ar')?.invalid &&
+        branchForm.get('disable_ar')?.touched) {
         <div class="p-error">
           <small>Arabic Disable Message is required.</small>
         </div>
         }
       </div>
+      <div class="flex flex-col">
+        <label class="font-medium">Opening Time</label>
+
+        <p-calendar
+          formControlName="opening_time"
+          [timeOnly]="true"
+          hourFormat="24"
+          class="w-full"
+        ></p-calendar>
+
+        @if (branchForm.get('opening_time')?.touched &&
+        branchForm.get('opening_time')?.invalid) {
+        <div class="p-error">
+          <small>Opening time is required.</small>
+        </div>
+        }
+      </div>
+      <div class="flex flex-col">
+  <label  class="font-medium">Closing Time</label>
+
+  <p-calendar
+    formControlName="closing_time"
+    timeOnly
+    dateFormat="24" 
+    class="w-full"
+  ></p-calendar>
+
+  @if (branchForm.get('closing_time')?.touched &&
+  branchForm.get('closing_time')?.invalid) {
+    <div class="p-error">
+      <small>Closing time is required.</small>
+    </div>
+  }
+  @if (
+  branchForm.errors?.['invalidTimeRange'] &&
+  (branchForm.get('closing_time')?.touched ||
+    branchForm.get('opening_time')?.touched)
+) {
+  <div class="p-error">
+    <small>Closing time must be later than opening time.</small>
+  </div>
+}
+</div>
+<div class="flex flex-col">
+        <label class="font-medium mb-3">City</label>
+        <p-dropdown
+          required
+          [filter]="true"
+          optionLabel="title_en"
+          [options]="governorates"
+          styleClass="w-full border border-black/25 rounded-[10px] px-3"
+          formControlName="governorate_id"
+          optionValue="id"
+          placeholder="Select a City" />
+
+        @if (branchForm.get('governorate_id')?.invalid && branchForm.get('governorate_id')?.touched) {
+        <div class="p-error">
+          <small>City is required.</small>
+        </div>
+        }
+      </div>
+@if (lightImageBase) {
+    <div class="relative w-32 h-32 mb-2 border rounded-lg overflow-hidden group md:col-span-2">
+      <img [src]="lightImageBase" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+        <span class="text-white text-xs">Current Image</span>
+      </div>
+    </div>
+  }
+      <div class="flex flex-col md:col-span-2">
+        <label class="font-medium">Map Image</label>
+
+        <p-fileUpload
+          #fileUpload
+          name="light_map"
+          accept="image/*"
+          [auto]="true"
+          [maxFileSize]="2000000"
+          [chooseLabel]="'Choose Image'"
+          [uploadLabel]="'Upload'"
+          [styleClass]="'w-full'"
+          [cancelLabel]="'Cancel'"
+          (onRemove)="clearImage()"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          [customUpload]="true"
+          (onSelect)="onLightMapSelect($event)"
+          [draggable]="true"
+        >
+          <ng-template pTemplate="content">
+            <div
+              class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-main-500 transition"
+            >
+              <i class="pi pi-cloud-upload text-4xl text-gray-400"></i>
+              <p class="text-gray-500 mt-2">
+                Drag & drop an image or
+                <span
+                  class="text-blue-500 cursor-pointer"
+                  (click)="fileUpload.choose()"
+                  >click to select</span
+                >
+              </p>
+            </div>
+          </ng-template>
+        </p-fileUpload>
+        @if ( branchForm.get('light_map')?.touched &&
+        branchForm.get('light_map')?.invalid ) {
+        <div class="p-error">
+          <small>Light map image is required.</small>
+        </div>
+        }
+      </div>
+
       <!-- <div class="flex items-center gap-2">
         <label class="font-medium">Status</label>
         <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="status"></p-inputSwitch>
       </div> -->
     </form>
   </ng-template>
+  
 
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-3 mt-4">
@@ -137,8 +328,14 @@
         pButton
         label="Cancel"
         class="p-button-text"
-        routerLink="/dashboard/contact-us/branches"></button>
-      <button pButton label="Save" (click)="saveBranch()" class="p-button-success btn-main px-3"></button>
+        routerLink="/dashboard/contact-us/branches"
+      ></button>
+      <button
+        pButton
+        label="Save"
+        (click)="saveBranch()"
+        class="p-button-success btn-main px-3"
+      ></button>
     </div>
   </ng-template>
 </p-card>
