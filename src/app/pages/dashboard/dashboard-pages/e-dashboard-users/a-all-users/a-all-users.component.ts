@@ -43,6 +43,7 @@ export class AAllUsersComponent {
   { label: 'Deleted', key: 'is_deleted' },
 ]
   users: usersData[] = [];
+  filteredUsers:usersData[] = []
   selectedUsers: usersData[] = [];
 
   roles: string[] = ["User", "Admin"];
@@ -58,11 +59,28 @@ export class AAllUsersComponent {
   ngOnInit(): void {
     this.loadUsers();
   }
+  applyFilters(): void {
+    let filtered = [...this.users];
 
+    // Apply search term filter
+    if (this.currentSearchTerm) {
+      filtered = filtered.filter((user) => {
+        return (
+          user.id.toString().includes(this.currentSearchTerm) ||
+          user.name.toLowerCase().includes(this.currentSearchTerm) 
+        );
+      });
+    }
 
-  onGlobalFilter(dt: Table, event: any) {
-    const value = event.target.value;
-    dt.filterGlobal(value, "contains");
+    this.filteredUsers = filtered;
+  }
+currentSearchTerm:string = ''
+  onGlobalFilter(table: Table, event: any) {
+     this.currentSearchTerm = (
+      event.target as HTMLInputElement
+    ).value.toLowerCase();
+    this.applyFilters()
+    table.filterGlobal(this.currentSearchTerm, 'contains');
   }
 
   confirmRoleChange(user: any): void {
@@ -100,19 +118,17 @@ export class AAllUsersComponent {
       },
     });
   }
+onSort(event: any) {
+    const { field, order } = event;
+    this.filteredUsers.sort((a: any, b: any) => {
+      let valueA = a[field];
+      let valueB = b[field];
 
-  confirmDelete(user: any): void {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
-      header: "Confirm Deletion",
-      icon: "pi pi-exclamation-triangle",
-      // accept: () => {
-      //   this.adminUserService.deleteUser(user.id).subscribe(() => {
-      //     this.users = this.users.filter((u) => u.id !== user.id);
-      //     this.filteredUsers = this.filteredUsers.filter((u) => u.id !== user.id);
-      //     this.messageService.add({ severity: "success", summary: "Deleted", detail: `User ${user.name} deleted.` });
-      //   });
-      // },
+      if (order === -1) {
+        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+      } else {
+        return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+      }
     });
   }
 
@@ -121,8 +137,7 @@ export class AAllUsersComponent {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
 
-    const updatedStatus = usersData.status ; // Toggle between 0 and 1
-    if (updatedStatus) {
+    const updatedStatus = !usersData.status ; // Toggle between 0 and 1
       this.usersService.toggleUserStatus(usersData.id.toString()).subscribe(() => {
         usersData.status = updatedStatus; // Update the UI immediately
         this.messageService.add({
@@ -132,7 +147,23 @@ export class AAllUsersComponent {
         });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
       });
-    } 
+    
+  }
+  toggleUsersActivation(usersData: usersData) {
+    this.ngxSpinnerService.show("actionsLoader");
+    this.messageService.clear();
+
+    const updatedStatus = !usersData.is_active ; // Toggle between 0 and 1
+      this.usersService.toggleUserActivation(usersData.id.toString()).subscribe(() => {
+        usersData.is_active = updatedStatus; // Update the UI immediately
+        this.messageService.add({
+          severity: "success",
+          summary: "Updated",
+          detail: `User ${updatedStatus ? "Activated" : "Deactivated"} successfully`,
+        });
+        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+      });
+    
   }
 
   totalRecords: number = 0;
@@ -152,6 +183,7 @@ export class AAllUsersComponent {
       next: (response) => {
         this.ngxSpinnerService.hide("actionsLoader");
         this.users = response.data.data;
+        this.filteredUsers = [...this.users]
         this.totalRecords = response.data.total;
         console.log(this.totalRecords);
         
@@ -218,46 +250,51 @@ export class AAllUsersComponent {
       reject: () => {},
     });
   }
-  getUserStatusModel(user: usersData): string[] {
-  const selected: string[] = [];
+  deactivateSelectedUsers(): void {
+    this.confirmationService.confirm({
+      message: "Are you sure you want to deactivate selected users?",
+      header: "deactivate Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      rejectLabel: "No",
+      acceptLabel: "Yes",
+      closeOnEscape: true,
+      acceptButtonStyleClass: "p-button-danger mx-2",
 
-  // if (user.is_active) selected.push('is_active');
-  // if (user.is_verified) selected.push('is_verified');
-  // if (user.is_deleted) selected.push('is_deleted');
+      accept: () => {
+        this.ngxSpinnerService.show("actionsLoader");
+        console.log(this.selectedUsers);
+        
+        const SelectedUsers = this.selectedUsers.map((user) => user.id);
+        let data = { users: SelectedUsers, is_active: false };
+        this.usersService.deactivateSelectedUsers(data).subscribe((response) => {
+          this.loadUsers();
+          this.selectedUsers = [];
+        });
+      },
+      reject: () => {},
+    });
+  }
+  
+  activateSelectedUsers(): void {
+    this.confirmationService.confirm({
+      message: "Are you sure you want to activate selected users?",
+      header: "activate Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      rejectLabel: "No",
+      acceptLabel: "Yes",
+      closeOnEscape: true,
+      acceptButtonStyleClass: "p-button-danger mx-2",
 
-  return selected;
-}
-onUserStatusChange(user: usersData, event: any) {
-  const selectedKeys: string[] = event.value;
-
-  const payload: any = {};
-
-  payload.is_active = selectedKeys.includes('is_active');
-  payload.is_verified = selectedKeys.includes('is_verified');
-  payload.is_deleted = selectedKeys.includes('is_deleted');
-
-  this.ngxSpinnerService.show('actionsLoader');
-
-  // this.usersService.updateUser(user.id.toString(), payload).subscribe({
-  //   next: () => {
-  //     // sync UI
-  //     user.is_active = payload.is_active;
-  //     user.is_verified = payload.is_verified;
-  //     user.is_deleted = payload.is_deleted;
-
-  //     this.messageService.add({
-  //       severity: 'success',
-  //       summary: 'Updated',
-  //       detail: 'User status updated'
-  //     });
-
-  //     this.ngxSpinnerService.hide('actionsLoader');
-  //   },
-  //   error: () => {
-  //     this.ngxSpinnerService.hide('actionsLoader');
-  //   }
-  // });
-}
-
-
+      accept: () => {
+        this.ngxSpinnerService.show("actionsLoader");
+        const SelectedUsers = this.selectedUsers.map((user) => user.id);
+        let data = { users: SelectedUsers, is_active: true };
+        this.usersService.activateSelectedUsers(data).subscribe((response) => {
+          this.loadUsers();
+          this.selectedUsers = [];
+        });
+      },
+      reject: () => {},
+    });
+  }
 }

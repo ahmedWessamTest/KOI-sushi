@@ -1,14 +1,16 @@
 export interface ITutorialAddResponse {
-  ToutrialContent: ToutrialContent;
-  success: string;
+  success: boolean
+  data: ToutrialContent
 }
 
 export interface ToutrialContent {
-  en_title: string;
-  ar_title: string;
-  en_Text: string;
-  content_type: string;
-  updated_at: string;
-  created_at: string;
-  id: number;
+  id: number
+  title_ar: string
+  title_en: string
+  description_ar: string
+  description_en: string
+  image: string
+  status: boolean
+  created_at: string
+  updated_at: string
 }

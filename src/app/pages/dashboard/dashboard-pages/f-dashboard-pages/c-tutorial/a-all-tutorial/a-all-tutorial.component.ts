@@ -49,7 +49,7 @@ export class AAllTutorialComponent {
     this.loading = true;
     this.tutorialService.getAllTutorial().subscribe(
       (response) => {
-        this.tutorials = response.content.data.reverse();
+        this.tutorials = response.data
         this.loading = false;
       },
       () => {

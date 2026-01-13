@@ -15,16 +15,16 @@ export class TutorialService {
   constructor(private http: HttpClient) {}
 
   getAllTutorial() {
-    return this.http.get<IGetAllTutorials>(`${WEB_SITE_BASE_URL}toutrial`);
+    return this.http.get<IGetAllTutorials>(`${WEB_SITE_BASE_URL}tutorial`);
   }
   getTutorialById(tutorialId: string) {
-    return this.http.get<IGetTutorialById>(`${WEB_SITE_BASE_URL}toutrial_data/${tutorialId}`);
+    return this.http.get<IGetTutorialById>(`${WEB_SITE_BASE_URL}tutorial/${tutorialId}`);
   }
   addTutorial(tutorialData: ITutorialAddBody) {
     return this.http.post<ITutorialAddResponse>(`${WEB_SITE_BASE_URL}toutrial_store`, tutorialData);
   }
   updateTutorial(tutorialId: string, locationData: ITutorialUpdateBody) {
-    return this.http.post<ITutorialUpdateResponse>(`${WEB_SITE_BASE_URL}toutrial_update/${tutorialId}`, locationData);
+    return this.http.post<ITutorialUpdateResponse>(`${WEB_SITE_BASE_URL}tutorial/${tutorialId}`, locationData);
   }
   // destroyToutrial(tutorialId: string) {
   //   return this.http.post<any>(`${WEB_SITE_BASE_URL}toutrial_destroy/${tutorialId}`, {});

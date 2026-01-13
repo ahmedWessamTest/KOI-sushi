@@ -11,9 +11,9 @@ export class PrivacyPolicyService {
   constructor(private http: HttpClient) {}
 
   getPrivacyPolicy() {
-    return this.http.get<IPrivacyPolicyData>(`${WEB_SITE_BASE_URL}privacy_index`);
+    return this.http.get<IPrivacyPolicyData>(`${WEB_SITE_BASE_URL}privacy-policy`);
   }
   updatePrivacyPolicy(privacyPolicyData: FormData) {
-    return this.http.post<IPrivacyPolicyUpdateResponse>(`${WEB_SITE_BASE_URL}privacy_update/1`, privacyPolicyData);
+    return this.http.post<IPrivacyPolicyUpdateResponse>(`${WEB_SITE_BASE_URL}privacy-policy`, privacyPolicyData);
   }
 }

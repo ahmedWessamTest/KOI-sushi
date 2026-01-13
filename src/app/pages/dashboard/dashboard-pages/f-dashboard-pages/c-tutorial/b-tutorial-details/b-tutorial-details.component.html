@@ -8,23 +8,23 @@
       <!-- English & Arabic Names -->
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">English Title</label>
-        <p class="text-gray-900 font-semibold">{{ tutorialData.ToutrialContent.en_title }}</p>
+        <p class="text-gray-900 font-semibold">{{ tutorialData.title_en }}</p>
       </div>
 
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">Arabic Title</label>
-        <p class="text-gray-900 font-semibold">{{ tutorialData.ToutrialContent.ar_title }}</p>
+        <p class="text-gray-900 font-semibold">{{ tutorialData.title_ar }}</p>
       </div>
 
       <!-- English & Arabic Texts -->
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">English Content</label>
-        <p class="text-gray-900 font-semibold">{{ tutorialData.ToutrialContent.en_Text }}</p>
+        <p class="text-gray-900 font-semibold">{{ tutorialData.description_en }}</p>
       </div>
 
       <div class="flex flex-col">
         <label class="font-medium text-gray-600">Arabic Content</label>
-        <p class="text-gray-900 font-semibold">{{ tutorialData.ToutrialContent.ar_text }}</p>
+        <p class="text-gray-900 font-semibold">{{ tutorialData.description_ar }}</p>
       </div>
 
       <!-- Created & Updated Date -->
@@ -56,7 +56,7 @@
         pButton
         label="Edit Tutorial"
         class="p-button-primary btn-main px-3"
-        [routerLink]="['/dashboard/pages/tutorial/tutorial-edit', tutorialData.ToutrialContent.id]"></button>
+        [routerLink]="['/dashboard/pages/tutorial/tutorial-edit', tutorialData.id]"></button>
     </div>
   </ng-template>
 </p-card>

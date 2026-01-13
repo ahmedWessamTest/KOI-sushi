@@ -24,8 +24,8 @@
     <ng-template pTemplate="body" let-tutorial>
       <tr>
         <td>{{ tutorial.id }}</td>
-        <td>{{ tutorial.en_title }}</td>
-        <td>{{ tutorial.ar_title }}</td>
+        <td>{{ tutorial.title_en }}</td>
+        <td>{{ tutorial.title_ar }}</td>
         <td>
           <a
             [routerLink]="['/dashboard/pages/tutorial/tutorial-edit', tutorial.id]"

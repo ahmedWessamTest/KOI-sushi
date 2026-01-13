@@ -27,14 +27,24 @@ export class UsersService {
   }
 
   toggleUserStatus(userId: string) {
-    return this.http.post<IUpdateUserResponse>(`${WEB_SITE_BASE_URL}users/${userId}/toggle`,{});
+    return this.http.post<IUpdateUserResponse>(`${WEB_SITE_BASE_URL}users/${userId}/toggle-status`,{});
+  }
+  toggleUserActivation(userId: string) {
+    return this.http.post<IUpdateUserResponse>(`${WEB_SITE_BASE_URL}users/${userId}/toggle-active`,{});
   }
 
   enableSelectedUsers(userData: {}) {
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple`, userData);
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple-status`, userData);
   }
 
   disableSelectedUsers(userData: {}) {
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple`, userData);
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple-status`, userData);
+  }
+  activateSelectedUsers(userData: {}) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple-active`, userData);
+  }
+
+  deactivateSelectedUsers(userData: {}) {
+    return this.http.post<any>(`${WEB_SITE_BASE_URL}users/toggle-multiple-active`, userData);
   }
 }

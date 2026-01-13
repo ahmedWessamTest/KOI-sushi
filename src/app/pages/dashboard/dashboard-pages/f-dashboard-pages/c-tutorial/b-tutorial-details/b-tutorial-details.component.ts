@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
-import { IGetTutorialById } from "../../../../../../core/Interfaces/a-tutorial-content/IGetTutorialById";
+import { ToutrialContent } from "../../../../../../core/Interfaces/a-tutorial-content/ITutorialAddResponse";
 
 @Component({
   selector: "app-b-tutorial-details",
@@ -16,9 +16,9 @@ import { IGetTutorialById } from "../../../../../../core/Interfaces/a-tutorial-c
 export class BTutorialDetailsComponent {
   private ActivatedRoute = inject(ActivatedRoute);
 
-  tutorialData!: IGetTutorialById;
+  tutorialData!: ToutrialContent;
 
   ngOnInit(): void {
-    this.tutorialData = this.ActivatedRoute.snapshot.data["tutorial"];
+    this.tutorialData = this.ActivatedRoute.snapshot.data["tutorial"].data;
   }
 }

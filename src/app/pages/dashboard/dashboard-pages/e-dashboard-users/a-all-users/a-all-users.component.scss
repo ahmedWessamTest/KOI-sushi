@@ -1,3 +1,29 @@
 ::ng-deep .p-checkbox-box.p-component {
   border: 0.5px solid #e3492375;
 }
+/* تحسين شكل الـ Badges */
+::ng-deep .user-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+
+    &.status-active {
+        background: #C8E6C9;
+        color: #256029;
+    }
+
+    &.status-inactive {
+        background: #FFCDD2;
+        color: #C63737;
+    }
+}
+
+/* إضافة ظل خفيف للـ Toolbar */
+::ng-deep .p-datatable-header {
+    background: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    border-width: 1px 0 1px 0;
+}

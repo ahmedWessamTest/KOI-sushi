@@ -13,16 +13,61 @@
   <p-table
     #dt
     [(selection)]="selectedUsers"
-    [value]="users"
+    [value]="filteredUsers"
     [paginator]="totalRecords"
     [lazy]="true"
     [rows]="rowsPerPage"
     [rowsPerPageOptions]="getPagination()"
     [totalRecords]="totalRecords"
     [showCurrentPageReport]="true"
+    (onSort)="onSort($event)"
     (onPage)="onPageChange($event)"
     [globalFilterFields]="['id', 'name', 'email']"
     responsiveLayout="scroll">
+    <ng-template pTemplate="caption">
+      <div class="flex flex-wrap align-items-center justify-content-between gap-2">
+        <div class="flex gap-2">
+          <button 
+            pButton 
+            label="Enable Selected" 
+            icon="pi pi-check-circle" 
+            class="p-button-success p-button-sm shadow-1" 
+            (click)="enableSelectedUsers()" 
+            [disabled]="!selectedUsers || !selectedUsers.length">
+          </button>
+          
+          <button 
+            pButton 
+            label="Disable Selected" 
+            icon="pi pi-ban" 
+            class="p-button-danger p-button-sm shadow-1" 
+            (click)="disableSelectedUsers()" 
+            [disabled]="!selectedUsers || !selectedUsers.length">
+          </button>
+        </div>
+        <div class="flex gap-2">
+          <button 
+            pButton 
+            label="activate Selected" 
+            icon="pi pi-check-circle" 
+            class="p-button-success p-button-sm shadow-1" 
+            (click)="activateSelectedUsers()" 
+            [disabled]="!selectedUsers || !selectedUsers.length">
+          </button>
+          
+          <button 
+            pButton 
+            label="deactivate Selected" 
+            icon="pi pi-ban" 
+            class="p-button-danger p-button-sm shadow-1" 
+            (click)="deactivateSelectedUsers()" 
+            [disabled]="!selectedUsers || !selectedUsers.length">
+          </button>
+        </div>
+
+       
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
         <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
@@ -30,8 +75,8 @@
         <th class="text-center" pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
         <th class="text-center" pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
         <th class="text-center" pSortableColumn="phone">Phone <p-sortIcon field="role"></p-sortIcon></th>
-        <th class="text-center" pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
-        <th class="text-center" pSortableColumn="controls">Activate Users<p-sortIcon field="controls"></p-sortIcon></th>
+        <th class="text-center" >Status </th>
+        <th class="text-center" >Activate Users</th>
         <th class="text-center">Actions</th>
       </tr>
     </ng-template>
@@ -54,8 +99,8 @@
         </td>
         <td class="text-center">
           <p-inputSwitch
-            [ngModel]="user.status"
-            (onChange)="toggleUsersStatus(user)"></p-inputSwitch>
+            [ngModel]="user.is_active"
+            (onChange)="toggleUsersActivation(user)"></p-inputSwitch>
         </td>
         
         <td class="flex justify-center gap-1 mx-auto">
@@ -74,21 +119,6 @@
           " />
         </td>
       </tr>
-    </ng-template>
-
-    <ng-template pTemplate="summary">
-      <div class="flex align-items-center justify-content-between">
-        <button
-          pButton
-          label="disable Selected Users"
-          (click)="disableSelectedUsers()"
-          class="p-button-success btn-main px-3"></button>
-        <button
-          pButton
-          label="Enable Selected Users"
-          (click)="enableSelectedUsers()"
-          class="p-button-success btn-main px-3"></button>
-      </div>
     </ng-template>
   </p-table>
 </div>

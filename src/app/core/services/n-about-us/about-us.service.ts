@@ -8,12 +8,15 @@ import { IAboutUsData } from "./../../Interfaces/n-about-us/IAboutUsData";
   providedIn: "root",
 })
 export class AboutUsService {
+
   constructor(private http: HttpClient) {}
 
   getAboutUs() {
-    return this.http.get<IAboutUsData>(`${WEB_SITE_BASE_URL}about_index`);
+    return this.http.get<IAboutUsData>(`${WEB_SITE_BASE_URL}about`);
   }
+
   updateAboutUs(aboutUsData: FormData) {
-    return this.http.post<IAboutUsUpdateResponse>(`${WEB_SITE_BASE_URL}about_update/1`, aboutUsData);
+    return this.http.post<IAboutUsUpdateResponse>(`${WEB_SITE_BASE_URL}about`, aboutUsData);
   }
+
 }

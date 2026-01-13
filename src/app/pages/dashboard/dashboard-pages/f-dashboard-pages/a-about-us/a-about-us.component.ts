@@ -55,7 +55,6 @@ import {  WEB_SITE_IMG_URL } from "../../../../../core/constants/WEB_SITE_BASE_U
 export class AAboutUsComponent {
   aboutUs!: IAboutUsData;
   readonly imgUrl = WEB_SITE_IMG_URL;
-  isEditing: boolean = false;
 
   private messageService = inject(MessageService);
 
@@ -71,15 +70,14 @@ export class AAboutUsComponent {
     });
   }
 
-  toggleEditing() {
-    this.isEditing = !this.isEditing;
-  }
 
   aboutImage: File | null = null;
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      console.log(file);
+      
       this.aboutImage = file;
     }
   }
@@ -90,12 +88,14 @@ export class AAboutUsComponent {
     let fd = new FormData();
     Object.keys(this.aboutUs.about).forEach((key) => {
       let data = { ...this.aboutUs.about } as any;
-      fd.append(key, data[key] as any);
+      if(key !== "image") {
+        fd.append(key, data[key] as any);
+      }
     });
 
     // Append the image file if it exists
     if (this.aboutImage) {
-      fd.append("about_image", this.aboutImage);
+      fd.append("image", this.aboutImage);
     }
 
     this.aboutUsService
@@ -112,7 +112,6 @@ export class AAboutUsComponent {
             summary: "Success",
             detail: "Changes saved successfully",
           });
-          this.isEditing = false;
           this.aboutUs.about = response.about as any;
         },
         error: (err) => {

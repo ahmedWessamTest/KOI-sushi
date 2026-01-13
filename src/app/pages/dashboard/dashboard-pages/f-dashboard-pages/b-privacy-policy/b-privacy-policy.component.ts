@@ -6,7 +6,7 @@ import { ButtonModule } from "primeng/button";
 import { EditorModule } from "primeng/editor";
 import { MessagesModule } from "primeng/messages";
 import { ToastModule } from "primeng/toast";
-import { IPrivacyPolicyData } from "../../../../../core/Interfaces/o-privacy-policy/IPrivacyPolicyData";
+import { IPrivacyPolicyData, PrivacyPolicy } from "../../../../../core/Interfaces/o-privacy-policy/IPrivacyPolicyData";
 import { SafeHtmlPipe } from "../../../../../core/pipes/safe-html.pipe";
 import { PrivacyPolicyService } from "../../../../../core/services/o-privacy-policy/privacy-policy.service";
 import { LoadingDataBannerComponent } from "../../../../../shared/components/loading-data-banner/loading-data-banner.component";
@@ -52,9 +52,8 @@ import { CardModule } from "primeng/card";
   providers: [MessageService],
 })
 export class BPrivacyPolicyComponent {
-  privacyPolicy!: IPrivacyPolicyData;
+  privacyPolicy!: PrivacyPolicy;
 
-  isEditing: boolean = false;
 
   private messageService = inject(MessageService);
 
@@ -65,20 +64,17 @@ export class BPrivacyPolicyComponent {
   ngOnInit(): void {
     this.privacyPolicyService.getPrivacyPolicy().subscribe({
       next: (response) => {
-        this.privacyPolicy = response;
+        this.privacyPolicy = response.privacy_policy;
       },
     });
   }
 
-  toggleEditing() {
-    this.isEditing = !this.isEditing;
-  }
 
   saveChanges() {
     this.ngxSpinnerService.show("actionsLoader");
     let fd = new FormData();
-    Object.keys(this.privacyPolicy.PrivacyPolicy).forEach((key) => {
-      let data = { ...this.privacyPolicy.PrivacyPolicy } as any;
+    Object.keys(this.privacyPolicy).forEach((key) => {
+      let data = { ...this.privacyPolicy } as any;
       fd.append(key, data[key] as any);
     });
 
@@ -96,8 +92,7 @@ export class BPrivacyPolicyComponent {
             summary: "Success",
             detail: "Changes saved successfully",
           });
-          this.isEditing = false;
-          this.privacyPolicy.PrivacyPolicy = response.PrivacyPolicy;
+          this.privacyPolicy = response.privacy_policy;
         },
         error: (err) => {
           console.error("Error saving changes", err);

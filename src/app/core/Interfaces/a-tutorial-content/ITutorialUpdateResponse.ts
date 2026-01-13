@@ -1,15 +1,16 @@
 export interface ITutorialUpdateResponse {
-  ToutrialContent: ToutrialContent;
-  success: string;
+  success: boolean
+  data: ToutrialContent
 }
 
 export interface ToutrialContent {
-  id: number;
-  en_title: string;
-  ar_title: string;
-  en_Text: string;
-  ar_text: null;
-  content_type: string;
-  created_at: string;
-  updated_at: string;
+  id: number
+  title_ar: string
+  title_en: string
+  description_ar: string
+  description_en: string
+  image: string
+  status: boolean
+  created_at: string
+  updated_at: string
 }

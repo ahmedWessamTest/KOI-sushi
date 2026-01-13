@@ -22,7 +22,6 @@ import { TutorialService } from "../../../../../../core/services/a-tutorial-cont
 export class CTutorialAddComponent {
   submitForm: FormGroup;
 
-  isEditing = false;
 
   tutorialId: string | null = null;
 
@@ -40,21 +39,21 @@ export class CTutorialAddComponent {
 
   constructor() {
     this.submitForm = this.fb.group({
-      en_title: ["", Validators.required],
-      ar_title: ["", Validators.required],
-      en_Text: ["", Validators.required],
-      ar_text: ["", Validators.required],
-      ar_Text: [""],
-      content_type: ["", Validators.required],
+      title_en: ["", Validators.required],
+      title_ar: ["", Validators.required],
+      description_en: ["", Validators.required],
+      description_ar: ["", Validators.required],
     });
   }
 
   ngOnInit() {
-    if (this.activatedRoute.snapshot.data["tutorial"]) {
-      this.isEditing = true;
-      this.submitForm.patchValue(this.activatedRoute.snapshot.data["tutorial"].ToutrialContent);
-      this.tutorialId = this.activatedRoute.snapshot.data["tutorial"].ToutrialContent.id;
+    const tutorialPayload = this.activatedRoute.snapshot.data["tutorial"]
+    if (tutorialPayload) {
+      this.submitForm.patchValue(tutorialPayload.data);
+      this.tutorialId = tutorialPayload.data.id;
     }
+    console.log(tutorialPayload);
+    
   }
 
   saveForm() {
@@ -62,19 +61,13 @@ export class CTutorialAddComponent {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
     const tutorialData: ITutorialAddBody = this.submitForm.value;
-    if (this.isEditing && this.tutorialId) {
       tutorialData.ar_Text = this.submitForm.get("ar_text")?.value;
+      if(this.tutorialId)
       this.categoriesService.updateTutorial(this.tutorialId, tutorialData).subscribe(() => {
         this.router.navigate(["/dashboard/pages/tutorial"]);
         this.messageService.add({ severity: "success", summary: "Updated", detail: "Tutorial updated successfully" });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
       });
-    } else {
-      this.categoriesService.addTutorial(tutorialData).subscribe(() => {
-        this.router.navigate(["/dashboard/pages/tutorial"]);
-        this.messageService.add({ severity: "success", summary: "Added", detail: "Tutorial added successfully" });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-      });
-    }
+    
   }
 }

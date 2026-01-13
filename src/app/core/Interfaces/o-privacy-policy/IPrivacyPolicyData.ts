@@ -1,13 +1,11 @@
 export interface IPrivacyPolicyData {
-  PrivacyPolicy: PrivacyPolicy;
+  success: boolean
+  privacy_policy: PrivacyPolicy
 }
 
 export interface PrivacyPolicy {
-  id: number;
-  en_title: string;
-  ar_title: string;
-  en_text: string;
-  ar_text: string;
-  created_at: string;
-  updated_at: string;
+  title_ar: string
+  title_en: string
+  description_ar: string
+  description_en: string
 }
