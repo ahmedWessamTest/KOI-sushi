@@ -9,6 +9,6 @@ export class NotificationsService {
   private http = inject(HttpClient);
 
   sendNotifications(notificationData: {}) {
-    return this.http.post(`${WEB_SITE_BASE_URL}sendAllUsersNotification`, notificationData);
+    return this.http.post(`${WEB_SITE_BASE_URL}notifications/broadcast`, notificationData);
   }
 }

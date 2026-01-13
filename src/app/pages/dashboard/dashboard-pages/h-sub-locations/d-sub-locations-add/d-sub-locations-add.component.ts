@@ -11,12 +11,14 @@ import { timer } from "rxjs";
 import { IAddSubLocationBody } from "../../../../../core/Interfaces/e-sublocations/IAddSubLocationBody";
 import { SubLocationsService } from "../../../../../core/services/e-sublocations/sub-locations.service";
 import { DropdownModule } from "primeng/dropdown";
-import { IBranch, ILocation } from "../../../../../core/Interfaces/e-sublocations/IGetSubLocationsBranches";
+import { GovernoratesData } from "../../../../../core/Interfaces/e-sublocations/IGetSubLocationsBranches";
 import { IGetSubLocationById } from "../../../../../core/Interfaces/e-sublocations/IGetSubLocationById";
 import { DividerModule } from "primeng/divider";
 import { FloatLabelModule } from "primeng/floatlabel";
 import { CommonModule } from "@angular/common";
 import { OnlyNumberDirective } from "../../../../../only-number.directive";
+import { BranchesService } from "../../../../../core/services/j-branches/branches.service";
+import { Branches } from "../../../../../core/Interfaces/j-branches/IAllBranches";
 
 @Component({
   selector: "app-d-sub-locations-add",
@@ -46,14 +48,14 @@ export class DSubLocationsAddComponent {
 
   subLocationId: string | null = null;
 
-  locations: ILocation[] = [];
+  governorates: GovernoratesData[] = [];
 
-  Branches: IBranch[] = [];
+  Branches: Branches[] = [];
 
   private fb = inject(FormBuilder);
 
   private subLocationsService = inject(SubLocationsService);
-
+  private branchesService = inject(BranchesService)
   private ngxSpinnerService = inject(NgxSpinnerService);
 
   private router = inject(Router);
@@ -64,37 +66,54 @@ export class DSubLocationsAddComponent {
 
   constructor() {
     this.subLocationForm = this.fb.group({
-      en_sub_location: ["", Validators.required],
-      ar_sub_location: ["", Validators.required],
-      location_id: ["", Validators.required],
-      price: ["", Validators.required],
+      title_en: ["", Validators.required],
+      title_ar: ["", Validators.required],
+      governorate_id: ["", Validators.required],
+      delivery_fee: ["", Validators.required],
       branch_id: ["", Validators.required],
-      status: [1, Validators.required],
+      status: [true, Validators.required],
     });
   }
 
   ngOnInit() {
-    const DATA = this.activatedRoute.snapshot.data["subLocations"] as IGetSubLocationById;
+    const DATA = this.activatedRoute.snapshot.data["subLocations"] ;
+    this.getGovernoratesData();
+      this.getBranches()
     if (DATA) {
       this.isEditing = true;
-      this.subLocationForm.patchValue(DATA.sublocation);
-      this.Branches = DATA.branches;
-      this.locations = DATA.locations;
-      this.subLocationId = DATA.sublocation.id.toString();
-    } else {
-      this.getBranchesData();
-    }
+        
+      this.patchFormValues(DATA.data)    
+      // this.Branches = DATA.branches;
+      // this.locations = DATA.locations;
+      this.subLocationId = DATA.data.id.toString();
+    } 
   }
-
-  getBranchesData(): void {
-    this.subLocationsService.getSubLocationsBranches().subscribe({
+patchFormValues(data:any) {
+  this.subLocationForm.patchValue({
+    title_en: data.title_en,
+      title_ar: data.title_ar,
+      governorate_id: data.governorate.id,
+      delivery_fee: data.delivery_fee,
+      branch_id: data.branch_id,
+      status: data.status,
+  });
+  console.log(this.subLocationForm.value);
+  
+}
+  getGovernoratesData(): void {
+    this.subLocationsService.getGoverorates().subscribe({
       next: (response) => {
-        this.Branches = response.branches;
-        this.locations = response.locations;
+        this.governorates = response.data;
       },
     });
   }
-
+getBranches() {
+  this.branchesService.getAllBranches().subscribe({
+      next: (response) => {
+        this.Branches = response.data;
+      },
+    });
+}
   saveSubLocation(): void {
     this.subLocationForm.markAllAsTouched();
     if (this.subLocationForm.invalid) return;

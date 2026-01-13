@@ -1,3 +1,4 @@
+import { Location } from './../../../../../core/Interfaces/e-sublocations/IGetSubLocationById';
 import { Component, inject } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -13,7 +14,7 @@ import { timer } from "rxjs";
 import { ISubLocationData } from "../../../../../core/Interfaces/e-sublocations/IGetAllSubLocations";
 import { SubLocationsService } from "../../../../../core/services/e-sublocations/sub-locations.service";
 import { CurrencyPipe } from "@angular/common";
-import { IBranch, ILocation } from "../../../../../core/Interfaces/e-sublocations/IGetSubLocationsBranches";
+import {  ILocation } from "../../../../../core/Interfaces/e-sublocations/IGetSubLocationsBranches";
 import { LoadingDataBannerComponent } from "../../../../../shared/components/loading-data-banner/loading-data-banner.component";
 import { NoDataFoundBannerComponent } from "../../../../../shared/components/no-data-found-banner/no-data-found-banner.component";
 import { InputTextModule } from "primeng/inputtext";
@@ -42,11 +43,8 @@ import { ISelectOptions } from "../../../../../core/Interfaces/core/ISelectOptio
   providers: [MessageService],
 })
 export class ASubLocationsAllComponent {
-  subLocations: ISubLocationData[] = [];
-  filteredSubLocations: ISubLocationData[] = [];
-
+  filteredLocations: ILocation[] = [];
   Locations: ILocation[] = [];
-  Branches: IBranch[] = [];
 
   private ngxSpinnerService = inject(NgxSpinnerService);
   private subLocationsService = inject(SubLocationsService);
@@ -59,17 +57,18 @@ export class ASubLocationsAllComponent {
   // Dropdown
   selectedStatus: string = "";
   selectOptions: ISelectOptions[] = [];
-  onFilterChange(value: string): void {
-    if (value) {
-      // Filter the blogs based on the selected category
-      this.filteredSubLocations = this.subLocations.filter((ele) => {
-        return ele.status.toString().includes(value);
-      });
-    } else {
-      // Reset to original data if no category is selected
-      this.filteredSubLocations = [...this.subLocations];
-    }
+ onFilterChange(value: string): void {
+  if (value === '' || value === null || value === undefined) {
+    this.filteredLocations = [...this.Locations];
+    return;
   }
+
+  const statusToFilter = value === '1';
+
+  this.filteredLocations = this.Locations.filter((ele) => {
+    return ele.status === statusToFilter;
+  });
+}
 
   initDropDownFilter(): void {
     this.selectOptions = [
@@ -90,24 +89,11 @@ export class ASubLocationsAllComponent {
   }
 
   fetchLocations() {
-    this.subLocationsService.getSubLocationsBranches().subscribe(
-      (response) => {
-        this.Branches = response.branches;
-        this.Locations = response.locations;
-        this.fetchSubLocation();
-      },
-      () => {
-        this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load SubLocations" });
-      }
-    );
-  }
-
-  fetchSubLocation() {
     this.subLocationsService.getAllLocations().subscribe(
       (response) => {
-        this.totalRecords = response.sublocations.total;
-        this.subLocations = response.sublocations.data.reverse();
-        this.filteredSubLocations = [...this.subLocations];
+        this.totalRecords = response.data.total;
+        this.Locations = response.data.data;
+        this.filteredLocations = [...this.Locations];
       },
       () => {
         this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load SubLocations" });
@@ -115,22 +101,18 @@ export class ASubLocationsAllComponent {
     );
   }
 
-  findLocations(id: number): string | undefined {
-    return this.Locations.find((e) => e.id === id)?.ar_location;
-  }
+ 
 
-  findCity(id: number): string | undefined {
-    return this.Branches.find((e) => e.id === id)?.en_branch_location;
-  }
 
-  toggleSubLocationStatus(subLocation: ISubLocationData) {
+
+  toggleSubLocationStatus(location: ILocation) {
     this.ngxSpinnerService.show("actionsLoader");
     this.messageService.clear();
-
-    const updatedStatus = subLocation.status ? 0 : 1;
-    if (updatedStatus) {
-      this.subLocationsService.enableLocation(subLocation.id.toString()).subscribe(() => {
-        subLocation.status = updatedStatus;
+    const updatedStatus:boolean = !location.status;
+    console.log(updatedStatus);
+    
+      this.subLocationsService.toggleLocation(location.id.toString()).subscribe(() => {
+        location.status = updatedStatus;
         this.messageService.add({
           severity: "success",
           summary: "Updated",
@@ -138,17 +120,7 @@ export class ASubLocationsAllComponent {
         });
         timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
       });
-    } else {
-      this.subLocationsService.destroyLocation(subLocation.id.toString()).subscribe(() => {
-        subLocation.status = updatedStatus;
-        this.messageService.add({
-          severity: "success",
-          summary: "Updated",
-          detail: `Branch ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-        });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-      });
-    }
+    
   }
 
   onPageChange(event: any) {
@@ -163,8 +135,8 @@ export class ASubLocationsAllComponent {
     this.subLocationsService.getAllLocations(page, perPage).subscribe(
       (response) => {
         this.ngxSpinnerService.hide("actionsLoader");
-        this.subLocations = response.sublocations.data.reverse();
-        this.filteredSubLocations = [...this.subLocations];
+        this.Locations = response.data.data
+        this.filteredLocations = [...this.Locations];
       },
       () => {
         this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load SubLocations" });
@@ -188,7 +160,7 @@ export class ASubLocationsAllComponent {
   // Sorting method
   onSort(event: any) {
     const { field, order } = event;
-    this.filteredSubLocations.sort((a: any, b: any) => {
+    this.filteredLocations.sort((a: any, b: any) => {
       let valueA = a[field];
       let valueB = b[field];
 
@@ -205,14 +177,12 @@ export class ASubLocationsAllComponent {
   // Global filter method
   onGlobalFilter(table: any, event: Event) {
     const searchValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredSubLocations = this.subLocations.filter((subLocation) => {
+    this.filteredLocations = this.Locations.filter((location) => {
       return (
-        subLocation.id.toString().includes(searchValue) ||
-        subLocation.en_sub_location.toLowerCase().includes(searchValue) ||
-        subLocation.ar_sub_location.toLowerCase().includes(searchValue) ||
-        subLocation.price.toString().includes(searchValue) ||
-        this.findLocations(subLocation.location_id)?.toLowerCase().includes(searchValue) ||
-        this.findCity(subLocation.branch_id)?.toLowerCase().includes(searchValue)
+        location.id.toString().includes(searchValue) ||
+        location.title_en.toLowerCase().includes(searchValue) ||
+        location.title_ar.toLowerCase().includes(searchValue) ||
+        location.delivery_fee.includes(searchValue) 
       );
     });
     table.filterGlobal(searchValue, "contains");

@@ -1,4 +1,4 @@
-@if (subLocations.length >0) {
+@if (Locations.length >0) {
 <div class="card">
   <div class="flex justify-between items-center mb-3">
     <h2 class="text-2xl font-semibold">Areas Control</h2>
@@ -27,23 +27,23 @@
     [showCurrentPageReport]="true"
     [lazy]="true"
     (onPage)="onPageChange($event)"
-    [globalFilterFields]="['id', 'en_sub_location', 'ar_sub_location', 'price']"
+    [globalFilterFields]="['id', 'title_en', 'title_ar', 'delivery_fee']"
     [sortMode]="'single'"
     (onSort)="onSort($event)"
-    [value]="filteredSubLocations"
+    [value]="filteredLocations"
     responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
         <th class="text-center" pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
         <th class="text-center">City</th>
-        <th class="text-center" pSortableColumn="en_sub_location">
-          Area (EN) <p-sortIcon field="en_sub_location"></p-sortIcon>
+        <th class="text-center" pSortableColumn="title_en">
+          Area (EN) <p-sortIcon field="title_en"></p-sortIcon>
         </th>
-        <th class="text-center" pSortableColumn="ar_sub_location">
-          Area (AR) <p-sortIcon field="ar_sub_location"></p-sortIcon>
+        <th class="text-center" pSortableColumn="title_ar">
+          Area (AR) <p-sortIcon field="title_ar"></p-sortIcon>
         </th>
         <th class="text-center">Branch</th>
-        <th class="text-center" pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
+        <th class="text-center" pSortableColumn="delivery_fee">Price <p-sortIcon field="delivery_fee"></p-sortIcon></th>
         <th class="text-center">
           <!-- Normal Dropdown without filter icon or overlay -->
           <p-dropdown
@@ -61,24 +61,22 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-subLocation>
+    <ng-template pTemplate="body" let-location>
       <tr>
-        <td class="text-center">{{ subLocation.id }}</td>
-        <td class="text-center">{{ findLocations(subLocation.location_id) }}</td>
-        <td class="text-center">{{ subLocation.en_sub_location }}</td>
-        <td class="text-center">{{ subLocation.ar_sub_location }}</td>
-        <td class="text-center">{{ findCity(subLocation.branch_id) }}</td>
-        <td class="text-center">{{ subLocation.price | currency : " EGP " }}</td>
+        <td class="text-center">{{ location.id }}</td>
+        <td class="text-center">{{ location.governorate.title_en }}</td>
+        <td class="text-center">{{ location.title_en }}</td>
+        <td class="text-center">{{ location.title_ar }}</td>
+        <td class="text-center">{{ location.branch.title_en }}</td>
+        <td class="text-center">{{ location.delivery_fee | currency : " EGP " }}</td>
         <td class="text-center">
           <p-inputSwitch
-            [trueValue]="1"
-            [falseValue]="0"
-            [ngModel]="subLocation.status"
-            (onChange)="toggleSubLocationStatus(subLocation)"></p-inputSwitch>
+            [ngModel]="location.status"
+            (onChange)="toggleSubLocationStatus(location)"></p-inputSwitch>
         </td>
         <td class="text-center">
           <a
-            [routerLink]="['/dashboard/sub-locations/sub-locations-edit', subLocation.id]"
+            [routerLink]="['/dashboard/sub-locations/sub-locations-edit', location.id]"
             target="_blank"
             pButton
             rel="noopener noreferrer"
@@ -90,7 +88,7 @@
         </td>
         <td class="text-center">
           <button
-            [routerLink]="['/dashboard/sub-locations/sub-locations-details', subLocation.id]"
+            [routerLink]="['/dashboard/sub-locations/sub-locations-details', location.id]"
             pButton
             label="View"
             icon="pi pi-search"></button>

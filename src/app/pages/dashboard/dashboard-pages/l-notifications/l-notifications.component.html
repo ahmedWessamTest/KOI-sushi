@@ -7,8 +7,8 @@
     <form [formGroup]="notificationForm" class="grid md:grid-cols-1 gap-6">
       <div class="flex flex-col">
         <label class="font-medium">Notification Title</label>
-        <input required type="text" pInputText formControlName="textmessage" class="p-inputtext-sm w-full" />
-        @if (notificationForm.get('textmessage')?.invalid && notificationForm.get('textmessage')?.touched) {
+        <input required type="text" pInputText formControlName="title" class="p-inputtext-sm w-full" />
+        @if (notificationForm.get('title')?.invalid && notificationForm.get('title')?.touched) {
         <div class="p-error">
           <small>Notification Title is required.</small>
         </div>
@@ -17,8 +17,8 @@
 
       <div class="flex flex-col">
         <label class="font-medium">Notification Text</label>
-        <input required type="text" pInputText formControlName="titlemessage" class="p-inputtext-sm w-full" />
-        @if (notificationForm.get('titlemessage')?.invalid && notificationForm.get('titlemessage')?.touched) {
+        <input required type="text" pInputText formControlName="body" class="p-inputtext-sm w-full" />
+        @if (notificationForm.get('body')?.invalid && notificationForm.get('body')?.touched) {
         <div class="p-error">
           <small>Notification Text is required.</small>
         </div>

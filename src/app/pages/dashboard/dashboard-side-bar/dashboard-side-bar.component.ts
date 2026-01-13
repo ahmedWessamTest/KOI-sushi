@@ -140,26 +140,26 @@ export class DashboardSideBarComponent {
             },
           ],
         },
-        // {
-        //   label: 'Areas',
-        //   items: [
-        //     {
-        //       label: 'Manage Locations',
-        //       icon: 'pi pi-fw pi-map-marker',
-        //       routerLink: ['/dashboard/sub-locations'],
-        //     },
-        //   ],
-        // },
-        // {
-        //   label: 'Notifications',
-        //   items: [
-        //     {
-        //       label: 'Send Notifications',
-        //       icon: 'pi pi-fw pi-mobile',
-        //       routerLink: ['/dashboard/notifications'],
-        //     },
-        //   ],
-        // },
+        {
+          label: 'Areas',
+          items: [
+            {
+              label: 'Manage Locations',
+              icon: 'pi pi-fw pi-map-marker',
+              routerLink: ['/dashboard/sub-locations'],
+            },
+          ],
+        },
+        {
+          label: 'Notifications',
+          items: [
+            {
+              label: 'Send Notifications',
+              icon: 'pi pi-fw pi-mobile',
+              routerLink: ['/dashboard/notifications'],
+            },
+          ],
+        },
         // {
         //   label: 'Contact Us',
         //   items: [

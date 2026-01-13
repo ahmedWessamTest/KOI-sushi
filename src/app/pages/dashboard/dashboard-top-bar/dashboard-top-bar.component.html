@@ -54,8 +54,8 @@
                 >{{ order.user?.name }} placed an order.</a
               >
               <span class="text-main text-xs block text-gray-500"
-                >Order ID: {{ order.id }} | {{ order.order_date }} |
-                {{ order.order_time }}</span
+                >Order ID: {{ order.id }} | {{ order.created_at | date }} |
+                {{ order.created_at | date:'HH:MM a' }}</span
               >
             </li>
           </ul>

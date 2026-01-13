@@ -16,22 +16,11 @@ import { IBranch, ILocation } from "../../../../../core/Interfaces/e-sublocation
 })
 export class BSubLocationsDetailsComponent {
   private ActivatedRoute = inject(ActivatedRoute);
-  Branches: IBranch[] = [];
-  Locations: ILocation[] = [];
+  location: ILocation = {} as ILocation;
 
-  subLocationData!: IGetSubLocationById;
 
   ngOnInit(): void {
-    this.subLocationData = this.ActivatedRoute.snapshot.data["subLocations"];
-    this.Branches = this.ActivatedRoute.snapshot.data["subLocations"].branches;
-    this.Locations = this.ActivatedRoute.snapshot.data["subLocations"].locations;
+    this.location = this.ActivatedRoute.snapshot.data["subLocations"].data;
   }
 
-  findCity(id: number): string | undefined {
-    return this.Branches.find((e) => e.id === id)?.en_branch_location;
-  }
-
-  findLocations(id: number): string | undefined {
-    return this.Locations.find((e) => e.id === id)?.en_location;
-  }
 }

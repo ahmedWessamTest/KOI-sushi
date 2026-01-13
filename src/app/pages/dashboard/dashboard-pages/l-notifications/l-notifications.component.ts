@@ -44,8 +44,8 @@ export class LNotificationsComponent {
 
   constructor() {
     this.notificationForm = this.fb.group({
-      textmessage: ['', Validators.required],
-      titlemessage: ['', Validators.required],
+      title: ['', Validators.required],
+      body: ['', Validators.required],
     });
   }
 

@@ -7,8 +7,8 @@
     <form [formGroup]="subLocationForm" class="grid md:grid-cols-2 gap-6">
       <div class="flex flex-col">
         <label class="font-medium mb-3">English Area</label>
-        <input required type="text" pInputText formControlName="en_sub_location" class="p-inputtext-sm w-full" />
-        @if (subLocationForm.get('en_sub_location')?.invalid && subLocationForm.get('en_sub_location')?.touched) {
+        <input required type="text" pInputText formControlName="title_en" class="p-inputtext-sm w-full" />
+        @if (subLocationForm.get('title_en')?.invalid && subLocationForm.get('title_en')?.touched) {
         <div class="p-error">
           <small>English Area is required.</small>
         </div>
@@ -17,8 +17,8 @@
 
       <div class="flex flex-col">
         <label class="font-medium mb-3">Arabic Area</label>
-        <input required type="text" pInputText formControlName="ar_sub_location" class="p-inputtext-sm w-full" />
-        @if (subLocationForm.get('ar_sub_location')?.invalid && subLocationForm.get('ar_sub_location')?.touched) {
+        <input required type="text" pInputText formControlName="title_ar" class="p-inputtext-sm w-full" />
+        @if (subLocationForm.get('title_ar')?.invalid && subLocationForm.get('title_ar')?.touched) {
         <div class="p-error">
           <small>Arabic Area is required.</small>
         </div>
@@ -27,8 +27,8 @@
 
       <div class="flex flex-col">
         <label class="font-medium mb-3">Price</label>
-        <input required appOnlyNumber pInputText formControlName="price" class="p-inputtext-sm w-full" />
-        @if (subLocationForm.get('price')?.invalid && subLocationForm.get('price')?.touched) {
+        <input required appOnlyNumber pInputText formControlName="delivery_fee" class="p-inputtext-sm w-full" />
+        @if (subLocationForm.get('delivery_fee')?.invalid && subLocationForm.get('delivery_fee')?.touched) {
         <div class="p-error">
           <small>Price is required.</small>
         </div>
@@ -40,14 +40,14 @@
         <p-dropdown
           required
           [filter]="true"
-          optionLabel="en_location"
-          [options]="locations"
+          optionLabel="title_en"
+          [options]="governorates"
           styleClass="w-full border border-black/25 rounded-[10px] px-3"
-          formControlName="location_id"
+          formControlName="governorate_id"
           optionValue="id"
           placeholder="Select a City" />
 
-        @if (subLocationForm.get('location_id')?.invalid && subLocationForm.get('location_id')?.touched) {
+        @if (subLocationForm.get('governorate_id')?.invalid && subLocationForm.get('governorate_id')?.touched) {
         <div class="p-error">
           <small>City is required.</small>
         </div>
@@ -59,7 +59,7 @@
         <p-dropdown
           required
           styleClass="w-full border border-black/25 rounded-[10px] px-3"
-          optionLabel="en_branch_location"
+          optionLabel="title_en"
           optionValue="id"
           [options]="Branches"
           formControlName="branch_id"
@@ -73,7 +73,7 @@
 
       <div class="flex items-center gap-2">
         <label class="font-medium">Status</label>
-        <p-inputSwitch [trueValue]="1" [falseValue]="0" formControlName="status"></p-inputSwitch>
+        <p-inputSwitch formControlName="status"></p-inputSwitch>
       </div>
     </form>
   </ng-template>

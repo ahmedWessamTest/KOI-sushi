@@ -1,50 +1,42 @@
 export interface ICurrentOrdered {
-  orders: NewOrders[];
+  success: boolean
+  orders: NewOrders[]
 }
 
 export interface NewOrders {
-  id: number;
-  user_id: number;
-  branch_id: number;
-  address_id: null;
-  address_information: null;
-  location_id: null;
-  location_title: null;
-  sub_location_id: null;
-  sub_location_title: null;
-  total_price: number;
-  sub_total: null | number;
-  confirmed_by_user: number;
-  status: string;
-  combo_id: null;
-  combo_name: null;
-  promo_code_id: null;
-  order_date: string;
-  order_time: null;
-  created_at: string;
-  updated_at: string;
-  date: string;
-  time: string;
-  user: User | null;
+  id: number
+  user_id: number
+  branch_id: number
+  address_id: number
+  promo_code_id?: number
+  promo_code_discount: string
+  voucher_id?: number
+  voucher_discount: string
+  loyalty_applied_points: number
+  loyalty_earned_points: number
+  loyalty_points_discount: number
+  happy_hours_discount: string
+  sub_total_price: string
+  delivery_fee: string
+  tax: string
+  total_price: string
+  delivery_time_minutes: number
+  payment_method: string
+  note?: string
+  status: string
+  is_notified: number
+  confirmed_by?: number
+  created_at: string
+  updated_at: string
+  user?: User
+  branch?: Branch
 }
-
+interface Branch {
+  id: number
+  title_ar: string
+  title_en: string
+}
 export interface User {
-  id: number;
-  name: string;
-  phone: string;
-  email: string;
-  email_verified_at: null;
-  role: string;
-  branch_id: number;
-  google_id: null;
-  apple_id: null;
-  device_token: null;
-  admin_status: number;
-  deactive_status: number;
-  delete_status: number;
-  forget_code: null;
-  verify_code: null;
-  verify_status: null;
-  created_at: string;
-  updated_at: string;
+ id: number
+  name: string
 }

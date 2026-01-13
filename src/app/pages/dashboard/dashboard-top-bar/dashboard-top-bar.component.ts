@@ -70,12 +70,11 @@ export class DashboardTopBarComponent {
 
   ngOnInit(): void {
     this.requestNotificationPermission(); // Request desktop notification permission
-    // this.fetchNotifications();
+    this.fetchNotifications();
     this.updateTitle();
-    // Poll API every 10 seconds
-    // this.notificationSubscription = interval(30000).subscribe(() => {
-    //   this.fetchNotifications();
-    // });
+    this.notificationSubscription = interval(10000).subscribe(() => {
+      this.fetchNotifications();
+    });
 
     // Initialize the alert sound
     this.audio = new Audio('assets/sounds/notification.mp3'); // Ensure this file exists

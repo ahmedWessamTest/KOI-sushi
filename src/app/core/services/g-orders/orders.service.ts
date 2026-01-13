@@ -28,15 +28,8 @@ export class OrdersService {
         }
     return this.http.post<IAllOrders>(`${WEB_SITE_BASE_URL}orders`, requestBody);
   }
-  getCurrentOrders(userId: string = "all") {
-      if (JSON.parse(localStorage.getItem("user")!).branch_id) {
-        userId = JSON.parse(localStorage.getItem("user")!).branch_id;
-      }
-    if (userId !== "all") {
-      return this.http.get<ICurrentOrdered>(`${WEB_SITE_BASE_URL}checkavail/${userId}`);
-    } else {
-      return this.http.get<ICurrentOrdered>(`${WEB_SITE_BASE_URL}checkavail/${userId}`);
-    }
+  getCurrentOrders() {
+      return this.http.get<ICurrentOrdered>(`${WEB_SITE_BASE_URL}orders/check-new`);
   }
   getOrderById(orderId: string) {
     return this.http.get<IOrderById>(`${WEB_SITE_BASE_URL}orders/${orderId}`);
