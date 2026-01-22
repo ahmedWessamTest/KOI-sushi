@@ -52,7 +52,7 @@
          <div class="col-span-2 grid md:grid-cols-2">
            <!-- Exclude category (only if "apply" = "limited") -->
       <div class="col-span-1">
-        <label for="excludeCategory" class="font-medium block mb-1">Exclude category</label>
+        <label for="excludeCategory" class="font-medium block mb-1">Include category</label>
         <p-multiSelect id="excludeCategory" [options]="allCategory()" (input)="onCategorySearchChange($event)" display="chip"
           formControlName="categories_ids" optionLabel="title_ar" optionValue="id" defaultLabel="Select Exclude category"
           [loading]="categoryIsLoading()" class="w-full" />

@@ -79,7 +79,7 @@
     <!-- Include products (only if "apply" = "limited") -->
     <div class="col-span-1">
       <label for="excludeProducts" class="font-medium block mb-1">Exclude products</label>
-      <p-multiSelect [options]="allProducts()" formControlName="products_ids" [loading]="productsIsLoading()" display="chip"
+      <p-multiSelect [options]="allProducts() || []" formControlName="products_ids" [loading]="productsIsLoading()" display="chip"
         optionLabel="title_ar" optionValue="id"
         [placeholder]="!submitForm.get('category_id')?.value ? 'Please select category first' : 'Select products'"
         (input)="onProductsSearchChange($event)" class="w-full" />

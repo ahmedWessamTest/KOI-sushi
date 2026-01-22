@@ -56,7 +56,7 @@
 
     <div class="col-span-1">
       <label class="font-medium block mb-1">Execlue products</label>
-      <p-multiSelect [options]="allProducts()" formControlName="products_ids" optionLabel="title_ar" optionValue="id"
+      <p-multiSelect [options]="allProducts() || []" formControlName="products_ids" optionLabel="title_ar" optionValue="id"
         placeholder="Select Products" [loading]="productsIsLoading()" (onFilter)="onProductsSearchChange($event)"
         class="w-full" display="chip">
       </p-multiSelect>
