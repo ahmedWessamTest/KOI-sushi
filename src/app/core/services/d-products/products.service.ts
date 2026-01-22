@@ -21,8 +21,12 @@ export class ProductsService {
 
   getAllProducts(page: number = 1, perPage: number = 10, search?: string, category_ids?: number[],selectedStatus?:number | null,selectedRecommendation?:number | null):Observable<IGetAllProducts> {    
     const requestBody:any = {};
-    if(page) requestBody.page = page;
-    if(perPage) requestBody.limit = perPage;
+    if(page && perPage) {
+      requestBody.page = page;
+      requestBody.limit = perPage;
+    } else {
+      requestBody.all = true;
+    }
     if(search) requestBody.search = search
     if(Array.isArray(category_ids) && category_ids.length > 0) requestBody.category_ids = category_ids;    
     if(selectedStatus !== null && selectedStatus !== undefined) requestBody.status = Boolean(selectedStatus);

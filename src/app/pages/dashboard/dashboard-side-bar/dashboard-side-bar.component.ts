@@ -5,13 +5,18 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { DashboardLayoutService } from '../../../core/services/core/dashboard-layout.service';
 import { DashboardMenuItemsComponent } from '../dashboard-menu-items/dashboard-menu-items.component';
-import { DialogModule } from "primeng/dialog";
-import { ToastModule } from "primeng/toast";
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-dashboard-side-bar',
   standalone: true,
-  imports: [ConfirmDialogModule, DashboardMenuItemsComponent, DialogModule, ToastModule],
+  imports: [
+    ConfirmDialogModule,
+    DashboardMenuItemsComponent,
+    DialogModule,
+    ToastModule,
+  ],
   templateUrl: './dashboard-side-bar.component.html',
   styleUrl: './dashboard-side-bar.component.scss',
   providers: [ConfirmationService],
@@ -27,9 +32,9 @@ export class DashboardSideBarComponent {
   ) {}
   showModal = signal<boolean>(false);
   ngOnInit(): void {
-      if (JSON.parse(localStorage.getItem('user')!).role === 'super-admin')
-        this.isAdmin = true;
-    
+    if (JSON.parse(localStorage.getItem('user')!).role === 'super-admin')
+      this.isAdmin = true;
+
     // this.getLoyaltyPointsStatus();
     this.initSideBar();
   }
@@ -50,7 +55,6 @@ export class DashboardSideBarComponent {
         {
           label: 'Offers',
           items: [
-
             {
               label: 'Promo Codes',
               icon: 'pi pi-fw pi-qrcode',
@@ -78,6 +82,21 @@ export class DashboardSideBarComponent {
               icon: 'pi pi-stopwatch',
               routerLink: ['/dashboard/offers/happy-hours'],
             },
+            {
+              label: 'General Discount',
+              icon: 'pi pi-percentage',
+              routerLink: ['/dashboard/offers/discount-offer'],
+            },
+            {
+              label: 'Mirror Offer',
+              icon: 'pi pi-clone',
+              routerLink: ['/dashboard/offers/half-mirror-offer'],
+            },
+            {
+              label: 'Custom Offers',
+              icon: 'pi pi-star',
+              routerLink: ['/dashboard/offers/custom-offers'],
+            },
           ],
         },
         {
@@ -92,6 +111,11 @@ export class DashboardSideBarComponent {
               label: 'Products',
               icon: 'pi pi-fw pi-th-large',
               routerLink: ['/dashboard/menu/products'],
+            },
+            {
+              label: 'Combos',
+              icon: 'pi pi-fw pi-box',
+              routerLink: ['/dashboard/menu/combos'],
             },
           ],
         },
@@ -258,5 +282,4 @@ export class DashboardSideBarComponent {
       reject: () => {},
     });
   }
-
 }

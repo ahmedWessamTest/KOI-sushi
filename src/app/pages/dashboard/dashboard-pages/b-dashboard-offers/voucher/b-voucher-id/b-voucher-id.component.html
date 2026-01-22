@@ -48,14 +48,14 @@
     </div>
 
     <div class="col-span-1">
-      <label class="font-medium block mb-1">Categories</label>
+      <label class="font-medium block mb-1">Include categories</label>
       <p-multiSelect [options]="allCategory()" formControlName="categories_ids" optionLabel="title_ar" optionValue="id"
         placeholder="Select Categories" class="w-full" display="chip">
       </p-multiSelect>
     </div>
 
     <div class="col-span-1">
-      <label class="font-medium block mb-1">Products Excluded</label>
+      <label class="font-medium block mb-1">Execlue products</label>
       <p-multiSelect [options]="allProducts()" formControlName="products_ids" optionLabel="title_ar" optionValue="id"
         placeholder="Select Products" [loading]="productsIsLoading()" (onFilter)="onProductsSearchChange($event)"
         class="w-full" display="chip">

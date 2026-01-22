@@ -1,0 +1,15 @@
+:host ::ng-deep {
+    .p-dropdown.status-dropdown {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        .p-dropdown-label {
+            padding: 0;
+            font-weight: 600;
+            color: #495057;
+        }
+        .p-dropdown-trigger {
+            width: 2rem;
+        }
+    }
+}

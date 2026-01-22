@@ -3,8 +3,6 @@ import { authGuard } from './auth/gurd/auth.guard';
 import { loginGuard } from './auth/gurd/login.guard';
 import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
 import { tutorialDetailsResolver } from './core/resolvers/a-tutorial-content/tutorial-details.resolver';
-import { comboDetailsResolver } from './core/resolvers/b-combo/combo-details.resolver';
-import { comboProductsResolver } from './core/resolvers/b-combo/combo-products.resolver';
 import { hotBoxesDetailsResolver } from './core/resolvers/c-hot-boxes/hot-boxes-details.resolver';
 import { productDetailsResolver } from './core/resolvers/d-products/product-details.resolver';
 import { productsCategoriesResolver } from './core/resolvers/d-products/products-categories.resolver';
@@ -22,6 +20,10 @@ import { voucherDetailsResolver } from './pages/dashboard/dashboard-pages/b-dash
 import { JInternetConnectionComponent } from './pages/dashboard/dashboard-pages/j-internet-connection/j-internet-connection.component';
 import { HappyHoursEditResolver } from './core/resolvers/c-happy-hours/happy-hours-edit.resolver';
 import { userOrdersResolver } from './core/resolvers/p-users/user-orders.resolver';
+import { comboDetailsResolver } from './core/resolvers/d-combos/combo-details.resolver';
+import { discountOfferResolver } from './core/resolvers/e-discount-offer/discount-offer.resolver';
+import { halfMirrorOfferResolver } from './core/resolvers/f-half-mirror-offer/half-mirror-offer.resolver';
+import { customOfferDetailsResolver } from './core/resolvers/g-custom-offers/custom-offer-details.resolver';
 
 export const routes: Routes = [
   // Auth
@@ -35,7 +37,7 @@ export const routes: Routes = [
         path: 'login',
         loadComponent: () =>
           import('./auth/components/login/login.component').then(
-            (c) => c.LoginComponent
+            (c) => c.LoginComponent,
           ),
         data: {
           title: 'KOI Sushi - login',
@@ -50,16 +52,16 @@ export const routes: Routes = [
     path: 'dashboard',
     loadComponent: () =>
       import('./core/layouts/dashboard-layout/dashboard-layout.component').then(
-        (c) => c.DashboardLayoutComponent
+        (c) => c.DashboardLayoutComponent,
       ),
     canActivate: [loginGuard],
     children: [
       {
         path: '',
         loadComponent: () =>
-          import(
-            './pages/dashboard/dashboard-pages/dashboard-pages.component'
-          ).then((c) => c.DashboardPagesComponent),
+          import('./pages/dashboard/dashboard-pages/dashboard-pages.component').then(
+            (c) => c.DashboardPagesComponent,
+          ),
         data: {
           title: 'KOI Sushi',
           description: 'Dashboard Page',
@@ -68,9 +70,9 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/a-dashboard-home/a-dashboard-home.component'
-              ).then((c) => c.ADashboardHomeComponent),
+              import('./pages/dashboard/dashboard-pages/a-dashboard-home/a-dashboard-home.component').then(
+                (c) => c.ADashboardHomeComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -80,9 +82,9 @@ export const routes: Routes = [
           {
             path: 'offers',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/b-dashboard-offers/b-dashboard-offers.component'
-              ).then((c) => c.BDashboardOffersComponent),
+              import('./pages/dashboard/dashboard-pages/b-dashboard-offers/b-dashboard-offers.component').then(
+                (c) => c.BDashboardOffersComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -91,9 +93,9 @@ export const routes: Routes = [
               {
                 path: 'boxes',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/a-hot-boxes-offers.component'
-                  ).then((c) => c.AHotBoxesOffersComponent),
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/a-hot-boxes-offers.component').then(
+                    (c) => c.AHotBoxesOffersComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -103,9 +105,9 @@ export const routes: Routes = [
                   {
                     path: 'boxes-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/a-hot-boxes-all/a-hot-boxes-all.component'
-                      ).then((c) => c.AHotBoxesAllComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/a-hot-boxes-all/a-hot-boxes-all.component').then(
+                        (c) => c.AHotBoxesAllComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -116,9 +118,9 @@ export const routes: Routes = [
                     resolve: { boxes: hotBoxesDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/b-hot-boxes-details/b-hot-boxes-details.component'
-                      ).then((c) => c.BHotBoxesDetailsComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/b-hot-boxes-details/b-hot-boxes-details.component').then(
+                        (c) => c.BHotBoxesDetailsComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -127,9 +129,9 @@ export const routes: Routes = [
                   {
                     path: 'boxes-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/c-hot-boxes-add/c-hot-boxes-add.component'
-                      ).then((c) => c.CHotBoxesAddComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/c-hot-boxes-add/c-hot-boxes-add.component').then(
+                        (c) => c.CHotBoxesAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -139,9 +141,9 @@ export const routes: Routes = [
                     path: 'boxes-edit/:id',
                     resolve: { boxes: hotBoxesDetailsResolver },
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/c-hot-boxes-add/c-hot-boxes-add.component'
-                      ).then((c) => c.CHotBoxesAddComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/a-hot-boxes-offers/c-hot-boxes-add/c-hot-boxes-add.component').then(
+                        (c) => c.CHotBoxesAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -246,15 +248,15 @@ export const routes: Routes = [
               //         description: 'Dashboard Page',
               //       },
               //     },
-                  
+
               //   ],
               // },
               {
                 path: 'coupons',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/d-coupon.component'
-                  ).then((c) => c.DCouponComponent),
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/d-coupon.component').then(
+                    (c) => c.DCouponComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -264,9 +266,9 @@ export const routes: Routes = [
                   {
                     path: 'coupons-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/a-all-coupon/a-all-coupon.component'
-                      ).then((c) => c.AAllCouponComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/a-all-coupon/a-all-coupon.component').then(
+                        (c) => c.AAllCouponComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -277,9 +279,9 @@ export const routes: Routes = [
                     resolve: { coupon: couponDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/b-coupon-details/b-coupon-details.component'
-                      ).then((c) => c.BCouponDetailsComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/b-coupon-details/b-coupon-details.component').then(
+                        (c) => c.BCouponDetailsComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -288,9 +290,9 @@ export const routes: Routes = [
                   {
                     path: 'coupons-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/c-coupon-add/c-coupon-add.component'
-                      ).then((c) => c.CCouponAddComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/c-coupon-add/c-coupon-add.component').then(
+                        (c) => c.CCouponAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -301,9 +303,9 @@ export const routes: Routes = [
                     resolve: { coupon: couponDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/c-coupon-add/c-coupon-add.component'
-                      ).then((c) => c.CCouponAddComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/d-coupon/c-coupon-add/c-coupon-add.component').then(
+                        (c) => c.CCouponAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -315,9 +317,9 @@ export const routes: Routes = [
               {
                 path: 'promo-codes',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/promo-code.component'
-                  ).then((c) => c.PromoCodeComponent),
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/promo-code.component').then(
+                    (c) => c.PromoCodeComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -331,9 +333,9 @@ export const routes: Routes = [
                   {
                     path: 'promo-codes-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/a-all-promo-code/a-promo-code.component'
-                      ).then((c) => c.AAllPromoCodeComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/a-all-promo-code/a-promo-code.component').then(
+                        (c) => c.AAllPromoCodeComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -344,9 +346,9 @@ export const routes: Routes = [
                     resolve: { promoCode: promoCodeDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/b-details-promo-code/b-details-promo-code.component'
-                      ).then((c) => c.BDetailsPromoCodeComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/b-details-promo-code/b-details-promo-code.component').then(
+                        (c) => c.BDetailsPromoCodeComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -355,9 +357,9 @@ export const routes: Routes = [
                   {
                     path: 'promo-codes-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/b-promo-code-id/b-promo-code-id.component'
-                      ).then((c) => c.BPromoCodeIdComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/b-promo-code-id/b-promo-code-id.component').then(
+                        (c) => c.BPromoCodeIdComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -368,9 +370,9 @@ export const routes: Routes = [
                     resolve: { promoCode: promoCodeDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/b-promo-code-id/b-promo-code-id.component'
-                      ).then((c) => c.BPromoCodeIdComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/promocode/b-promo-code-id/b-promo-code-id.component').then(
+                        (c) => c.BPromoCodeIdComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -382,9 +384,9 @@ export const routes: Routes = [
               {
                 path: 'vouchers',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/voucher.component'
-                  ).then((c) => c.VoucherComponent),
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/voucher.component').then(
+                    (c) => c.VoucherComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -394,9 +396,9 @@ export const routes: Routes = [
                   {
                     path: 'vouchers-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/a-all-voucher/a-all-voucher.component'
-                      ).then((c) => c.AAllVoucherComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/a-all-voucher/a-all-voucher.component').then(
+                        (c) => c.AAllVoucherComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -407,9 +409,9 @@ export const routes: Routes = [
                     resolve: { voucher: voucherDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-details-voucher/b-details-voucher.component'
-                      ).then((c) => c.BDetailsVoucherComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-details-voucher/b-details-voucher.component').then(
+                        (c) => c.BDetailsVoucherComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -418,9 +420,9 @@ export const routes: Routes = [
                   {
                     path: 'vouchers-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component'
-                      ).then((c) => c.BVoucherIdComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component').then(
+                        (c) => c.BVoucherIdComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -431,9 +433,9 @@ export const routes: Routes = [
                     resolve: { voucher: voucherDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component'
-                      ).then((c) => c.BVoucherIdComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/voucher/b-voucher-id/b-voucher-id.component').then(
+                        (c) => c.BVoucherIdComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -445,21 +447,92 @@ export const routes: Routes = [
               {
                 path: 'loyalty-points',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/loyalty-points/loyalty-points.component'
-                  ).then((c) => c.LoyaltyPointsComponent),
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/loyalty-points/loyalty-points.component').then(
+                    (c) => c.LoyaltyPointsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
-                }
+                },
+              },
+              {
+                path: 'discount-offer',
+                resolve: { discountOffer: discountOfferResolver },
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/e-discount-offer/discount-offer.component').then(
+                    (c) => c.DiscountOfferComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+              },
+              {
+                path: 'half-mirror-offer',
+                resolve: { halfMirrorOffer: halfMirrorOfferResolver },
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/f-half-mirror-offer/half-mirror-offer.component').then(
+                    (c) => c.HalfMirrorOfferComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+              },
+              /* Custom Offers */
+              {
+                path: 'custom-offers',
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/g-custom-offers/g-custom-offers.component').then(
+                    (c) => c.CustomOffersListComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+              },
+              {
+                path: 'custom-offers-add',
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/g-custom-offers/add-custom-offer/add-custom-offer.component').then(
+                    (c) => c.AddCustomOfferComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+              },
+              {
+                path: 'custom-offers-edit/:id',
+                resolve: { customOffer: customOfferDetailsResolver },
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/g-custom-offers/add-custom-offer/add-custom-offer.component').then(
+                    (c) => c.AddCustomOfferComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+              },
+              {
+                path: 'custom-offers-details/:id',
+                resolve: { customOffer: customOfferDetailsResolver },
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/g-custom-offers/add-custom-offer/add-custom-offer.component').then(
+                    (c) => c.AddCustomOfferComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
               },
               // happy-hours
               {
                 path: 'happy-hours',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/b-dashboard-offers/c-happy-hours/a-happy-hours.component'
-                  ).then((c) => c.AHappyHoursComponent),
+                  import('./pages/dashboard/dashboard-pages/b-dashboard-offers/c-happy-hours/a-happy-hours.component').then(
+                    (c) => c.AHappyHoursComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -473,9 +546,9 @@ export const routes: Routes = [
                   {
                     path: 'happy-hours-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/c-happy-hours/a-all-happy-hours/a-all-happy-hours.component'
-                      ).then((c) => c.AAllHappyHoursComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/c-happy-hours/a-all-happy-hours/a-all-happy-hours.component').then(
+                        (c) => c.AAllHappyHoursComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -486,9 +559,9 @@ export const routes: Routes = [
                     resolve: { happyHours: HappyHoursEditResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/b-dashboard-offers/c-happy-hours/b-happy-hours-edit/b-happy-hours-edit.component'
-                      ).then((c) => c.BHappyHoursEditAddComponent),
+                      import('./pages/dashboard/dashboard-pages/b-dashboard-offers/c-happy-hours/b-happy-hours-edit/b-happy-hours-edit.component').then(
+                        (c) => c.BHappyHoursEditAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -502,9 +575,9 @@ export const routes: Routes = [
           {
             path: 'menu',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/c-dashboard-menu/c-dashboard-menu.component'
-              ).then((c) => c.CDashboardMenuComponent),
+              import('./pages/dashboard/dashboard-pages/c-dashboard-menu/c-dashboard-menu.component').then(
+                (c) => c.CDashboardMenuComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -515,9 +588,9 @@ export const routes: Routes = [
               {
                 path: 'categories',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/a-categories.component'
-                  ).then((c) => c.ACategoriesComponent),
+                  import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/a-categories.component').then(
+                    (c) => c.ACategoriesComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -531,9 +604,9 @@ export const routes: Routes = [
                   {
                     path: 'categories-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/a-all-categories/a-all-categories.component'
-                      ).then((c) => c.AAllCategoriesComponent),
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/a-all-categories/a-all-categories.component').then(
+                        (c) => c.AAllCategoriesComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -544,9 +617,9 @@ export const routes: Routes = [
                     resolve: { category: categoryDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/b-category-details/b-category-details.component'
-                      ).then((c) => c.BCategoryDetailsComponent),
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/b-category-details/b-category-details.component').then(
+                        (c) => c.BCategoryDetailsComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -555,9 +628,9 @@ export const routes: Routes = [
                   {
                     path: 'categories-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/d-category-add/d-category-add.component'
-                      ).then((c) => c.DCategoryAddComponent),
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/d-category-add/d-category-add.component').then(
+                        (c) => c.DCategoryAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -568,9 +641,9 @@ export const routes: Routes = [
                     resolve: { category: categoryDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/d-category-add/d-category-add.component'
-                      ).then((c) => c.DCategoryAddComponent),
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/d-category-add/d-category-add.component').then(
+                        (c) => c.DCategoryAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -578,14 +651,14 @@ export const routes: Routes = [
                   },
                 ],
               },
-              
+
               // products
               {
                 path: 'products',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/b-products.component'
-                  ).then((c) => c.BProductsComponent),
+                  import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/b-products.component').then(
+                    (c) => c.BProductsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -596,9 +669,7 @@ export const routes: Routes = [
                   {
                     path: 'products-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/a-all-products/a-all-products.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/a-all-products/a-all-products.component')
                         .then()
                         .then((c) => c.AAllProductsComponent),
                     data: {
@@ -611,9 +682,7 @@ export const routes: Routes = [
                     resolve: { products: productDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/b-products-details/b-products-details.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/b-products-details/b-products-details.component')
                         .then()
                         .then((c) => c.BProductsDetailsComponent),
                     data: {
@@ -624,9 +693,7 @@ export const routes: Routes = [
                   {
                     path: 'products-pice-price/:id',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/d-products-pice-price/d-products-pice-price.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/d-products-pice-price/d-products-pice-price.component')
                         .then()
                         .then((c) => c.DProductsPicePriceComponent),
                     data: {
@@ -637,9 +704,7 @@ export const routes: Routes = [
                   {
                     path: 'products-pice-price-add/:id',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/f-pice-price-add/f-pice-price-add.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/f-pice-price-add/f-pice-price-add.component')
                         .then()
                         .then((c) => c.FPicePriceAddComponent),
                     data: {
@@ -652,9 +717,7 @@ export const routes: Routes = [
                   {
                     path: 'products-pice-price-edit/:id',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/f-pice-price-add/f-pice-price-add.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/f-pice-price-add/f-pice-price-add.component')
                         .then()
                         .then((c) => c.FPicePriceAddComponent),
                     data: {
@@ -667,9 +730,7 @@ export const routes: Routes = [
                   {
                     path: 'products-choice/:id',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/e-products-choices/e-products-choices.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/e-products-choices/e-products-choices.component')
                         .then()
                         .then((c) => c.EProductsChoicesComponent),
                     data: {
@@ -680,9 +741,7 @@ export const routes: Routes = [
                   {
                     path: 'products-choice-add/:id',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/g-choices-add/g-choices-add.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/g-choices-add/g-choices-add.component')
                         .then()
                         .then((c) => c.GChoicesAddComponent),
                     data: {
@@ -697,9 +756,7 @@ export const routes: Routes = [
                   {
                     path: 'products-choice-edit/:id',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/g-choices-add/g-choices-add.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/g-choices-add/g-choices-add.component')
                         .then()
                         .then((c) => c.GChoicesAddComponent),
                     data: {
@@ -714,9 +771,7 @@ export const routes: Routes = [
                   {
                     path: 'products-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/c-products-add/c-products-add.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/c-products-add/c-products-add.component')
                         .then()
                         .then((c) => c.CProductsAddComponent),
                     data: {
@@ -733,11 +788,97 @@ export const routes: Routes = [
                       categories: productsCategoriesResolver,
                     },
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/h-products-edit/h-products-edit.component'
-                      )
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/b-products/h-products-edit/h-products-edit.component')
                         .then()
                         .then((c) => c.HProductsEditComponent),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                ],
+              },
+              // combos
+              {
+                path: 'combos',
+                loadComponent: () =>
+                  import('./pages/dashboard/dashboard-pages/c-dashboard-menu/d-combos/d-combos.component').then(
+                    (c) => c.DCombosComponent,
+                  ),
+                data: {
+                  title: 'KOI Sushi',
+                  description: 'Dashboard Page',
+                },
+                children: [
+                  {
+                    path: '',
+                    redirectTo: 'combos-index',
+                    pathMatch: 'full',
+                  },
+                  {
+                    path: 'combos-index',
+                    loadComponent: () =>
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/d-combos/d-all-combos/d-all-combos.component').then(
+                        (c) => c.DAllCombosComponent,
+                      ),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                  {
+                    path: 'categories-details/:id',
+                    resolve: { category: categoryDetailsResolver },
+                    runGuardsAndResolvers: 'always',
+                    loadComponent: () =>
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/b-category-details/b-category-details.component').then(
+                        (c) => c.BCategoryDetailsComponent,
+                      ),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                  },
+                  {
+                    path: 'combos-add',
+                    loadComponent: () =>
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/d-combos/b-add-combo/b-add-combo.component').then(
+                        (c) => c.BAddComboComponent,
+                      ),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                    resolve: {
+                      products: productDetailsResolver,
+                      categories: productsCategoriesResolver,
+                    },
+                  },
+                  {
+                    path: 'combos-edit/:id',
+                    loadComponent: () =>
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/d-combos/b-add-combo/b-add-combo.component').then(
+                        (c) => c.BAddComboComponent,
+                      ),
+                    data: {
+                      title: 'KOI Sushi',
+                      description: 'Dashboard Page',
+                    },
+                    resolve: {
+                      combo: comboDetailsResolver,
+                      categories: productsCategoriesResolver,
+                    },
+                    runGuardsAndResolvers: 'always',
+                  },
+
+                  {
+                    path: 'categories-edit/:id',
+                    resolve: { category: categoryDetailsResolver },
+                    runGuardsAndResolvers: 'always',
+                    loadComponent: () =>
+                      import('./pages/dashboard/dashboard-pages/c-dashboard-menu/a-categories/d-category-add/d-category-add.component').then(
+                        (c) => c.DCategoryAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -751,9 +892,9 @@ export const routes: Routes = [
           {
             path: 'sub-locations',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/h-sub-locations/h-sub-locations.component'
-              ).then((c) => c.HSubLocationsComponent),
+              import('./pages/dashboard/dashboard-pages/h-sub-locations/h-sub-locations.component').then(
+                (c) => c.HSubLocationsComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -767,9 +908,9 @@ export const routes: Routes = [
               {
                 path: 'sub-locations-index',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/h-sub-locations/a-sub-locations-all/a-sub-locations-all.component'
-                  ).then((c) => c.ASubLocationsAllComponent),
+                  import('./pages/dashboard/dashboard-pages/h-sub-locations/a-sub-locations-all/a-sub-locations-all.component').then(
+                    (c) => c.ASubLocationsAllComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -780,9 +921,9 @@ export const routes: Routes = [
                 resolve: { subLocations: subLocationsResolver },
                 runGuardsAndResolvers: 'always',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/h-sub-locations/b-sub-locations-details/b-sub-locations-details.component'
-                  ).then((c) => c.BSubLocationsDetailsComponent),
+                  import('./pages/dashboard/dashboard-pages/h-sub-locations/b-sub-locations-details/b-sub-locations-details.component').then(
+                    (c) => c.BSubLocationsDetailsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -791,9 +932,9 @@ export const routes: Routes = [
               {
                 path: 'sub-locations-add',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/h-sub-locations/d-sub-locations-add/d-sub-locations-add.component'
-                  ).then((c) => c.DSubLocationsAddComponent),
+                  import('./pages/dashboard/dashboard-pages/h-sub-locations/d-sub-locations-add/d-sub-locations-add.component').then(
+                    (c) => c.DSubLocationsAddComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -804,9 +945,9 @@ export const routes: Routes = [
                 resolve: { subLocations: subLocationsResolver },
                 runGuardsAndResolvers: 'always',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/h-sub-locations/d-sub-locations-add/d-sub-locations-add.component'
-                  ).then((c) => c.DSubLocationsAddComponent),
+                  import('./pages/dashboard/dashboard-pages/h-sub-locations/d-sub-locations-add/d-sub-locations-add.component').then(
+                    (c) => c.DSubLocationsAddComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -818,9 +959,9 @@ export const routes: Routes = [
           {
             path: 'orders',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/d-dashboard-orders/d-dashboard-orders.component'
-              ).then((c) => c.DDashboardOrdersComponent),
+              import('./pages/dashboard/dashboard-pages/d-dashboard-orders/d-dashboard-orders.component').then(
+                (c) => c.DDashboardOrdersComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -830,9 +971,9 @@ export const routes: Routes = [
               {
                 path: 'orders',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/d-dashboard-orders/a-orders/a-orders.component'
-                  ).then((c) => c.AOrdersComponent),
+                  import('./pages/dashboard/dashboard-pages/d-dashboard-orders/a-orders/a-orders.component').then(
+                    (c) => c.AOrdersComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -842,9 +983,9 @@ export const routes: Routes = [
               {
                 path: 'history',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/d-dashboard-orders/b-orders-history/b-orders-history.component'
-                  ).then((c) => c.BOrdersHistoryComponent),
+                  import('./pages/dashboard/dashboard-pages/d-dashboard-orders/b-orders-history/b-orders-history.component').then(
+                    (c) => c.BOrdersHistoryComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -854,9 +995,9 @@ export const routes: Routes = [
               {
                 path: 'order-details/:id',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/d-dashboard-orders/c-orders-details/c-orders-details.component'
-                  ).then((c) => c.COrdersDetailsComponent),
+                  import('./pages/dashboard/dashboard-pages/d-dashboard-orders/c-orders-details/c-orders-details.component').then(
+                    (c) => c.COrdersDetailsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -869,9 +1010,9 @@ export const routes: Routes = [
               {
                 path: 'order-history-details/:id',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/d-dashboard-orders/c-orders-details/c-orders-details.component'
-                  ).then((c) => c.COrdersDetailsComponent),
+                  import('./pages/dashboard/dashboard-pages/d-dashboard-orders/c-orders-details/c-orders-details.component').then(
+                    (c) => c.COrdersDetailsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -888,9 +1029,9 @@ export const routes: Routes = [
           {
             path: 'users',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/e-dashboard-users/e-dashboard-users.component'
-              ).then((c) => c.EDashboardUsersComponent),
+              import('./pages/dashboard/dashboard-pages/e-dashboard-users/e-dashboard-users.component').then(
+                (c) => c.EDashboardUsersComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -900,9 +1041,9 @@ export const routes: Routes = [
               {
                 path: 'users-index',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/e-dashboard-users/a-all-users/a-all-users.component'
-                  ).then((c) => c.AAllUsersComponent),
+                  import('./pages/dashboard/dashboard-pages/e-dashboard-users/a-all-users/a-all-users.component').then(
+                    (c) => c.AAllUsersComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -910,12 +1051,15 @@ export const routes: Routes = [
               },
               {
                 path: 'users-orders/:id',
-                resolve: { userData: usersDetailsResolver,userOrders:userOrdersResolver },
+                resolve: {
+                  userData: usersDetailsResolver,
+                  userOrders: userOrdersResolver,
+                },
                 runGuardsAndResolvers: 'always',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/e-dashboard-users/b-user-orders/b-user-orders.component'
-                  ).then((c) => c.BUserOrdersComponent),
+                  import('./pages/dashboard/dashboard-pages/e-dashboard-users/b-user-orders/b-user-orders.component').then(
+                    (c) => c.BUserOrdersComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -929,9 +1073,9 @@ export const routes: Routes = [
                 },
                 runGuardsAndResolvers: 'always',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/e-dashboard-users/c-user-addresses/c-user-addresses.component'
-                  ).then((c) => c.CUserAddressesComponent),
+                  import('./pages/dashboard/dashboard-pages/e-dashboard-users/c-user-addresses/c-user-addresses.component').then(
+                    (c) => c.CUserAddressesComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -943,9 +1087,9 @@ export const routes: Routes = [
           {
             path: 'pages',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/f-dashboard-pages/f-dashboard-pages.component'
-              ).then((c) => c.FDashboardPagesComponent),
+              import('./pages/dashboard/dashboard-pages/f-dashboard-pages/f-dashboard-pages.component').then(
+                (c) => c.FDashboardPagesComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -954,9 +1098,9 @@ export const routes: Routes = [
               {
                 path: 'about-us',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/f-dashboard-pages/a-about-us/a-about-us.component'
-                  ).then((c) => c.AAboutUsComponent),
+                  import('./pages/dashboard/dashboard-pages/f-dashboard-pages/a-about-us/a-about-us.component').then(
+                    (c) => c.AAboutUsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -965,9 +1109,9 @@ export const routes: Routes = [
               {
                 path: 'privacy-policy',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/f-dashboard-pages/b-privacy-policy/b-privacy-policy.component'
-                  ).then((c) => c.BPrivacyPolicyComponent),
+                  import('./pages/dashboard/dashboard-pages/f-dashboard-pages/b-privacy-policy/b-privacy-policy.component').then(
+                    (c) => c.BPrivacyPolicyComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -976,9 +1120,9 @@ export const routes: Routes = [
               {
                 path: 'tutorial',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/c-tutorial.component'
-                  ).then((c) => c.CTutorialComponent),
+                  import('./pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/c-tutorial.component').then(
+                    (c) => c.CTutorialComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -988,9 +1132,9 @@ export const routes: Routes = [
                   {
                     path: 'tutorial-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/a-all-tutorial/a-all-tutorial.component'
-                      ).then((c) => c.AAllTutorialComponent),
+                      import('./pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/a-all-tutorial/a-all-tutorial.component').then(
+                        (c) => c.AAllTutorialComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1001,9 +1145,9 @@ export const routes: Routes = [
                     resolve: { tutorial: tutorialDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/b-tutorial-details/b-tutorial-details.component'
-                      ).then((c) => c.BTutorialDetailsComponent),
+                      import('./pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/b-tutorial-details/b-tutorial-details.component').then(
+                        (c) => c.BTutorialDetailsComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1012,9 +1156,9 @@ export const routes: Routes = [
                   {
                     path: 'tutorial-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/c-tutorial-add/c-tutorial-add.component'
-                      ).then((c) => c.CTutorialAddComponent),
+                      import('./pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/c-tutorial-add/c-tutorial-add.component').then(
+                        (c) => c.CTutorialAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1025,9 +1169,9 @@ export const routes: Routes = [
                     resolve: { tutorial: tutorialDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/c-tutorial-add/c-tutorial-add.component'
-                      ).then((c) => c.CTutorialAddComponent),
+                      import('./pages/dashboard/dashboard-pages/f-dashboard-pages/c-tutorial/c-tutorial-add/c-tutorial-add.component').then(
+                        (c) => c.CTutorialAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1041,9 +1185,9 @@ export const routes: Routes = [
           {
             path: 'contact-us',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/g-contact-us/g-contact-us.component'
-              ).then((c) => c.GContactUsComponent),
+              import('./pages/dashboard/dashboard-pages/g-contact-us/g-contact-us.component').then(
+                (c) => c.GContactUsComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -1052,9 +1196,9 @@ export const routes: Routes = [
               {
                 path: 'social-links',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/g-contact-us/a-social-media-links/a-social-media-links.component'
-                  ).then((c) => c.ASocialMediaLinksComponent),
+                  import('./pages/dashboard/dashboard-pages/g-contact-us/a-social-media-links/a-social-media-links.component').then(
+                    (c) => c.ASocialMediaLinksComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -1063,9 +1207,9 @@ export const routes: Routes = [
               {
                 path: 'branches',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/g-contact-us/b-branch/b-branch.component'
-                  ).then((c) => c.BBranchComponent),
+                  import('./pages/dashboard/dashboard-pages/g-contact-us/b-branch/b-branch.component').then(
+                    (c) => c.BBranchComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -1075,9 +1219,9 @@ export const routes: Routes = [
                   {
                     path: 'branches-index',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/g-contact-us/b-branch/c-all-branches/c-all-branches.component'
-                      ).then((c) => c.CAllBranchesComponent),
+                      import('./pages/dashboard/dashboard-pages/g-contact-us/b-branch/c-all-branches/c-all-branches.component').then(
+                        (c) => c.CAllBranchesComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1088,9 +1232,9 @@ export const routes: Routes = [
                     resolve: { branch: branchDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/g-contact-us/b-branch/a-branch-details/a-branch-details.component'
-                      ).then((c) => c.ABranchDetailsComponent),
+                      import('./pages/dashboard/dashboard-pages/g-contact-us/b-branch/a-branch-details/a-branch-details.component').then(
+                        (c) => c.ABranchDetailsComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1099,9 +1243,9 @@ export const routes: Routes = [
                   {
                     path: 'branches-add',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/g-contact-us/b-branch/b-branch-add/b-branch-add.component'
-                      ).then((c) => c.BBranchAddComponent),
+                      import('./pages/dashboard/dashboard-pages/g-contact-us/b-branch/b-branch-add/b-branch-add.component').then(
+                        (c) => c.BBranchAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1112,9 +1256,9 @@ export const routes: Routes = [
                     resolve: { branch: branchDetailsResolver },
                     runGuardsAndResolvers: 'always',
                     loadComponent: () =>
-                      import(
-                        './pages/dashboard/dashboard-pages/g-contact-us/b-branch/b-branch-add/b-branch-add.component'
-                      ).then((c) => c.BBranchAddComponent),
+                      import('./pages/dashboard/dashboard-pages/g-contact-us/b-branch/b-branch-add/b-branch-add.component').then(
+                        (c) => c.BBranchAddComponent,
+                      ),
                     data: {
                       title: 'KOI Sushi',
                       description: 'Dashboard Page',
@@ -1125,9 +1269,9 @@ export const routes: Routes = [
               {
                 path: 'messages',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/g-contact-us/d-messages/d-messages.component'
-                  ).then((c) => c.DMessagesComponent),
+                  import('./pages/dashboard/dashboard-pages/g-contact-us/d-messages/d-messages.component').then(
+                    (c) => c.DMessagesComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -1138,9 +1282,9 @@ export const routes: Routes = [
                 resolve: { message: messageDetailsResolver },
                 runGuardsAndResolvers: 'always',
                 loadComponent: () =>
-                  import(
-                    './pages/dashboard/dashboard-pages/g-contact-us/d-messages/message-details/message-details.component'
-                  ).then((c) => c.MessageDetailsComponent),
+                  import('./pages/dashboard/dashboard-pages/g-contact-us/d-messages/message-details/message-details.component').then(
+                    (c) => c.MessageDetailsComponent,
+                  ),
                 data: {
                   title: 'KOI Sushi',
                   description: 'Dashboard Page',
@@ -1151,9 +1295,9 @@ export const routes: Routes = [
           {
             path: 'notifications',
             loadComponent: () =>
-              import(
-                './pages/dashboard/dashboard-pages/l-notifications/l-notifications.component'
-              ).then((c) => c.LNotificationsComponent),
+              import('./pages/dashboard/dashboard-pages/l-notifications/l-notifications.component').then(
+                (c) => c.LNotificationsComponent,
+              ),
             data: {
               title: 'KOI Sushi',
               description: 'Dashboard Page',
@@ -1179,7 +1323,7 @@ export const routes: Routes = [
     path: '**',
     loadComponent: () =>
       import('./pages/main/not-found/not-found.component').then(
-        (e) => e.NotFoundComponent
+        (e) => e.NotFoundComponent,
       ),
     data: { title: 'Not Found Page' },
   },

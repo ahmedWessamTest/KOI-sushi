@@ -85,7 +85,7 @@ export class BPromoCodeIdComponent implements OnInit {
   ];
 
   applyOptions = [
-    { label: 'All Users', value: 'unlimited' },
+    { label: 'All Users', value: 'all' },
     { label: 'Specific users', value: 'limited' },
   ];
 
@@ -172,11 +172,9 @@ export class BPromoCodeIdComponent implements OnInit {
       .subscribe((selectedCatIds: number[]) => {
         this.SelectedCategoriesIds.set(selectedCatIds);
 
-        // --- منطق التنظيف ---
         const currentProductIds = this.submitForm.get('products_ids')?.value as number[];
 
         if (currentProductIds && currentProductIds.length > 0) {
-          // نقوم بفلترة المنتجات المختارة: نبقي فقط على المنتجات التي تنتمي للتصنيفات التي ما زالت مختارة
           const cleanedProductIds = this.allProducts().filter(p =>
             selectedCatIds.includes(p.category_id) && currentProductIds.includes(p.id)
           ).map(p => p.id);
