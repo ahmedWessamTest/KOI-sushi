@@ -78,13 +78,13 @@ export class DiscountOfferComponent {
     this.submitForm.patchValue({
       title_ar: data.title_ar,
       title_en: data.title_en,
-      value: data.percentage, // Assuming 'percentage' from response maps to 'value' in update based on user request example
+      value: data.percentage,
       status: data.status,
-      // If the GET response includes 'combos' or similar, patch it here.
-      // User didn't show 'combos' in GET response, but did in POST.
-      // Creating functionality to select combos.
       combos: data.combos ? data.combos.map((c: any) => c.id || c) : [],
     });
+    if (data.image) {
+      this.imagePreview = data.image;
+    }
   }
 
   private loadCombos() {

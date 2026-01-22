@@ -82,6 +82,9 @@ export class HalfMirrorOfferComponent {
       status: data.status,
       combos: data.combos ? data.combos.map((c: any) => c.id || c) : [],
     });
+    if (data.image) {
+      this.imagePreview = data.image;
+    }
   }
 
   private loadCombos() {

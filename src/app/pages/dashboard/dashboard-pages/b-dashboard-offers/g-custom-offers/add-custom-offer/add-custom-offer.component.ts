@@ -119,8 +119,7 @@ export class AddCustomOfferComponent {
       combos: data.combos ? data.combos.map((c: any) => c.id) : [],
     });
     if (data.image) {
-      // Handling image preview if needed.
-      // Usually images come from a different base URL or we handle them locally.
+      this.imagePreview = data.image;
     }
   }
 
