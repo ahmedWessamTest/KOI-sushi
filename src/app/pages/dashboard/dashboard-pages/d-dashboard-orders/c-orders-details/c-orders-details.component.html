@@ -197,7 +197,7 @@
     </p-table>
   </p-card>
   } 
-  @if (order.order.items) {
+  @if (isHaveCombo) {
   <p-card header="Combo Details" styleClass="shadow-lg border">
     <p-table [value]="order.order.items" responsiveLayout="scroll">
       <ng-template pTemplate="header">
@@ -224,6 +224,7 @@
   </p-card>
   } 
   
+    @if (order.order.note) {
     <p-card header="Order Notes" styleClass="shadow-lg border">
       <p-table [value]="[order.order]" responsiveLayout="scroll">
         <ng-template pTemplate="header">
@@ -238,7 +239,7 @@
         </ng-template>
       </p-table>
     </p-card>
-
+  }
   <p-card header="Cart Details" styleClass="shadow-lg border">
     <p-table [value]="userOrders" responsiveLayout="scroll">
       <ng-template pTemplate="header">
@@ -246,6 +247,7 @@
           <th class="text-center">#</th>
           <th class="text-center">Cart Item</th>
           <th class="text-center">Quantity</th>
+          <th class="text-center">Product Option</th>
           <th class="text-center">Price</th>
         </tr>
       </ng-template>
@@ -255,6 +257,7 @@
           <td class="text-center">{{ i + 1 }}</td>
           <td class="text-center">{{ item?.product?.title_en }}</td>
           <td class="text-center">{{ item?.quantity }}</td>
+          <td class="text-center">{{ item?.product_option?.title_en }}</td>
           <td class="text-center">
             {{ item.price * item.quantity | currency : " EGP " }}
           </td>
@@ -263,13 +266,13 @@
 
       <ng-template pTemplate="footer">
         <tr>
-          <td colspan="3" class="text-right font-bold">Subtotal:</td>
+          <td colspan="4" class="text-right font-bold">Subtotal:</td>
           <td class="text-center font-bold">
             {{ order.order.sub_total_price | currency : " EGP " }}
           </td>
         </tr>
         <tr>
-          <td colspan="3" class="text-right font-bold">VAT:</td>
+          <td colspan="4" class="text-right font-bold">VAT:</td>
           <td class="text-center font-bold">
             <span class="flex items-center justify-center gap-2">
               <p-badge
@@ -294,7 +297,7 @@
         </tr>
         @if(order.order.loyalty_points_discount){
           <tr>
-            <td colspan="3" class="text-right font-bold">Loyalty Points:</td>
+            <td colspan="4" class="text-right font-bold">Loyalty Points:</td>
             <td class="text-center font-bold">
               <span class="flex items-center justify-center gap-2">
                 <p-badge
@@ -310,7 +313,7 @@
         }
         @if(convertStringToNumber(order.order.happy_hours_discount)){
           <tr>
-            <td colspan="3" class="text-right font-bold">happy hours:</td>
+            <td colspan="4" class="text-right font-bold">happy hours:</td>
             <td class="text-center font-bold">
               <span class="flex items-center justify-center gap-2">
                 <p-badge
@@ -327,7 +330,7 @@
 
         @if (order.order.loyalty_points_discount) {
         <tr>
-          <td colspan="3" class="text-right font-bold text-lg">promo code</td>
+          <td colspan="4" class="text-right font-bold text-lg">promo code</td>
           <td class="text-center font-bold text-lg">
             <span class="flex items-center justify-center gap-2">
               <p-badge
@@ -344,7 +347,7 @@
         </tr>
         } @if (order.order.delivery_fee) {
         <tr>
-          <td colspan="3" class="text-right font-bold text-lg">Delivery:</td>
+          <td colspan="4" class="text-right font-bold text-lg">Delivery:</td>
           <td class="text-center font-bold text-lg">
             <span class="flex items-center justify-center gap-2">
               <p-badge
@@ -359,7 +362,7 @@
         </tr>
         }
         <tr>
-          <td colspan="3" class="text-right font-bold text-lg">Total:</td>
+          <td colspan="4" class="text-right font-bold text-lg">Total:</td>
           <td class="text-center font-bold text-lg">
             {{ order.order.total_price | currency : " EGP " }}
           </td>

@@ -1,148 +1,250 @@
 <p-card class="p-4">
-    <ng-template pTemplate="title">
-      <h2 class="text-xl font-semibold text-gray-800">
-        {{ isViewOnly ? 'Custom Offer Details' : (isEditing ? 'Edit Custom Offer' : 'Add Custom Offer') }}
-      </h2>
-    </ng-template>
-  
-    <ng-template pTemplate="content">
-      <form [formGroup]="submitForm" class="grid md:grid-cols-2 gap-6">
-        
-        <!-- Title AR -->
-        <div class="flex flex-col gap-2">
-          <label class="font-medium">Title (AR) <span class="text-red-500">*</span></label>
-          <input type="text" pInputText formControlName="title_ar" placeholder="عنوان العرض باللغة العربية" />
-          @if (submitForm.get('title_ar')?.invalid && submitForm.get('title_ar')?.touched) {
-            <small class="p-error">Title (AR) is required.</small>
-          }
-        </div>
+  <ng-template pTemplate="title">
+    <h2 class="text-xl font-semibold text-gray-800">
+      {{
+        isViewOnly
+          ? "Custom Offer Details"
+          : isEditing
+            ? "Edit Custom Offer"
+            : "Add Custom Offer"
+      }}
+    </h2>
+  </ng-template>
 
-        <!-- Title EN -->
-        <div class="flex flex-col gap-2">
-          <label class="font-medium">Title (EN) <span class="text-red-500">*</span></label>
-          <input type="text" pInputText formControlName="title_en" placeholder="Offer Title in English" />
-          @if (submitForm.get('title_en')?.invalid && submitForm.get('title_en')?.touched) {
-            <small class="p-error">Title (EN) is required.</small>
-          }
-        </div>
+  <ng-template pTemplate="content">
+    <form [formGroup]="submitForm" class="grid md:grid-cols-2 gap-6">
+      <!-- Title AR -->
+      <div class="flex flex-col gap-2">
+        <label class="font-medium"
+          >Title (AR) <span class="text-red-500">*</span></label
+        >
+        <input
+          type="text"
+          pInputText
+          formControlName="title_ar"
+          placeholder="عنوان العرض باللغة العربية"
+        />
+        @if (
+          submitForm.get("title_ar")?.invalid &&
+          submitForm.get("title_ar")?.touched
+        ) {
+          <small class="p-error">Title (AR) is required.</small>
+        }
+      </div>
 
-        <!-- Value -->
-        <div class="flex flex-col gap-2">
-          <label class="font-medium">Value (%) <span class="text-red-500">*</span></label>
-          <input appOnlyNumber type="text" pInputText formControlName="percentage" placeholder="e.g. 15.00" />
-          @if (submitForm.get('percentage')?.invalid && submitForm.get('percentage')?.touched) {
-            <small class="p-error">Value is required.</small>
-          }
-        </div>
+      <!-- Title EN -->
+      <div class="flex flex-col gap-2">
+        <label class="font-medium"
+          >Title (EN) <span class="text-red-500">*</span></label
+        >
+        <input
+          type="text"
+          pInputText
+          formControlName="title_en"
+          placeholder="Offer Title in English"
+        />
+        @if (
+          submitForm.get("title_en")?.invalid &&
+          submitForm.get("title_en")?.touched
+        ) {
+          <small class="p-error">Title (EN) is required.</small>
+        }
+      </div>
 
-        <!-- Min Order Amount -->
-        <div class="flex flex-col gap-2">
-          <label class="font-medium">Min Order Amount <span class="text-red-500">*</span></label>
-          <input appOnlyNumber type="text" pInputText formControlName="min_order_amount" placeholder="e.g. 500.00" />
-          @if (submitForm.get('min_order_amount')?.invalid && submitForm.get('min_order_amount')?.touched) {
-            <small class="p-error">Min Order Amount is required.</small>
-          }
-        </div>
+      <!-- Value -->
+      <div class="flex flex-col gap-2">
+        <label class="font-medium"
+          >Value (%) <span class="text-red-500">*</span></label
+        >
+        <input
+          appOnlyNumber
+          type="text"
+          pInputText
+          formControlName="percentage"
+          placeholder="e.g. 15.00"
+        />
+        @if (
+          submitForm.get("percentage")?.invalid &&
+          submitForm.get("percentage")?.touched
+        ) {
+          <small class="p-error">Value is required.</small>
+        }
+      </div>
 
-        <!-- Status -->
-        <div class="flex items-center gap-2">
-          <label class="font-medium">Status <span class="text-red-500">*</span></label>
-          <p-inputSwitch formControlName="status"></p-inputSwitch>
-          @if (submitForm.get('status')?.invalid && submitForm.get('status')?.touched) {
-            <small class="p-error">Status is required.</small>
-          }
-        </div>
+      <!-- Min Order Amount -->
+      <div class="flex flex-col gap-2">
+        <label class="font-medium"
+          >Min Order Amount <span class="text-red-500">*</span></label
+        >
+        <input
+          appOnlyNumber
+          type="text"
+          pInputText
+          formControlName="min_order_amount"
+          placeholder="e.g. 500.00"
+        />
+        @if (
+          submitForm.get("min_order_amount")?.invalid &&
+          submitForm.get("min_order_amount")?.touched
+        ) {
+          <small class="p-error">Min Order Amount is required.</small>
+        }
+      </div>
 
-        <!-- Image Upload -->
-        <div class="flex flex-col gap-2">
-          <label class="font-medium">Offer Image</label>
-          @if (!isViewOnly) {
-            <p-fileUpload
-              #fileUpload
-              name="image"
-              accept="image/*"
-              [auto]="true"
-              [maxFileSize]="2000000"
-              [chooseLabel]="'Choose Image'"
-              [uploadLabel]="'Upload'"
-              [styleClass]="'w-full'"
-              [cancelLabel]="'Cancel'"
-              (onRemove)="clearImage()"
-              [showUploadButton]="false"
-              [showCancelButton]="false"
-              [customUpload]="true"
-              (onSelect)="onFileSelect($event)"
-              [draggable]="true">
-              <ng-template pTemplate="content">
-                <div
-                  class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-main-500 transition">
-                  <i class="pi pi-cloud-upload text-4xl text-gray-400"></i>
-                  <p class="text-gray-500 mt-2 text-center">
-                    Drag & drop an image or
-                    <span class="text-blue-500 cursor-pointer" (click)="fileUpload.choose()">click to select</span>
-                  </p>
-                </div>
-              </ng-template>
-            </p-fileUpload>
-          }
-          @if (imagePreview && (isEditing || isViewOnly)) {
-            <div class="mt-2 relative w-32 h-32">
-              <img [src]="imagePreview" alt="Preview" class="w-full h-full object-cover rounded-md border" />
-              <!-- @if (!isViewOnly) {
+      <!-- Status -->
+      <div class="flex items-center gap-2">
+        <label class="font-medium"
+          >Status <span class="text-red-500">*</span></label
+        >
+        <p-inputSwitch formControlName="status"></p-inputSwitch>
+        @if (
+          submitForm.get("status")?.invalid && submitForm.get("status")?.touched
+        ) {
+          <small class="p-error">Status is required.</small>
+        }
+      </div>
+
+      <!-- Image Upload -->
+      <div class="flex flex-col gap-2">
+        <label class="font-medium">Offer Image</label>
+        @if (!isViewOnly) {
+          <p-fileUpload
+            #fileUpload
+            name="image"
+            accept="image/*"
+            [auto]="true"
+            [maxFileSize]="2000000"
+            [chooseLabel]="'Choose Image'"
+            [uploadLabel]="'Upload'"
+            [styleClass]="'w-full'"
+            [cancelLabel]="'Cancel'"
+            (onRemove)="clearImage()"
+            [showUploadButton]="false"
+            [showCancelButton]="false"
+            [customUpload]="true"
+            (onSelect)="onFileSelect($event)"
+            [draggable]="true"
+          >
+            <ng-template pTemplate="content">
+              <div
+                class="upload-area flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-main-500 transition"
+              >
+                <i class="pi pi-cloud-upload text-4xl text-gray-400"></i>
+                <p class="text-gray-500 mt-2 text-center">
+                  Drag & drop an image or
+                  <span
+                    class="text-blue-500 cursor-pointer"
+                    (click)="fileUpload.choose()"
+                    >click to select</span
+                  >
+                </p>
+              </div>
+            </ng-template>
+          </p-fileUpload>
+        }
+        @if (imagePreview && (isEditing || isViewOnly)) {
+          <div class="mt-2 relative w-32 h-32">
+            <img
+              [src]="imagePreview"
+              alt="Preview"
+              class="w-full h-full object-cover rounded-md border"
+            />
+            <!-- @if (!isViewOnly) {
                 <button type="button" (click)="clearImage(); fileUpload.clear()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow hover:bg-red-600 transition">
                   <i class="pi pi-times text-xs"></i>
                 </button>
               } -->
-            </div>
-          }
-        </div>
-
-        <!-- Combos -->
-        <div class="md:col-span-2 flex flex-col gap-2">
-            <label class="font-medium">Select Combos <span class="text-red-500">*</span></label>
-            <p-multiSelect 
-                [options]="combos" 
-                formControlName="combos" 
-                optionLabel="title_en" 
-                optionValue="id" 
-                display="chip"
-                placeholder="Select Combos"
-                styleClass="w-full"
-                [filter]="true"
-                [loading]="loadingCombos">
-            </p-multiSelect>
-            @if (submitForm.get('combos')?.invalid && submitForm.get('combos')?.touched) {
-                <small class="p-error">At least one combo must be selected.</small>
-            }
-        </div>
-
-        <!-- Descriptions (AR/EN) -->
-        <div class="flex flex-col gap-2">
-            <label class="font-medium">Description (AR) <span class="text-red-500">*</span></label>
-            <textarea pInputTextarea formControlName="description_ar" rows="3" class="w-full"></textarea>
-            @if (submitForm.get('description_ar')?.invalid && submitForm.get('description_ar')?.touched) {
-                <small class="p-error">Description (AR) is required.</small>
-            }
-        </div>
-        <div class="flex flex-col gap-2">
-            <label class="font-medium">Description (EN) <span class="text-red-500">*</span></label>
-            <textarea pInputTextarea formControlName="description_en" rows="3" class="w-full"></textarea>
-            @if (submitForm.get('description_en')?.invalid && submitForm.get('description_en')?.touched) {
-                <small class="p-error">Description (EN) is required.</small>
-            }
-        </div>
-  
-      </form>
-    </ng-template>
-  
-    <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-3">
-        <button pButton label="Back" [routerLink]="['/dashboard/offers/custom-offers']" class="p-button-secondary p-button-outlined btn-main px-4"></button>
-        @if (!isViewOnly) {
-          <button pButton [label]="isEditing ? 'Update' : 'Save'" (click)="save()" class="p-button-success btn-main px-4"></button>
+          </div>
         }
       </div>
-    </ng-template>
-  </p-card>
-  
-  <p-toast></p-toast>
+
+      <!-- Combos -->
+      <div class="md:col-span-2 flex flex-col gap-2">
+        <label class="font-medium"
+          >Select Combos ({{ combos.length }})
+          @if (submitForm.get("combos")?.value?.length > 5) {
+            <span class="text-blue-600 ml-1"
+              >({{ submitForm.get("combos")?.value?.length }} selected)</span
+            >
+          }
+          <span class="text-red-500">*</span>
+        </label>
+        <p-multiSelect
+          [options]="combos"
+          [maxSelectedLabels]="5"
+          formControlName="combos"
+          optionLabel="title_en"
+          optionValue="id"
+          display="chip"
+          placeholder="Select Combos"
+          styleClass="w-full"
+          [filter]="true"
+          [loading]="loadingCombos"
+        >
+        </p-multiSelect>
+        @if (
+          submitForm.get("combos")?.invalid && submitForm.get("combos")?.touched
+        ) {
+          <small class="p-error">At least one combo must be selected.</small>
+        }
+      </div>
+
+      <!-- Descriptions (AR/EN) -->
+      <div class="flex flex-col gap-2">
+        <label class="font-medium"
+          >Description (AR) <span class="text-red-500">*</span></label
+        >
+        <textarea
+          pInputTextarea
+          formControlName="description_ar"
+          rows="3"
+          class="w-full"
+        ></textarea>
+        @if (
+          submitForm.get("description_ar")?.invalid &&
+          submitForm.get("description_ar")?.touched
+        ) {
+          <small class="p-error">Description (AR) is required.</small>
+        }
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="font-medium"
+          >Description (EN) <span class="text-red-500">*</span></label
+        >
+        <textarea
+          pInputTextarea
+          formControlName="description_en"
+          rows="3"
+          class="w-full"
+        ></textarea>
+        @if (
+          submitForm.get("description_en")?.invalid &&
+          submitForm.get("description_en")?.touched
+        ) {
+          <small class="p-error">Description (EN) is required.</small>
+        }
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3">
+      <button
+        pButton
+        label="Back"
+        [routerLink]="['/dashboard/offers/custom-offers']"
+        class="p-button-secondary p-button-outlined btn-main px-4"
+      ></button>
+      @if (!isViewOnly) {
+        <button
+          pButton
+          [label]="isEditing ? 'Update' : 'Save'"
+          (click)="save()"
+          class="p-button-success btn-main px-4"
+        ></button>
+      }
+    </div>
+  </ng-template>
+</p-card>
+
+<p-toast></p-toast>

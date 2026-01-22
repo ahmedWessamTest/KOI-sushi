@@ -9,18 +9,22 @@
       <label for="title-en" class="font-medium block mb-1">Title En</label>
       <input id="title-en" type="text" pInputText placeholder="Enter voucher En title" formControlName="title_en"
         class="w-full" />
-      <small class="text-red-500" *ngIf="submitForm.get('title_en')?.touched && submitForm.get('title_en')?.invalid">
-        Title is required (min 3 characters)
-      </small>
+      @if(submitForm.get('title_en')?.touched && submitForm.get('title_en')?.invalid) {
+        <small class="text-red-500">
+          Title is required (min 3 characters)
+        </small>
+      }
     </div>
 
     <div class="col-span-1">
       <label for="title-ar" class="font-medium block mb-1">Title Ar</label>
       <input id="title-ar" type="text" pInputText placeholder="Enter voucher ar Title" formControlName="title_ar"
         class="w-full" />
-      <small class="text-red-500" *ngIf="submitForm.get('title_ar')?.touched && submitForm.get('title_ar')?.invalid">
-        Title is required (min 3 characters)
-      </small>
+      @if(submitForm.get('title_ar')?.touched && submitForm.get('title_ar')?.invalid) {
+        <small class="text-red-500">
+          Title is required (min 3 characters)
+        </small>
+      }
     </div>
 
     <div class="col-span-1">
@@ -48,15 +52,23 @@
     </div>
 
     <div class="col-span-1">
-      <label class="font-medium block mb-1">Include categories</label>
-      <p-multiSelect [options]="allCategory()" formControlName="categories_ids" optionLabel="title_ar" optionValue="id"
+      <label class="font-medium block mb-1">Include categories ({{allCategory().length}})
+        @if(submitForm.get('categories_ids')?.value?.length > 5) {
+          <span class="text-blue-600 ml-1">({{submitForm.get('categories_ids')?.value?.length}} selected)</span>
+        }
+      </label>
+      <p-multiSelect [options]="allCategory()" [maxSelectedLabels]="5" formControlName="categories_ids" optionLabel="title_ar" optionValue="id"
         placeholder="Select Categories" class="w-full" display="chip">
       </p-multiSelect>
     </div>
 
     <div class="col-span-1">
-      <label class="font-medium block mb-1">Execlue products</label>
-      <p-multiSelect [options]="allProducts() || []" formControlName="products_ids" optionLabel="title_ar" optionValue="id"
+      <label class="font-medium block mb-1">Execlue products ({{allProducts().length}})
+        @if(submitForm.get('products_ids')?.value?.length > 5) {
+          <span class="text-blue-600 ml-1">({{submitForm.get('products_ids')?.value?.length}} selected)</span>
+        }
+      </label>
+      <p-multiSelect [options]="allProducts() || []" [maxSelectedLabels]="5" formControlName="products_ids" optionLabel="title_ar" optionValue="id"
         placeholder="Select Products" [loading]="productsIsLoading()" (onFilter)="onProductsSearchChange($event)"
         class="w-full" display="chip">
       </p-multiSelect>
@@ -102,19 +114,29 @@
       <p-calendar id="expiration_date" formControlName="expiration_date" dateFormat="yy-mm-dd" [showIcon]="true"
         class="w-full"></p-calendar>
     </div>
-    <div class="col-span-1" *ngIf="submitForm.get('use')?.value === 'specific'">
-      <label for="limit" class="font-medium block mb-1">Usage Limit</label>
-      <input id="limit" type="number" pInputText formControlName="limit" class="w-full" appOnlyNumber />
-    </div>
+    @if(submitForm.get('use')?.value === 'specific') {
+      <div class="col-span-1">
+        <label for="limit" class="font-medium block mb-1">Usage Limit</label>
+        <input id="limit" type="number" pInputText formControlName="limit" class="w-full" appOnlyNumber />
+      </div>
+    }
 
-    <div class="col-span-1" *ngIf="submitForm.get('apply')?.value === 'specific'">
-      <label for="users" class="font-medium block mb-1">Specific Users</label>
-      <p-multiSelect id="users" [options]="allUsers()" (input)="onSearchChange($event)" formControlName="users"
-        optionLabel="name" optionValue="id" [loading]="isLoadingUsers()" class="w-full" display="chip"></p-multiSelect>
-    </div>
-    <div class="col-span-2" *ngIf="errorMessage()">
-      <p class="text-red-600 font-medium bg-red-50 p-2 rounded">{{ errorMessage() }}</p>
-    </div>
+    @if(submitForm.get('apply')?.value === 'specific') {
+      <div class="col-span-1">
+        <label for="users" class="font-medium block mb-1">Specific Users
+          @if(submitForm.get('users')?.value?.length > 5) {
+            <span class="text-blue-600 ml-1">({{submitForm.get('users')?.value?.length}} selected)</span>
+          }
+        </label>
+        <p-multiSelect id="users" [options]="allUsers()" (input)="onSearchChange($event)" formControlName="users"
+          optionLabel="name" optionValue="id" [loading]="isLoadingUsers()" class="w-full" display="chip"></p-multiSelect>
+      </div>
+    }
+    @if(errorMessage()) {
+      <div class="col-span-2">
+        <p class="text-red-600 font-medium bg-red-50 p-2 rounded">{{ errorMessage() }}</p>
+      </div>
+    }
 
     <div class="col-span-2 flex justify-end mt-4">
       <p-button label="{{ isEditing ? 'Update Voucher' : 'Create Voucher' }}" icon="pi pi-save" type="submit"

@@ -9,11 +9,11 @@
       <label for="code" class="font-medium block mb-1">Code</label>
       <input id="title-en" type="text" pInputText placeholder="Enter promo code code" formControlName="code"
         class="w-full" />
-      <small class="text-red-500" *ngIf="
-          submitForm.get('code')?.touched && submitForm.get('code')?.invalid
-        ">
-        code is required
-      </small>
+      @if(submitForm.get('code')?.touched && submitForm.get('code')?.invalid) {
+        <small class="text-red-500">
+          code is required
+        </small>
+      }
     </div>
 
     <!-- Use Option -->
@@ -35,11 +35,11 @@
       <label for="value" class="font-medium block mb-1">Value</label>
       <input id="value" type="number" pInputText placeholder="Enter discount value" formControlName="value"
         class="w-full" appOnlyNumber />
-      <small class="text-red-500" *ngIf="
-          submitForm.get('value')?.touched && submitForm.get('value')?.invalid
-        ">
-        Value must be a positive number
-      </small>
+      @if(submitForm.get('value')?.touched && submitForm.get('value')?.invalid) {
+        <small class="text-red-500">
+          Value must be a positive number
+        </small>
+      }
     </div>
 
     <!-- Minimum Amount -->
@@ -57,30 +57,46 @@
     </div>
 
     <!-- Limit (only if "limited" use selected) -->
-    <div class="col-span-1" *ngIf="submitForm.get('use')?.value === 'limited'">
-      <label for="limit" class="font-medium block mb-1">Limit</label>
-      <input id="limit" type="number" pInputText placeholder="Enter usage limit" formControlName="limit" class="w-full"
-        appOnlyNumber />
-    </div>
+    @if(submitForm.get('use')?.value === 'limited') {
+      <div class="col-span-1">
+        <label for="limit" class="font-medium block mb-1">Limit</label>
+        <input id="limit" type="number" pInputText placeholder="Enter usage limit" formControlName="limit" class="w-full"
+          appOnlyNumber />
+      </div>
+    }
 
     <!-- Users (only if "apply" = "limited") -->
-    <div class="col-span-1" *ngIf="submitForm.get('apply')?.value === 'limited'">
-      <label for="users" class="font-medium block mb-1">Users</label>
-      <p-multiSelect id="users" [options]="allUsers()" (input)="onSearchChange($event)" formControlName="users"
-        optionLabel="name" optionValue="id" defaultLabel="Select users" [loading]="isLoadingUsers()" class="w-full" display="chip" />
-    </div>
+    @if(submitForm.get('apply')?.value === 'limited') {
+      <div class="col-span-1">
+        <label for="users" class="font-medium block mb-1">Users
+          @if(submitForm.get('users')?.value?.length > 5) {
+            <span class="text-blue-600 ml-1">({{submitForm.get('users')?.value?.length}} selected)</span>
+          }
+        </label>
+        <p-multiSelect id="users" [options]="allUsers()" (input)="onSearchChange($event)" formControlName="users"
+          optionLabel="name" optionValue="id" defaultLabel="Select users" [loading]="isLoadingUsers()" class="w-full" display="chip" />
+      </div>
+    }
     <!-- Exclude category (only if "apply" = "limited") -->
     <div class="col-span-1">
-      <label for="excludeCategory" class="font-medium block mb-1">include category</label>
-      <p-multiSelect id="excludeCategory" [options]="allCategory()" (input)="onCategorySearchChange($event)" display="chip"
+      <label for="excludeCategory" class="font-medium block mb-1">include category ({{allCategory().length}})
+        @if(submitForm.get('categories_ids')?.value?.length > 5) {
+          <span class="text-blue-600 ml-1">({{submitForm.get('categories_ids')?.value?.length}} selected)</span>
+        }
+      </label>
+      <p-multiSelect id="excludeCategory" [maxSelectedLabels]="5" [options]="allCategory()" (input)="onCategorySearchChange($event)" display="chip"
         formControlName="categories_ids" optionLabel="title_ar" optionValue="id" defaultLabel="Select Exclude category"
         [loading]="categoryIsLoading()" class="w-full" />
     </div>
     <!-- Include products (only if "apply" = "limited") -->
     <div class="col-span-1">
-      <label for="excludeProducts" class="font-medium block mb-1">Exclude products</label>
+      <label for="excludeProducts" class="font-medium block mb-1">Exclude products ({{allProducts().length}})
+        @if(submitForm.get('products_ids')?.value?.length > 5) {
+          <span class="text-blue-600 ml-1">({{submitForm.get('products_ids')?.value?.length}} selected)</span>
+        }
+      </label>
       <p-multiSelect [options]="allProducts() || []" formControlName="products_ids" [loading]="productsIsLoading()" display="chip"
-        optionLabel="title_ar" optionValue="id"
+        optionLabel="title_ar" optionValue="id" [maxSelectedLabels]="5"
         [placeholder]="!submitForm.get('category_id')?.value ? 'Please select category first' : 'Select products'"
         (input)="onProductsSearchChange($event)" class="w-full" />
     </div>
@@ -90,12 +106,11 @@
       <p-calendar id="expiration_date" formControlName="expiration_date" dateFormat="yy-mm-dd" showIcon="true"
         class="w-full"></p-calendar>
       <div class="validation">
-        <small class="text-red-500" *ngIf="
-            submitForm.get('expiration_date')?.touched &&
-            submitForm.get('expiration_date')?.invalid
-          ">
-          Expiration date is required
-        </small>
+        @if(submitForm.get('expiration_date')?.touched && submitForm.get('expiration_date')?.invalid) {
+          <small class="text-red-500">
+            Expiration date is required
+          </small>
+        }
       </div>
     </div>
 
@@ -106,9 +121,11 @@
     </div>
 
     <!-- Error Message -->
-    <div class="col-span-2" *ngIf="errorMessage()">
-      <p class="text-red-600 font-medium">{{ errorMessage() }}</p>
-    </div>
+    @if(errorMessage()) {
+      <div class="col-span-2">
+        <p class="text-red-600 font-medium">{{ errorMessage() }}</p>
+      </div>
+    }
     <!-- Submit Button -->
     <div class="col-span-2 flex justify-end mt-4">
       <p-button label="{{ isEditing ? 'Update Voucher' : 'Create Voucher' }}" icon="pi pi-save" type="submit"

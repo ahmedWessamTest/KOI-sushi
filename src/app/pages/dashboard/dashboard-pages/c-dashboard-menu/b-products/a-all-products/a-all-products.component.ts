@@ -1,26 +1,26 @@
-import { NgOptimizedImage } from "@angular/common";
-import { Component, inject } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterLink } from "@angular/router";
-import { NgxSpinnerService } from "ngx-spinner";
-import { MessageService } from "primeng/api";
-import { ButtonModule } from "primeng/button";
-import { DialogModule } from "primeng/dialog";
-import { DropdownChangeEvent, DropdownModule } from "primeng/dropdown";
-import { InputSwitchModule } from "primeng/inputswitch";
-import { Table, TableModule } from "primeng/table";
-import { ToastModule } from "primeng/toast";
-import { timer } from "rxjs";
-import {  productsData } from "../../../../../../core/Interfaces/d-products/IGetAllProducts";
-import { ProductsService } from "../../../../../../core/services/d-products/products.service";
-import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
-import { NoDataFoundBannerComponent } from "../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component";
-import { ISelectOptions } from "../../../../../../core/Interfaces/core/ISelectOptions";
-import { WEB_SITE_IMG_URL } from "../../../../../../core/constants/WEB_SITE_BASE_UTL";
-import { Category } from "../../../../../../core/Interfaces/d-products/IGetProductsCategories";
+import { NgOptimizedImage } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { Table, TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { timer } from 'rxjs';
+import { productsData } from '../../../../../../core/Interfaces/d-products/IGetAllProducts';
+import { ProductsService } from '../../../../../../core/services/d-products/products.service';
+import { LoadingDataBannerComponent } from '../../../../../../shared/components/loading-data-banner/loading-data-banner.component';
+import { NoDataFoundBannerComponent } from '../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component';
+import { ISelectOptions } from '../../../../../../core/Interfaces/core/ISelectOptions';
+import { WEB_SITE_IMG_URL } from '../../../../../../core/constants/WEB_SITE_BASE_UTL';
+import { Category } from '../../../../../../core/Interfaces/d-products/IGetProductsCategories';
 
 @Component({
-  selector: "app-a-all-products",
+  selector: 'app-a-all-products',
   standalone: true,
   imports: [
     ButtonModule,
@@ -36,14 +36,14 @@ import { Category } from "../../../../../../core/Interfaces/d-products/IGetProdu
     NgOptimizedImage,
     NoDataFoundBannerComponent,
   ],
-  templateUrl: "./a-all-products.component.html",
-  styleUrl: "./a-all-products.component.scss",
+  templateUrl: './a-all-products.component.html',
+  styleUrl: './a-all-products.component.scss',
   providers: [MessageService],
 })
 export class AAllProductsComponent {
   products: productsData[] = [];
   allCategories!: Category[];
-  selectedCategory:number[] = [];
+  selectedCategory: number[] = [];
   filteredProducts: productsData[] = [];
   categoryData!: {
     value: number;
@@ -59,11 +59,11 @@ export class AAllProductsComponent {
 
   // Dropdown
   selectedStatus: number | null = null;
-  selectedRecommendation:number | null = null
+  selectedRecommendation: number | null = null;
   selectOptions: ISelectOptions[] = [];
   recommendedOptions: ISelectOptions[] = [];
   onFilterCategoryChange(value: DropdownChangeEvent): void {
-    if(value.value === null) {
+    if (value.value === null) {
       this.selectedCategory = [];
     } else {
       this.selectedCategory = [value.value];
@@ -71,46 +71,43 @@ export class AAllProductsComponent {
     this.loadProducts();
   }
   onFilterChange(value: string | null): void {
-    
-    if(value !== null) {
+    if (value !== null) {
       this.selectedStatus = Number(value);
     } else {
-      this.selectedStatus = null
+      this.selectedStatus = null;
     }
-    this.loadProducts()
+    this.loadProducts();
   }
   onRecommendedFilterChange(value: string | null): void {
-    
-    if(value !== null) {
+    if (value !== null) {
       this.selectedRecommendation = Number(value);
     } else {
-      this.selectedRecommendation = null
+      this.selectedRecommendation = null;
     }
-    this.loadProducts()
+    this.loadProducts();
   }
 
   initDropDownFilter(): void {
     this.selectOptions = [
       {
-        label: "Active",
-        value: "1",
+        label: 'Active',
+        value: '1',
       },
       {
-        label: "Inactive",
-        value: "0",
+        label: 'Inactive',
+        value: '0',
       },
     ];
     this.recommendedOptions = [
       {
-        label: "Recommended",
-        value: "1",
+        label: 'Recommended',
+        value: '1',
       },
       {
-        label: "Not recommended",
-        value: "0",
+        label: 'Not recommended',
+        value: '0',
       },
-
-    ]
+    ];
   }
 
   ngOnInit() {
@@ -127,7 +124,6 @@ export class AAllProductsComponent {
         value: category.id,
         label: category.title_en,
       }));
-      
     });
   }
 
@@ -141,49 +137,52 @@ export class AAllProductsComponent {
         this.products = response.products.data;
         this.filteredProducts = [...this.products];
         console.log(this.filteredProducts);
-        
       },
       () => {
-        this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load Product" });
-      }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load Product',
+        });
+      },
     );
   }
 
   // Toggle Product
   toggleProductStatus(Product: any) {
-    this.ngxSpinnerService.show("actionsLoader");
+    this.ngxSpinnerService.show('actionsLoader');
     this.messageService.clear();
 
     const updatedStatus = !Product.status; // Toggle between 0 and 1
-      this.productsService.enableProduct(Product.id.toString()).subscribe(() => {
-        this.messageService.add({
-          severity: "success",
-          summary: "Updated",
-          detail: `Product ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-        });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
-        Product.status = updatedStatus;
+    this.productsService.enableProduct(Product.id.toString()).subscribe(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Updated',
+        detail: `Product ${updatedStatus ? 'Enabled' : 'Disabled'} successfully`,
       });
-      
-    
+      timer(200).subscribe(() => this.ngxSpinnerService.hide('actionsLoader'));
+      Product.status = updatedStatus;
+    });
   }
   // Toggle recommended
   toggleRecommendedStatus(Product: any) {
-    this.ngxSpinnerService.show("actionsLoader");
+    this.ngxSpinnerService.show('actionsLoader');
     this.messageService.clear();
 
     const updatedStatus = !Product.is_recommended; // Toggle between 0 and 1
-      this.productsService.toggleProductRecommendation(Product.id.toString()).subscribe(() => {
+    this.productsService
+      .toggleProductRecommendation(Product.id.toString())
+      .subscribe(() => {
         this.messageService.add({
-          severity: "success",
-          summary: "Updated",
-          detail: `Recommended ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
+          severity: 'success',
+          summary: 'Updated',
+          detail: `Recommended ${updatedStatus ? 'Enabled' : 'Disabled'} successfully`,
         });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+        timer(200).subscribe(() =>
+          this.ngxSpinnerService.hide('actionsLoader'),
+        );
         Product.is_recommended = updatedStatus;
       });
-      
-    
   }
 
   totalRecords: number = 0;
@@ -197,21 +196,33 @@ export class AAllProductsComponent {
   }
 
   loadProducts() {
-    this.ngxSpinnerService.show("actionsLoader");
-    this.productsService.getAllProducts(this.currentPage, this.rowsPerPage,"",this.selectedCategory,this.selectedStatus,this.selectedRecommendation).subscribe(
-      (response: any) => {
-        this.ngxSpinnerService.hide("actionsLoader");
-        this.allProducts = response;
-        this.totalRecords = response.products.total;
-        this.products = response.products.data;
-        this.filteredProducts = [...this.products];
-        console.log(this.filteredProducts);
-        
-      },
-      () => {
-        this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load Product" });
-      }
-    );
+    this.ngxSpinnerService.show('actionsLoader');
+    this.productsService
+      .getAllProducts(
+        this.currentPage,
+        this.rowsPerPage,
+        '',
+        this.selectedCategory,
+        this.selectedStatus,
+        this.selectedRecommendation,
+      )
+      .subscribe(
+        (response: any) => {
+          this.ngxSpinnerService.hide('actionsLoader');
+          this.allProducts = response;
+          this.totalRecords = response.products.total;
+          this.products = response.products.data;
+          this.filteredProducts = [...this.products];
+          console.log(this.filteredProducts);
+        },
+        () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load Product',
+          });
+        },
+      );
   }
 
   getPagination(): number[] {
@@ -228,15 +239,15 @@ export class AAllProductsComponent {
   }
 
   onGlobalFilter(dt: Table, event: any) {
-    // const value = event.target.value.toLowerCase();
-    // this.filteredProducts = this.products.filter((product) => {
-    //   return (
-    //     product.id.toString().includes(value) ||
-    //     product.title_en.toLowerCase().includes(value) ||
-    //     product.title_ar.toLowerCase().includes(value) ||
-    //     (product.status ? "active" : "inactive").includes(value)
-    //   );
-    // });
+    const value = event.target.value.toLowerCase();
+    this.filteredProducts = this.products.filter((product) => {
+      return (
+        product.id.toString().includes(value) ||
+        product.title_en.toLowerCase().includes(value) ||
+        product.title_ar.toLowerCase().includes(value) ||
+        (product.status ? 'active' : 'inactive').includes(value)
+      );
+    });
   }
 
   onSort(event: any) {
@@ -250,17 +261,16 @@ export class AAllProductsComponent {
       let valueB: any;
 
       // Handle different field types
-      if (field === "id") {
+      if (field === 'id') {
         valueA = Number(a.id);
         valueB = Number(b.id);
-      } else if (field === "en_food_name") {
+      } else if (field === 'en_food_name') {
         valueA = a.title_ar;
         valueB = b.title_ar;
-      } else if (field === "ar_food_name") {
+      } else if (field === 'ar_food_name') {
         valueA = a.title_en;
         valueB = b.title_ar;
-      } 
-       else {
+      } else {
         // Default case
         valueA = (a as any)[field];
         valueB = (b as any)[field];

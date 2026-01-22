@@ -50,7 +50,7 @@ import { User } from './../../../../../core/Interfaces/g-orders/IAllOrders';
 })
 export class COrdersDetailsComponent {
   order!: IOrderById;
-
+  isHaveCombo = false;
   userDetails: User[] = [];
   userAddress: Address[] = [];
   userPromoCode: Promo[] = [];
@@ -81,7 +81,8 @@ export class COrdersDetailsComponent {
   fetchData(): void {
     this.order = this.activatedRoute.snapshot.data['orderDetails'];
     console.log(this.order);
-    
+    this.isHaveCombo = this.order.order.items.some((item) => item.combo_offer);
+
     const userPhone = this.order.order.user?.phone;
     const addressPhone = this.order.order.user.phone;
 
@@ -97,13 +98,13 @@ export class COrdersDetailsComponent {
     this.userDetails = [];
     this.userAddress = [];
     console.log(this.order.order.user);
-    
+
     this.userDetails.push(this.order.order.user);
     this.userAddress.push(this.order.order.address);
     if (this.order.order.promo_code) {
       this.userPromoCode.push(this.order.order.promo_code);
     }
-    this.userOrders = this.order.order.items;    
+    this.userOrders = this.order.order.items;
   }
 
   backToOrders(): void {
@@ -113,10 +114,6 @@ export class COrdersDetailsComponent {
       this.router.navigate(['/dashboard/orders/']);
     }
   }
-
-
-
- 
 
   getTotalPrice(orderdetails: Orderdetail): number {
     return Number(orderdetails.total_price);
@@ -141,7 +138,7 @@ export class COrdersDetailsComponent {
       const printWindow = window.open(
         '',
         'ZiSushiReceipt',
-        'width=800,height=900'
+        'width=800,height=900',
       );
 
       const happyValue = this.convertStringToNumber(happy);
@@ -155,17 +152,15 @@ export class COrdersDetailsComponent {
               <td>${happyValue}</td>
             </tr>`
             : '',
-        ziDiscountRow:
-          ziDiscount
-            ? `
+        ziDiscountRow: ziDiscount
+          ? `
     <tr>
       <td>Zi Points:</td>
       <td>${ziDiscount}</td>
     </tr>
   `
-            : '',
+          : '',
       };
-      
 
       printWindow?.document.write(`
         <html>
@@ -240,7 +235,13 @@ export class COrdersDetailsComponent {
     }
   }
 
-  statusSteps = ['requested', 'preparing', 'out_for_delivery', 'delivered', 'canceled'];
+  statusSteps = [
+    'requested',
+    'preparing',
+    'out_for_delivery',
+    'delivered',
+    'canceled',
+  ];
   private ordersService = inject(OrdersService);
   messageService = inject(MessageService);
   private ngxSpinnerService = inject(NgxSpinnerService);
@@ -264,7 +265,11 @@ export class COrdersDetailsComponent {
   }
   getAvailableStatusOptions(currentStatus: string) {
     const statusWithIcons = [
-      { label: 'Placed', value: 'requested', icon: 'pi pi-inbox text-yellow-500' },
+      {
+        label: 'Placed',
+        value: 'requested',
+        icon: 'pi pi-inbox text-yellow-500',
+      },
       {
         label: 'Preparing',
         value: 'preparing',
@@ -285,13 +290,17 @@ export class COrdersDetailsComponent {
         value: 'canceled',
         icon: 'pi pi-times text-red-500',
       },
-      { label: 'Failed', value: 'failed', icon: 'pi pi-times-circle text-red-500' },
+      {
+        label: 'Failed',
+        value: 'failed',
+        icon: 'pi pi-times-circle text-red-500',
+      },
     ];
 
     const currentIndex = statusWithIcons.findIndex(
-      status => status.value === currentStatus
+      (status) => status.value === currentStatus,
     );
-  
+
     return statusWithIcons.map((status, index) => ({
       ...status,
       disabled: index < currentIndex,
@@ -306,7 +315,7 @@ export class COrdersDetailsComponent {
       .subscribe({
         next: (response) => {
           timer(200).subscribe(() =>
-            this.ngxSpinnerService.hide('actionsLoader')
+            this.ngxSpinnerService.hide('actionsLoader'),
           );
           order = response.order;
           this.messageService.add({
@@ -321,7 +330,7 @@ export class COrdersDetailsComponent {
         },
         error: (err) => {
           timer(200).subscribe(() =>
-            this.ngxSpinnerService.hide('actionsLoader')
+            this.ngxSpinnerService.hide('actionsLoader'),
           );
           console.error('Error updating status', err);
           this.messageService.add({

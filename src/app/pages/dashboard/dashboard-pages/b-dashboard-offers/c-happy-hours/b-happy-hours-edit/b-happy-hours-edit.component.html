@@ -52,16 +52,22 @@
          <div class="col-span-2 grid md:grid-cols-2">
            <!-- Exclude category (only if "apply" = "limited") -->
       <div class="col-span-1">
-        <label for="excludeCategory" class="font-medium block mb-1">Include category</label>
-        <p-multiSelect id="excludeCategory" [options]="allCategory()" (input)="onCategorySearchChange($event)" display="chip"
+        <label for="excludeCategory" class="font-medium block mb-1">Include category ({{allCategory().length}})
+          @if(submitForm.get('categories_ids')?.value?.length > 5) {
+            <span class="text-blue-600 ml-1">({{submitForm.get('categories_ids')?.value?.length}} selected)</span>
+          }
+        </label>
+        <p-multiSelect [maxSelectedLabels]="5" id="excludeCategory" [options]="allCategory()" (input)="onCategorySearchChange($event)" display="chip"
           formControlName="categories_ids" optionLabel="title_ar" optionValue="id" defaultLabel="Select Exclude category"
           [loading]="categoryIsLoading()" class="w-full" />
       </div>
       <!-- Exclude products (only if "apply" = "limited") -->
        @if(allProducts().length > 0) {
          <div class="col-span-1">
-           <label for="excludeProducts" class="font-medium block mb-1">Exclude products</label>
-           <p-multiSelect [options]="allProducts()" formControlName="products_ids" [loading]="productsIsLoading()" display="chip"
+           <label for="excludeProducts" class="font-medium block mb-1">Exclude products ({{allProducts().length}}) @if(submitForm.get('products_ids')?.value?.length > 5) {
+            <span class="text-blue-600 ml-1">({{submitForm.get('products_ids')?.value?.length}} selected)</span>
+          }</label>
+           <p-multiSelect [maxSelectedLabels]="5" [options]="allProducts()" formControlName="products_ids" [loading]="productsIsLoading()" display="chip"
              optionLabel="title_ar" optionValue="id"
              [placeholder]="!submitForm.get('category_id')?.value ? 'Please select category first' : 'Select products'"
              (input)="onProductsSearchChange($event)" class="w-full" />

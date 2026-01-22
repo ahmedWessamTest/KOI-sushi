@@ -75,7 +75,11 @@
         </div>
 
         <div class="md:col-span-2">
-            <label class="font-medium mb-1 block">Select Combos <span class="text-red-500">*</span></label>
+            <label class="font-medium mb-1 block"> Select Combos ({{combos.length}}) <span class="text-red-500">*</span>
+              @if(submitForm.get('combos')?.value?.length > 5) {
+                <span class="text-blue-600 ml-1">({{submitForm.get('combos')?.value?.length}} selected)</span>
+              }
+            </label>
             <p-multiSelect 
                 [options]="combos" 
                 formControlName="combos" 
@@ -84,6 +88,7 @@
                 display="chip"
                 placeholder="Select Combos"
                 styleClass="w-full"
+                [maxSelectedLabels]="5"
                 [filter]="true"
                 [loading]="loadingCombos">
             </p-multiSelect>
