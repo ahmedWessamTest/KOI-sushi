@@ -12,18 +12,19 @@ import { WEB_SITE_BASE_URL } from '../../../../../../../core/constants/WEB_SITE_
 export class PromoCodeService {
   http = inject(HttpClient);
 
-
   getAllPromoCodes(
     page: number = 1,
     limit: number = 10,
-    selectedType?:string | null,
-    selectedStatus?:string | null
+    selectedType?: string | null,
+    selectedStatus?: string | null,
   ): Observable<IAllPromoCodes> {
-    const requestBody:any = {page,limit};
-    if(selectedType) requestBody.type = selectedType
-    if(selectedStatus !== null && selectedStatus !== undefined) requestBody.status = Boolean(Number(selectedStatus))
+    const requestBody: any = { page, limit };
+    if (selectedType) requestBody.type = selectedType;
+    if (selectedStatus !== null && selectedStatus !== undefined)
+      requestBody.status = Boolean(Number(selectedStatus));
     return this.http.post<IAllPromoCodes>(
-      `${WEB_SITE_BASE_URL}promo-code`,requestBody
+      `${WEB_SITE_BASE_URL}promo-code`,
+      requestBody,
     );
   }
 
@@ -34,27 +35,27 @@ export class PromoCodeService {
   enablePromoCode(id: string): Observable<IPromoCode> {
     return this.http.post<IPromoCode>(
       `${WEB_SITE_BASE_URL}promo-code/${id}/toggle`,
-      {}
+      {},
     );
   }
 
   updatePromoCode(id: string, promoCodeData: PromoCode): Observable<any> {
     return this.http.post<any>(
       `${WEB_SITE_BASE_URL}promo-code/${id}`,
-      promoCodeData
+      promoCodeData,
     );
   }
 
   addPromoCode(promoCodeData: PromoCode): Observable<any> {
     return this.http.post<any>(
-      `${WEB_SITE_BASE_URL}promo-code`,
-      promoCodeData
+      `${WEB_SITE_BASE_URL}promo-code/create`,
+      promoCodeData,
     );
   }
 
   activeUsers(search: string = ''): Observable<IActiveUsers> {
     return this.http.get<IActiveUsers>(
-      `${WEB_SITE_BASE_URL}users?search=${search}`
+      `${WEB_SITE_BASE_URL}users?search=${search}`,
     );
   }
 }

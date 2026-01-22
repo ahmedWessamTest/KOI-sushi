@@ -13,17 +13,22 @@ import { WEB_SITE_BASE_URL } from '../../../../../../../core/constants/WEB_SITE_
 export class VoucherService {
   http = inject(HttpClient);
 
-
-  getAllVouchers(page: number = 1, limit: number = 10,selectedType?:string | null,selectedStatus?:string | null): Observable<IVouchers> {
+  getAllVouchers(
+    page: number = 1,
+    limit: number = 10,
+    selectedType?: string | null,
+    selectedStatus?: string | null,
+  ): Observable<IVouchers> {
     console.log(selectedType);
     console.log(selectedStatus);
-    
-    
-    const requestBody:any = {page,limit};
-    if(selectedType) requestBody.type = selectedType
-    if(selectedStatus !== null && selectedStatus !== undefined) requestBody.status = Boolean(Number(selectedStatus))
+
+    const requestBody: any = { page, limit };
+    if (selectedType) requestBody.type = selectedType;
+    if (selectedStatus !== null && selectedStatus !== undefined)
+      requestBody.status = Boolean(Number(selectedStatus));
     return this.http.post<IVouchers>(
-      `${WEB_SITE_BASE_URL}voucher`,requestBody
+      `${WEB_SITE_BASE_URL}voucher`,
+      requestBody,
     );
   }
 
@@ -34,24 +39,27 @@ export class VoucherService {
   enableVoucher(id: string): Observable<{ message: string; status: number }> {
     return this.http.post<{ message: string; status: number }>(
       `${WEB_SITE_BASE_URL}voucher/${id}/toggle`,
-      {}
+      {},
     );
   }
 
   updateVoucher(id: string, voucherData: any): Observable<any> {
     return this.http.post<any>(
       `${WEB_SITE_BASE_URL}voucher/${id}`,
-      voucherData
+      voucherData,
     );
   }
 
   addVoucher(voucherData: FormData): Observable<any> {
-    return this.http.post<any>(`${WEB_SITE_BASE_URL}voucher`, voucherData);
+    return this.http.post<any>(
+      `${WEB_SITE_BASE_URL}voucher/create`,
+      voucherData,
+    );
   }
 
   activeUsers(search: string = ''): Observable<IActiveUsers> {
     return this.http.get<IActiveUsers>(
-      `${WEB_SITE_BASE_URL}users?search=${search}`
+      `${WEB_SITE_BASE_URL}users?search=${search}`,
     );
   }
 }
