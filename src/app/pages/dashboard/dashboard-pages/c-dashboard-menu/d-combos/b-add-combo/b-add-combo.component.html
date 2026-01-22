@@ -1,45 +1,45 @@
 <p-card class="p-4">
   <ng-template pTemplate="title">
-    <h2 class="text-xl font-semibold text-gray-800">{{ isEditing ? "Edit Product" : "Add Product" }}</h2>
+    <h2 class="text-xl font-semibold text-gray-800">{{ isEditing ? "Edit combo" : "Add combo" }}</h2>
   </ng-template>
 
   <ng-template pTemplate="content">
     <form [formGroup]="submitForm" class="grid md:grid-cols-1 gap-6">
       <div>
-        <label class="font-medium mb-1 block">Product English Name</label>
+        <label class="font-medium mb-1 block">combo English Name</label>
         <input type="text" pInputText formControlName="title_en" class="p-inputtext-sm w-full" />
         @if (submitForm.get('title_en')?.invalid && submitForm.get('title_en')?.touched) {
         <div class="p-error">
-          <small>Product English Name is required.</small>
+          <small>combo English Name is required.</small>
         </div>
         }
       </div>
 
       <div>
-        <label class="font-medium mb-1 block">Product Arabic Name</label>
+        <label class="font-medium mb-1 block">combo Arabic Name</label>
         <input type="text" pInputText formControlName="title_ar" class="p-inputtext-sm w-full" />
         @if (submitForm.get('title_ar')?.invalid && submitForm.get('title_ar')?.touched) {
         <div class="p-error">
-          <small>Product Arabic Name is required.</small>
+          <small>combo Arabic Name is required.</small>
         </div>
         }
       </div>
 
       <div>
-        <label class="font-medium mb-1 block">Product Price</label>
+        <label class="font-medium mb-1 block">combo Price</label>
         <input appOnlyNumber type="number" pInputText formControlName="price" class="p-inputtext-sm w-full" />
         @if (submitForm.get('price')?.invalid && submitForm.get('price')?.touched) {
         <div class="p-error">
-          <small>Product Price is required.</small>
+          <small>combo Price is required.</small>
         </div>
         }
       </div>
       <div>
-        <label class="font-medium mb-1 block">Product Pieces</label>
+        <label class="font-medium mb-1 block">combo Pieces</label>
         <input appOnlyNumber type="number" pInputText formControlName="pieces" class="p-inputtext-sm w-full" />
         @if (submitForm.get('pieces')?.invalid && submitForm.get('pieces')?.touched) {
         <div class="p-error">
-          <small>Product Pieces is required.</small>
+          <small>combo Pieces is required.</small>
         </div>
         }
       </div>
@@ -63,26 +63,26 @@
   <div [formGroup]="control" class="grid grid-cols-12 gap-3 border-bottom pb-3 mb-3 items-end">
     
     <div class="col-span-4">
-      <label class="block mb-1">Select Category</label>
+      <label class="block mb-1">Include Category</label>
       <p-dropdown 
         [options]="categories" 
         formControlName="category_id" 
         optionLabel="title_en" 
         optionValue="id"
-        placeholder="Select Category"
+        placeholder="Include Category"
         styleClass="w-full"
         (onChange)="onCategoryChange($event.value, $index)">
       </p-dropdown>
     </div>
 
     <div class="col-span-4">
-      <label class="block mb-1">Excludes (Optional)</label>
+      <label class="block mb-1">Exclude Products</label>
       <p-multiSelect 
         [options]="productsByRow[$index]" 
         formControlName="combo_category_excludes" 
         optionLabel="title_en" 
         optionValue="id"
-        placeholder="Select Products"
+        placeholder="Exclude Products"
         styleClass="w-full" display="chip" [loading]="loadingProducts">
       </p-multiSelect>
     </div>
