@@ -17,9 +17,9 @@ import {  WEB_SITE_IMG_URL } from "../../../../../../core/constants/WEB_SITE_BAS
 export class BProductsDetailsComponent {
   private ActivatedRoute = inject(ActivatedRoute);
   readonly imgUrl = WEB_SITE_IMG_URL;
-  productData!: IGetProductById;
+  productData!: any;
 
   ngOnInit(): void {
-    this.productData = this.ActivatedRoute.snapshot.data["products"];
+    this.productData = this.ActivatedRoute.snapshot.data["products"].data;
   }
 }
