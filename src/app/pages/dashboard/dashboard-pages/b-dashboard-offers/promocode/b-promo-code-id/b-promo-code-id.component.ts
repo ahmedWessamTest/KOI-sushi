@@ -360,9 +360,9 @@ export class BPromoCodeIdComponent implements OnInit {
       apply: formValue.apply,
       status: formValue.status,
       expiration_date:
-        formValue.expiration_date instanceof Date
-          ? formValue.expiration_date.toISOString().split('T')[0]
-          : formValue.expiration_date,
+  formValue.expiration_date instanceof Date
+    ? this.formatDateLocal(formValue.expiration_date) // استخدم دالة مساعدة هنا
+    : formValue.expiration_date,
       users: formValue.users || [],
       promo_code_categories: categoriesPayload,
     };
@@ -436,4 +436,11 @@ export class BPromoCodeIdComponent implements OnInit {
     this.searchTerm = target.value.trim();
     this.ProductsSearchSubject.next(this.searchTerm);
   }
+  private formatDateLocal(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // الشهور تبدأ من 0
+  const day = String(date.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
+}
 }
