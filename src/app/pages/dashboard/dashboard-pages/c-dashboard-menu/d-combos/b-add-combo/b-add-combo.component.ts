@@ -97,14 +97,12 @@ export class BAddComboComponent {
         title_ar: combo.title_ar,
       });
 
-      // Handle categories and products
       if (combo.combo_categories && combo.combo_categories.length > 0) {
-        // Clear existing items in form array (if any)
         this.clearFormArray(this.comboCategoryArray);
-        this.productsByRow = []; // Clear products tracking
+        this.productsByRow = [];
 
         combo.combo_categories.forEach((cat: any, index: number) => {
-          this.addPiecePrice(); // Adds a new group to FormArray
+          this.addPiecePrice();
 
           const group = this.comboCategoryArray.at(index) as FormGroup;
           group.patchValue({
@@ -115,7 +113,6 @@ export class BAddComboComponent {
               : [],
           });
 
-          // Load products for this category
           this.onCategoryChange(cat.category_id, index, true);
         });
       }
@@ -143,6 +140,24 @@ export class BAddComboComponent {
         ) {
         }
       });
+
+    this.submitForm.get('pieces')?.valueChanges.subscribe((pieces) => {
+      this.updateAllLimitsMax(pieces);
+    });
+  }
+
+  private updateAllLimitsMax(pieces: number) {
+    const piecesCount = Number(pieces) || 0;
+    this.comboCategoryArray.controls.forEach((control: FormGroup) => {
+      const limitControl = control.get('limit');
+      if (limitControl) {
+        limitControl.setValidators([
+          Validators.required,
+          Validators.max(piecesCount),
+        ]);
+        limitControl.updateValueAndValidity();
+      }
+    });
   }
 
   private clearFormArray(formArray: FormArray) {
@@ -208,14 +223,18 @@ export class BAddComboComponent {
 
   // Methods to add inputs dynamically
   addPiecePrice() {
+    const pieces = this.submitForm.get('pieces')?.value || '';
     const group = this.fb.group({
       category_id: [null, Validators.required],
-      limit: [''],
-      combo_category_excludes: [[]], // للمنتجات المستثناة (MultiSelect)
+      limit: [
+        pieces,
+        [Validators.required, Validators.max(Number(pieces) || 0)],
+      ],
+      combo_category_excludes: [[]],
     });
 
     this.comboCategoryArray.push(group);
-    this.productsByRow.push([]); // مكان فارغ لمنتجات هذا الصف
+    this.productsByRow.push([]);
   }
   loadingProducts = false;
   onCategoryChange(

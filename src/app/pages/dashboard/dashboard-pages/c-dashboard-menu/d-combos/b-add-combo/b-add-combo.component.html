@@ -1,49 +1,82 @@
 <p-card class="p-4">
   <ng-template pTemplate="title">
-    <h2 class="text-xl font-semibold text-gray-800">{{ isEditing ? "Edit combo" : "Add combo" }}</h2>
+    <h2 class="text-xl font-semibold text-gray-800">
+      {{ isEditing ? "Edit combo" : "Add combo" }}
+    </h2>
   </ng-template>
 
   <ng-template pTemplate="content">
     <form [formGroup]="submitForm" class="grid md:grid-cols-1 gap-6">
       <div>
         <label class="font-medium mb-1 block">combo English Name</label>
-        <input type="text" pInputText formControlName="title_en" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('title_en')?.invalid && submitForm.get('title_en')?.touched) {
-        <div class="p-error">
-          <small>combo English Name is required.</small>
-        </div>
+        <input
+          type="text"
+          pInputText
+          formControlName="title_en"
+          class="p-inputtext-sm w-full"
+        />
+        @if (
+          submitForm.get("title_en")?.invalid &&
+          submitForm.get("title_en")?.touched
+        ) {
+          <div class="p-error">
+            <small>combo English Name is required.</small>
+          </div>
         }
       </div>
 
       <div>
         <label class="font-medium mb-1 block">combo Arabic Name</label>
-        <input type="text" pInputText formControlName="title_ar" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('title_ar')?.invalid && submitForm.get('title_ar')?.touched) {
-        <div class="p-error">
-          <small>combo Arabic Name is required.</small>
-        </div>
+        <input
+          type="text"
+          pInputText
+          formControlName="title_ar"
+          class="p-inputtext-sm w-full"
+        />
+        @if (
+          submitForm.get("title_ar")?.invalid &&
+          submitForm.get("title_ar")?.touched
+        ) {
+          <div class="p-error">
+            <small>combo Arabic Name is required.</small>
+          </div>
         }
       </div>
 
       <div>
         <label class="font-medium mb-1 block">combo Price</label>
-        <input appOnlyNumber type="number" pInputText formControlName="price" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('price')?.invalid && submitForm.get('price')?.touched) {
-        <div class="p-error">
-          <small>combo Price is required.</small>
-        </div>
+        <input
+          appOnlyNumber
+          type="number"
+          pInputText
+          formControlName="price"
+          class="p-inputtext-sm w-full"
+        />
+        @if (
+          submitForm.get("price")?.invalid && submitForm.get("price")?.touched
+        ) {
+          <div class="p-error">
+            <small>combo Price is required.</small>
+          </div>
         }
       </div>
       <div>
         <label class="font-medium mb-1 block">combo Pieces</label>
-        <input appOnlyNumber type="number" pInputText formControlName="pieces" class="p-inputtext-sm w-full" />
-        @if (submitForm.get('pieces')?.invalid && submitForm.get('pieces')?.touched) {
-        <div class="p-error">
-          <small>combo Pieces is required.</small>
-        </div>
+        <input
+          appOnlyNumber
+          type="number"
+          pInputText
+          formControlName="pieces"
+          class="p-inputtext-sm w-full"
+        />
+        @if (
+          submitForm.get("pieces")?.invalid && submitForm.get("pieces")?.touched
+        ) {
+          <div class="p-error">
+            <small>combo Pieces is required.</small>
+          </div>
         }
       </div>
-      
 
       <!-- InputSwitch State -->
       <!-- <div class="flex items-center gap-2">
@@ -52,71 +85,103 @@
       </div> -->
 
       <!-- Dynamic Piece Price Inputs -->
-       
+
       <div formArrayName="combo_categories" class="mt-4">
-  <div class="flex justify-between items-center mb-3">
-    <label class="font-bold text-lg">Combo Categories Configuration</label>
-    <button pButton label="Add Category" icon="pi pi-plus" class="p-button-sm p-button-outlined" (click)="addPiecePrice()"></button>
-  </div>
+        <div class="flex justify-between items-center mb-3">
+          <label class="font-bold text-lg"
+            >Combo Categories Configuration</label
+          >
+          <button
+            pButton
+            label="Add Category"
+            icon="pi pi-plus"
+            class="p-button-sm p-button-outlined"
+            (click)="addPiecePrice()"
+          ></button>
+        </div>
 
-  @for (control of comboCategoryArray.controls; track $index) {
-  <div [formGroup]="control" class="grid grid-cols-12 gap-3 border-bottom pb-3 mb-3 items-end">
-    
-    <div class="col-span-4">
-      <label class="block mb-1">Include Category</label>
-      <p-dropdown 
-        [options]="categories" 
-        formControlName="category_id" 
-        optionLabel="title_en" 
-        optionValue="id"
-        placeholder="Include Category"
-        styleClass="w-full"
-        (onChange)="onCategoryChange($event.value, $index)">
-      </p-dropdown>
-    </div>
+        @for (control of comboCategoryArray.controls; track $index) {
+          <div
+            [formGroup]="control"
+            class="grid grid-cols-12 gap-3 border-bottom pb-3 mb-3 items-end"
+          >
+            <div class="col-span-4">
+              <label class="block mb-1">Include Category</label>
+              <p-dropdown
+                [options]="categories"
+                formControlName="category_id"
+                optionLabel="title_en"
+                optionValue="id"
+                placeholder="Include Category"
+                styleClass="w-full"
+                (onChange)="onCategoryChange($event.value, $index)"
+              >
+              </p-dropdown>
+            </div>
 
-    <div class="col-span-4">
-      <label class="block mb-1">Exclude Products</label>
-      <p-multiSelect 
-        [options]="productsByRow[$index]" 
-        formControlName="combo_category_excludes" 
-        optionLabel="title_en" 
-        optionValue="id"
-        placeholder="Exclude Products"
-        styleClass="w-full" display="chip" [loading]="loadingProducts">
-      </p-multiSelect>
-    </div>
+            <div class="col-span-4">
+              <label class="block mb-1">Exclude Products</label>
+              <p-multiSelect
+                [options]="productsByRow[$index]"
+                formControlName="combo_category_excludes"
+                optionLabel="title_en"
+                optionValue="id"
+                placeholder="Exclude Products"
+                styleClass="w-full"
+                display="chip"
+                [loading]="loadingProducts"
+              >
+              </p-multiSelect>
+            </div>
 
-    <div class="col-span-3">
-      <label class="block mb-1">Limit</label>
-      <input 
-        type="number" 
-        pInputText 
-        formControlName="limit" 
-        placeholder="Max pieces" 
-        class="w-full" />
-    </div>
+            <div class="col-span-3 relative">
+              <label class="block mb-1">Limit</label>
+              <input
+                type="number"
+                pInputText
+                formControlName="limit"
+                placeholder="Max pieces"
+                class="w-full"
+                [max]="submitForm.get('pieces')?.value"
+              />
+              @if (control.get("limit")?.hasError("max")) {
+                <small class="p-error block mt-1">
+                  Limit cannot exceed
+                  {{ submitForm.get("pieces")?.value }} pieces.
+                </small>
+              }
+            </div>
 
-    <div class="col-span-1">
-      <button pButton icon="pi pi-trash" class="p-button-danger p-button-text" (click)="removePiecePrice($index)"></button>
-    </div>
-  </div>
-  }
+            <div class="col-span-1">
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-danger p-button-text"
+                (click)="removePiecePrice($index)"
+              ></button>
+            </div>
+          </div>
+        }
 
-  @if (submitForm.get('combo_categories')?.invalid && submitForm.get('combo_categories')?.touched) {
-    <small class="p-error block mt-2">At least one category configuration is required.</small>
-  }
-</div>
-      
-
-     
+        @if (
+          submitForm.get("combo_categories")?.invalid &&
+          submitForm.get("combo_categories")?.touched
+        ) {
+          <small class="p-error block mt-2"
+            >At least one category configuration is required.</small
+          >
+        }
+      </div>
     </form>
 
     @if (errorMessage.length > 0) {
-    <div class="my-3 bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
-      <p class="font-bold">Something Wrong!</p>
-      <p>{{ errorMessage }}</p>
-    </div>
+      <div
+        class="my-3 bg-red-100 border-l-4 border-red-500 text-red-700 p-4"
+        role="alert"
+      >
+        <p class="font-bold">Something Wrong!</p>
+        <p>{{ errorMessage }}</p>
+      </div>
     }
   </ng-template>
 
@@ -127,8 +192,14 @@
         pButton
         label="Cancel"
         class="p-button-text"
-        routerLink="/dashboard/menu/products"></button>
-      <button pButton label="Save" (click)="saveForm()" class="p-button-success btn-main px-3"></button>
+        routerLink="/dashboard/menu/products"
+      ></button>
+      <button
+        pButton
+        label="Save"
+        (click)="saveForm()"
+        class="p-button-success btn-main px-3"
+      ></button>
     </div>
   </ng-template>
 </p-card>
