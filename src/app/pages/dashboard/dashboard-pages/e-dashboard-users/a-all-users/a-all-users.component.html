@@ -1,130 +1,157 @@
-@if (users.length > 0) {
-<div class="card">
-  <h2 class="text-2xl font-semibold mb-4">User Management</h2>
-
-  <!-- Search Input -->
-  <div class="mb-3 flex justify-content-end">
-    <span class="p-input-icon-right">
-      <i class="pi pi-search"></i>
-      <input class="mb-0" type="text" pInputText placeholder="Search" (input)="onGlobalFilter(dt, $event)" />
-    </span>
-  </div>
-
-  <p-table
-    #dt
-    [(selection)]="selectedUsers"
-    [value]="filteredUsers"
-    [paginator]="totalRecords"
-    [lazy]="true"
-    [rows]="rowsPerPage"
-    [rowsPerPageOptions]="getPagination()"
-    [totalRecords]="totalRecords"
-    [showCurrentPageReport]="true"
-    (onSort)="onSort($event)"
-    (onPage)="onPageChange($event)"
-    [globalFilterFields]="['id', 'name', 'email']"
-    responsiveLayout="scroll">
-    <ng-template pTemplate="caption">
-      <div class="flex flex-wrap align-items-center justify-content-between gap-2">
-        <div class="flex gap-2">
-          <button 
-            pButton 
-            label="Enable Selected" 
-            icon="pi pi-check-circle" 
-            class="p-button-success p-button-sm shadow-1" 
-            (click)="enableSelectedUsers()" 
-            [disabled]="!selectedUsers || !selectedUsers.length">
-          </button>
-          
-          <button 
-            pButton 
-            label="Disable Selected" 
-            icon="pi pi-ban" 
-            class="p-button-danger p-button-sm shadow-1" 
-            (click)="disableSelectedUsers()" 
-            [disabled]="!selectedUsers || !selectedUsers.length">
-          </button>
-        </div>
-        <div class="flex gap-2">
-          <button 
-            pButton 
-            label="activate Selected" 
-            icon="pi pi-check-circle" 
-            class="p-button-success p-button-sm shadow-1" 
-            (click)="activateSelectedUsers()" 
-            [disabled]="!selectedUsers || !selectedUsers.length">
-          </button>
-          
-          <button 
-            pButton 
-            label="deactivate Selected" 
-            icon="pi pi-ban" 
-            class="p-button-danger p-button-sm shadow-1" 
-            (click)="deactivateSelectedUsers()" 
-            [disabled]="!selectedUsers || !selectedUsers.length">
-          </button>
-        </div>
-
-       
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header">
-      <tr>
-        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-        <th class="text-center" pSortableColumn="id">User ID <p-sortIcon field="id"></p-sortIcon></th>
-        <th class="text-center" pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-        <th class="text-center" pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-        <th class="text-center" pSortableColumn="phone">Phone <p-sortIcon field="role"></p-sortIcon></th>
-        <th class="text-center" >Status </th>
-        <th class="text-center" >Activate Users</th>
-        <th class="text-center">Actions</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-user>
-      <tr>
-        <td>
-          <p-tableCheckbox [value]="user" />
-        </td>
-        <td class="text-center">{{ user.id }}</td>
-        <td class="text-center">{{ user.name }}</td>
-        <td class="text-center">{{ user.email }}</td>
-        <td class="text-center">
-          {{ user.phone }}
-        </td>
-        <td class="text-center">
-          <p-inputSwitch
-            [ngModel]="user.status"
-            (onChange)="toggleUsersStatus(user)"></p-inputSwitch>
-        </td>
-        <td class="text-center">
-          <p-inputSwitch
-            [ngModel]="user.is_active"
-            (onChange)="toggleUsersActivation(user)"></p-inputSwitch>
-        </td>
-        
-        <td class="flex justify-center gap-1 mx-auto">
-          <p-button
-            [routerLink]="['/dashboard/users/users-address', user.id]"
-            [link]="true"
-            label="Address"
-            type="button"
-            icon="pi pi-address-book" />
-          <p-button
-            [routerLink]="['/dashboard/users/users-orders', user.id]"
-            [link]="true"
-            label="Orders"
-            type="button"
-            icon="pi pi-truck
-          " />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
-
+@if (!filteredUsers) {
+  <app-loading-data-banner></app-loading-data-banner>
 } @else {
-<app-loading-data-banner></app-loading-data-banner>
+  <div class="card">
+    <h2 class="text-2xl font-semibold mb-4">User Management</h2>
+
+    <!-- Search Input -->
+    <div class="mb-3 flex justify-content-end">
+      <span class="p-input-icon-right">
+        <i class="pi pi-search"></i>
+        <input
+          class="mb-0"
+          type="text"
+          pInputText
+          placeholder="Search"
+          (input)="onGlobalFilter(dt, $event)"
+        />
+      </span>
+    </div>
+
+    <p-table
+      #dt
+      [(selection)]="selectedUsers"
+      [value]="filteredUsers ?? []"
+      [paginator]="totalRecords"
+      [lazy]="true"
+      [rows]="rowsPerPage"
+      [rowsPerPageOptions]="getPagination()"
+      [totalRecords]="totalRecords"
+      [showCurrentPageReport]="true"
+      (onSort)="onSort($event)"
+      (onPage)="onPageChange($event)"
+      [globalFilterFields]="['id', 'name', 'email']"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="caption">
+        <div
+          class="flex flex-wrap align-items-center justify-content-between gap-2"
+        >
+          <div class="flex gap-2">
+            <button
+              pButton
+              label="Enable Selected"
+              icon="pi pi-check-circle"
+              class="p-button-success p-button-sm shadow-1"
+              (click)="enableSelectedUsers()"
+              [disabled]="!selectedUsers || !selectedUsers.length"
+            ></button>
+
+            <button
+              pButton
+              label="Disable Selected"
+              icon="pi pi-ban"
+              class="p-button-danger p-button-sm shadow-1"
+              (click)="disableSelectedUsers()"
+              [disabled]="!selectedUsers || !selectedUsers.length"
+            ></button>
+          </div>
+          <div class="flex gap-2">
+            <button
+              pButton
+              label="activate Selected"
+              icon="pi pi-check-circle"
+              class="p-button-success p-button-sm shadow-1"
+              (click)="activateSelectedUsers()"
+              [disabled]="!selectedUsers || !selectedUsers.length"
+            ></button>
+
+            <button
+              pButton
+              label="deactivate Selected"
+              icon="pi pi-ban"
+              class="p-button-danger p-button-sm shadow-1"
+              (click)="deactivateSelectedUsers()"
+              [disabled]="!selectedUsers || !selectedUsers.length"
+            ></button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+          <th class="text-center" pSortableColumn="id">
+            User ID <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="name">
+            Name <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="email">
+            Email <p-sortIcon field="email"></p-sortIcon>
+          </th>
+          <th class="text-center" pSortableColumn="phone">
+            Phone <p-sortIcon field="role"></p-sortIcon>
+          </th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Activate Users</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="user" />
+          </td>
+          <td class="text-center">{{ user.id }}</td>
+          <td class="text-center">{{ user.name }}</td>
+          <td class="text-center">{{ user.email }}</td>
+          <td class="text-center">
+            {{ user.phone }}
+          </td>
+          <td class="text-center">
+            <p-inputSwitch
+              [ngModel]="user.status"
+              (onChange)="toggleUsersStatus(user)"
+            ></p-inputSwitch>
+          </td>
+          <td class="text-center">
+            <p-inputSwitch
+              [ngModel]="user.is_active"
+              (onChange)="toggleUsersActivation(user)"
+            ></p-inputSwitch>
+          </td>
+
+          <td class="flex justify-center gap-1 mx-auto">
+            <p-button
+              [routerLink]="['/dashboard/users/users-address', user.id]"
+              [link]="true"
+              label="Address"
+              type="button"
+              icon="pi pi-address-book"
+            />
+            <p-button
+              [routerLink]="['/dashboard/users/users-orders', user.id]"
+              [link]="true"
+              label="Orders"
+              type="button"
+              icon="pi pi-truck
+          "
+            />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7">
+            <div class="h-48 flex justify-center items-center flex-col">
+              <app-no-data-found-banner></app-no-data-found-banner>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 }
 
 <p-toast />

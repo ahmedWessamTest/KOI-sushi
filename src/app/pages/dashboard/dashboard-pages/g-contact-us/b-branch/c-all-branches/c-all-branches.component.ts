@@ -1,20 +1,24 @@
-import { Component, inject } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { RouterLink } from "@angular/router";
-import { NgxSpinnerService } from "ngx-spinner";
-import { MessageService } from "primeng/api";
-import { ButtonModule } from "primeng/button";
-import { DialogModule } from "primeng/dialog";
-import { DropdownModule } from "primeng/dropdown";
-import { InputSwitchModule } from "primeng/inputswitch";
-import { TableModule } from "primeng/table";
-import { ToastModule } from "primeng/toast";
-import { timer } from "rxjs";
-import { Branches, BranchesData } from "../../../../../../core/Interfaces/j-branches/IAllBranches";
-import { BranchesService } from "../../../../../../core/services/j-branches/branches.service";
-import { LoadingDataBannerComponent } from "../../../../../../shared/components/loading-data-banner/loading-data-banner.component";
+import { Component, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { timer } from 'rxjs';
+import {
+  Branches,
+  BranchesData,
+} from '../../../../../../core/Interfaces/j-branches/IAllBranches';
+import { BranchesService } from '../../../../../../core/services/j-branches/branches.service';
+import { LoadingDataBannerComponent } from '../../../../../../shared/components/loading-data-banner/loading-data-banner.component';
+import { NoDataFoundBannerComponent } from '../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component';
 @Component({
-  selector: "app-c-all-branches",
+  selector: 'app-c-all-branches',
   standalone: true,
   imports: [
     ButtonModule,
@@ -27,9 +31,10 @@ import { LoadingDataBannerComponent } from "../../../../../../shared/components/
     InputSwitchModule,
     LoadingDataBannerComponent,
     RouterLink,
+    NoDataFoundBannerComponent,
   ],
-  templateUrl: "./c-all-branches.component.html",
-  styleUrl: "./c-all-branches.component.scss",
+  templateUrl: './c-all-branches.component.html',
+  styleUrl: './c-all-branches.component.scss',
   providers: [MessageService],
 })
 export class CAllBranchesComponent {
@@ -57,25 +62,29 @@ export class CAllBranchesComponent {
       },
       () => {
         this.loading = false;
-        this.messageService.add({ severity: "error", summary: "Error", detail: "Failed to load branches" });
-      }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load branches',
+        });
+      },
     );
   }
 
   // Toggle Branches
   toggleBranchStatus(branch: any) {
-    this.ngxSpinnerService.show("actionsLoader");
+    this.ngxSpinnerService.show('actionsLoader');
     this.messageService.clear();
 
     const updatedStatus = !branch.status; // Toggle between 0 and 1
-      this.branchesService.toggleBranch(branch.id.toString()).subscribe(() => {
-        branch.status = updatedStatus; // Update the UI immediately
-        this.messageService.add({
-          severity: "success",
-          summary: "Updated",
-          detail: `Branch ${updatedStatus ? "Enabled" : "Disabled"} successfully`,
-        });
-        timer(200).subscribe(() => this.ngxSpinnerService.hide("actionsLoader"));
+    this.branchesService.toggleBranch(branch.id.toString()).subscribe(() => {
+      branch.status = updatedStatus; // Update the UI immediately
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Updated',
+        detail: `Branch ${updatedStatus ? 'Enabled' : 'Disabled'} successfully`,
       });
+      timer(200).subscribe(() => this.ngxSpinnerService.hide('actionsLoader'));
+    });
   }
 }
