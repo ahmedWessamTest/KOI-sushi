@@ -19,6 +19,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { CombosService } from '../../../../../core/services/d-combos/combos.service';
 import { DiscountOfferService } from '../../../../../core/services/e-discount-offer/discount-offer.service';
 import { OnlyNumberDirective } from '../../../../../only-number.directive';
+import { NgxJoditComponent } from 'ngx-jodit';
 
 @Component({
   selector: 'app-discount-offer',
@@ -34,6 +35,7 @@ import { OnlyNumberDirective } from '../../../../../only-number.directive';
     MultiSelectModule,
     OnlyNumberDirective,
     FileUploadModule,
+    NgxJoditComponent,
   ],
   templateUrl: './discount-offer.component.html',
   styleUrl: './discount-offer.component.scss',
@@ -68,6 +70,8 @@ export class DiscountOfferComponent {
     this.submitForm = this.fb.group({
       title_ar: ['', Validators.required],
       title_en: ['', Validators.required],
+      description_ar: ['', Validators.required],
+      description_en: ['', Validators.required],
       value: ['', Validators.required],
       status: [false, Validators.required],
       combos: [[], Validators.required],
@@ -78,6 +82,8 @@ export class DiscountOfferComponent {
     this.submitForm.patchValue({
       title_ar: data.title_ar,
       title_en: data.title_en,
+      description_ar: data.description_ar,
+      description_en: data.description_en,
       value: data.percentage,
       status: data.status,
       combos: data.combos ? data.combos.map((c: any) => c.id || c) : [],
@@ -125,6 +131,8 @@ export class DiscountOfferComponent {
 
     formData.append('title_ar', values.title_ar);
     formData.append('title_en', values.title_en);
+    formData.append('description_ar', values.description_ar);
+    formData.append('description_en', values.description_en);
     formData.append('percentage', values.value); // API expects percentage
     formData.append('status', values.status ? '1' : '0');
 

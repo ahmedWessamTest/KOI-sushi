@@ -10,10 +10,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { timer } from 'rxjs';
-import {
-  Branches,
-  BranchesData,
-} from '../../../../../../core/Interfaces/j-branches/IAllBranches';
+import { Branches } from '../../../../../../core/Interfaces/j-branches/IAllBranches';
 import { BranchesService } from '../../../../../../core/services/j-branches/branches.service';
 import { LoadingDataBannerComponent } from '../../../../../../shared/components/loading-data-banner/loading-data-banner.component';
 import { NoDataFoundBannerComponent } from '../../../../../../shared/components/no-data-found-banner/no-data-found-banner.component';
@@ -52,7 +49,6 @@ export class CAllBranchesComponent {
     this.fetchBranches();
   }
 
-  // get All Branches
   fetchBranches() {
     this.loading = true;
     this.branchesService.getAllBranches().subscribe(
@@ -71,14 +67,13 @@ export class CAllBranchesComponent {
     );
   }
 
-  // Toggle Branches
   toggleBranchStatus(branch: any) {
     this.ngxSpinnerService.show('actionsLoader');
     this.messageService.clear();
 
-    const updatedStatus = !branch.status; // Toggle between 0 and 1
+    const updatedStatus = !branch.status;
     this.branchesService.toggleBranch(branch.id.toString()).subscribe(() => {
-      branch.status = updatedStatus; // Update the UI immediately
+      branch.status = updatedStatus;
       this.messageService.add({
         severity: 'success',
         summary: 'Updated',

@@ -19,6 +19,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { CombosService } from '../../../../../core/services/d-combos/combos.service';
 import { HalfMirrorOfferService } from '../../../../../core/services/f-half-mirror-offer/half-mirror-offer.service';
 import { OnlyNumberDirective } from '../../../../../only-number.directive';
+import { NgxJoditComponent } from 'ngx-jodit';
 
 @Component({
   selector: 'app-half-mirror-offer',
@@ -34,6 +35,7 @@ import { OnlyNumberDirective } from '../../../../../only-number.directive';
     MultiSelectModule,
     OnlyNumberDirective,
     FileUploadModule,
+    NgxJoditComponent,
   ],
   templateUrl: './half-mirror-offer.component.html',
   styleUrl: './half-mirror-offer.component.scss',
@@ -69,6 +71,8 @@ export class HalfMirrorOfferComponent {
       title_ar: ['', Validators.required],
       title_en: ['', Validators.required],
       bonus_percentage: ['', Validators.required],
+      description_ar: ['', Validators.required],
+      description_en: ['', Validators.required],
       status: [false, Validators.required],
       combos: [[], Validators.required],
     });
@@ -79,6 +83,8 @@ export class HalfMirrorOfferComponent {
       title_ar: data.title_ar,
       title_en: data.title_en,
       bonus_percentage: data.bonus_percentage,
+      description_ar: data.description_ar,
+      description_en: data.description_en,
       status: data.status,
       combos: data.combos ? data.combos.map((c: any) => c.id || c) : [],
     });
@@ -126,6 +132,8 @@ export class HalfMirrorOfferComponent {
     formData.append('title_ar', values.title_ar);
     formData.append('title_en', values.title_en);
     formData.append('bonus_percentage', values.bonus_percentage);
+    formData.append('description_ar', values.description_ar);
+    formData.append('description_en', values.description_en);
     formData.append('status', values.status ? '1' : '0');
 
     values.combos.forEach((id: any) => {

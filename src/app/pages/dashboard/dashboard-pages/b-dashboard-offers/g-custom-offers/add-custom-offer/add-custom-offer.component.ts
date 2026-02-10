@@ -138,6 +138,7 @@ export class AddCustomOfferComponent {
   clearImage() {
     this.selectedImage = null;
     this.imagePreview = null;
+    this.fileUpload.clear();
   }
 
   save() {
