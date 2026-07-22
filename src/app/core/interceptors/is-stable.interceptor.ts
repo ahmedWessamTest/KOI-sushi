@@ -36,9 +36,9 @@ export const networkInterceptor: HttpInterceptorFn = (req, next) => {
   const appRef = inject(ApplicationRef);
   const toastrService = inject(ToastrService);
 
-  const shouldSkipRetry = NO_RETRY_APIS.some((endpoint) =>
-    req.url.includes(endpoint)
-  );
+  const shouldSkipRetry =
+    req.method === 'POST' ||
+    NO_RETRY_APIS.some((endpoint) => req.url.includes(endpoint));
 
   const MAX_RETRIES = 3;
   const RETRY_DELAY = 2000; // 2 seconds delay between retries

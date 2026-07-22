@@ -212,28 +212,40 @@
     }
     @if (isHaveCombo) {
       <p-card header="Combo Details" styleClass="shadow-lg border">
-        <p-table [value]="order.order.items" responsiveLayout="scroll">
+        <p-table [value]="groupedCombos" responsiveLayout="scroll">
           <ng-template pTemplate="header">
             <tr>
               <th class="text-center">Combo Name</th>
-              <th class="text-center">Combo Pieces</th>
-              <th class="text-center">Combo Value</th>
+              <th class="text-center">Offer</th>
+              <th class="text-center">Included Items</th>
+              <th class="text-center">Pieces</th>
+              <th class="text-center">Combo Price</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-item>
-            @if (item.combo_offer) {
-              <tr>
-                <td class="text-center">
-                  {{ item.combo_offer.combo.title_en }}
-                </td>
-                <td class="text-center">
-                  {{ item.combo_offer.combo.pieces }}
-                </td>
-                <td class="text-center">
-                  {{ item.combo_offer.combo.price | currency: " EGP " }}
-                </td>
-              </tr>
-            }
+          <ng-template pTemplate="body" let-combo>
+            <tr>
+              <td class="text-center font-semibold">
+                {{ combo.title_en }}
+              </td>
+              <td class="text-center">
+                <span class="text-sm text-gray-600">{{ combo.offer_title || '-' }}</span>
+              </td>
+              <td class="text-center">
+                <div class="flex flex-wrap items-center justify-center gap-1">
+                  @for (item of combo.items; track $index) {
+                    <span class="inline-block text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded border">
+                      {{ item.product_name }} {{ item.option_name ? '(' + item.option_name + ')' : '' }}
+                    </span>
+                  }
+                </div>
+              </td>
+              <td class="text-center">
+                {{ combo.pieces }}
+              </td>
+              <td class="text-center font-bold">
+                {{ combo.price | currency: " EGP " }}
+              </td>
+            </tr>
           </ng-template>
         </p-table>
       </p-card>
@@ -256,147 +268,132 @@
       </p-card>
     }
     <p-card header="Cart Details" styleClass="shadow-lg border">
-      <p-table [value]="userOrders" responsiveLayout="scroll">
-        <ng-template pTemplate="header">
-          <tr>
-            <th class="text-center">#</th>
-            <th class="text-center">Cart Item</th>
-            <th class="text-center">Quantity</th>
-            <th class="text-center">Category</th>
-            <th class="text-center">Product Option</th>
-            <th class="text-center">Price</th>
-          </tr>
-        </ng-template>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+            <tr>
+              <th class="p-3 text-center">#</th>
+              <th class="p-3 text-center">Cart Item</th>
+              <th class="p-3 text-center">Quantity</th>
+              <th class="p-3 text-center">Category</th>
+              <th class="p-3 text-center">Product Option</th>
+              <th class="p-3 text-center">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (group of cartDisplayGroups; track $index) {
+              @for (item of group.items; track item.id; let itemIdx = $index) {
+                <tr [ngClass]="group.isCombo ? 'bg-amber-50/50 border-b border-amber-100' : 'border-b'">
+                  <td class="p-3 text-center font-medium text-gray-500">
+                    {{ itemIdx + 1 }}
+                  </td>
+                  <td class="p-3 text-center font-semibold">
+                    <span>{{ item?.product?.title_en }}</span>
+                    @if (group.isCombo) {
+                      <span class="ml-2 text-xs font-normal text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
+                        Combo Item
+                      </span>
+                    }
+                  </td>
+                  <td class="p-3 text-center">{{ item?.quantity }}</td>
+                  <td class="p-3 text-center text-gray-600">{{ item?.product?.category?.title_en || '-' }}</td>
+                  <td class="p-3 text-center text-gray-600">{{ item?.product_option?.title_en || '-' }}</td>
+                  <td class="p-3 text-center font-medium">
+                    @if (group.isCombo && item.product_option?.price && convertStringToNumber(item.price) === 0) {
+                      <span class="text-xs text-gray-400 line-through mr-1">
+                        {{ convertStringToNumber(item.product_option.price) * item.quantity | currency: ' EGP ' }}
+                      </span>
+                      <span class="text-green-600 font-bold">Included</span>
+                    } @else {
+                      {{ convertStringToNumber(item.price) * item.quantity | currency: ' EGP ' }}
+                    }
+                  </td>
+                </tr>
+              }
 
-        <ng-template pTemplate="body" let-item let-i="rowIndex">
-          <tr>
-            <td class="text-center">{{ i + 1 }}</td>
-            <td class="text-center">{{ item?.product?.title_en }}</td>
-            <td class="text-center">{{ item?.quantity }}</td>
-            <td class="text-center">{{ item?.product?.category?.title_en }}</td>
-            <td class="text-center">{{ item?.product_option?.title_en }}</td>
-            <td class="text-center">
-              {{ item.price * item.quantity | currency: " EGP " }}
-            </td>
-          </tr>
-        </ng-template>
+              @if (group.isCombo) {
+                <tr class="bg-amber-100/90 text-amber-950 font-semibold border-b-2 border-amber-300">
+                  <td colspan="4" class="p-3 text-left pl-6">
+                    <span class="flex items-center gap-2">
+                      <i class="pi pi-box text-amber-700 text-lg"></i>
+                      <span><strong>Combo:</strong> {{ group.combo_title }}</span>
+                      @if (group.offer_title) {
+                        <span class="bg-amber-200 text-amber-950 text-xs px-2 py-0.5 rounded border border-amber-400">
+                          {{ group.offer_title }}
+                        </span>
+                      }
+                      <span class="text-xs text-amber-800">({{ group.pieces }} Pieces)</span>
+                    </span>
+                  </td>
+                  <td class="p-3 text-right">
+                    @if (group.combo_savings && group.combo_savings > 0) {
+                      <span class="text-xs bg-green-600 text-white font-bold px-2 py-1 rounded shadow-sm">
+                        Saved: {{ group.combo_savings | currency: ' EGP ' }}
+                      </span>
+                    }
+                  </td>
+                  <td class="p-3 text-center text-base font-bold text-amber-950">
+                    {{ group.combo_price | currency: ' EGP ' }}
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
 
-        <ng-template pTemplate="footer">
-          <tr>
-            <td colspan="5" class="text-right font-bold">Subtotal:</td>
-            <td class="text-center font-bold">
-              {{ order.order.sub_total_price | currency: " EGP " }}
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5" class="text-right font-bold">VAT:</td>
-            <td class="text-center font-bold">
-              <span class="flex items-center justify-center gap-2">
-                <p-badge
-                  [value]="order.order.tax | currency: ' EGP '"
-                  severity="warning"
-                  styleClass="mr-2"
-                  pTooltip="VAT percentage"
-                  tooltipPosition="top"
-                  aria-label="VAT percentage"
-                ></p-badge>
-                <p-badge
-                  [value]="
-                    convertStringToNumber(order.order.tax_percentage) / 100
-                      | percent
-                  "
-                  severity="warning"
-                  styleClass="mr-2"
-                  pTooltip="VAT percentage"
-                  tooltipPosition="top"
-                  aria-label="VAT percentage"
-                ></p-badge>
+      <!-- Totals & Discounts Summary Section -->
+      <div class="mt-6 border-t pt-4">
+        <div class="flex flex-col gap-2 max-w-md ml-auto">
+          <div class="flex justify-between items-center text-sm py-1">
+            <span class="font-medium text-gray-600">Subtotal:</span>
+            <span class="font-bold text-gray-800">{{ order.order.sub_total_price | currency: ' EGP ' }}</span>
+          </div>
+
+          @if (totalComboSavings > 0) {
+            <div class="flex justify-between items-center text-sm bg-green-50 px-3 py-2 rounded-md border border-green-200">
+              <span class="font-semibold text-green-800 flex items-center gap-1.5">
+                <i class="pi pi-tag text-green-600"></i>
+                Combo Offers Discount / Savings:
               </span>
-            </td>
-          </tr>
-          @if (order.order.loyalty_points_discount) {
-            <tr>
-              <td colspan="5" class="text-right font-bold">Loyalty Points:</td>
-              <td class="text-center font-bold">
-                <span class="flex items-center justify-center gap-2">
-                  <p-badge
-                    [value]="order.order.loyalty_points_discount"
-                    severity="contrast"
-                    pTooltip="Loyalty Points"
-                    tooltipPosition="top"
-                    aria-label="LoyaltyPoints"
-                  ></p-badge>
-                </span>
-              </td>
-            </tr>
-          }
-          @if (convertStringToNumber(order.order.happy_hours_discount)) {
-            <tr>
-              <td colspan="5" class="text-right font-bold">happy hours:</td>
-              <td class="text-center font-bold">
-                <span class="flex items-center justify-center gap-2">
-                  <p-badge
-                    [value]="
-                      convertStringToNumber(order.order.happy_hours_discount)
-                        | currency: ' EGP '
-                    "
-                    severity="contrast"
-                    pTooltip="happy hours"
-                    tooltipPosition="top"
-                    aria-label="happy hours"
-                  ></p-badge>
-                </span>
-              </td>
-            </tr>
+              <span class="font-bold text-green-700 text-base">
+                - {{ totalComboSavings | currency: ' EGP ' }}
+              </span>
+            </div>
           }
 
+          <div class="flex justify-between items-center text-sm py-1">
+            <span class="font-medium text-gray-600">VAT ({{ convertStringToNumber(order.order.tax_percentage) }}%):</span>
+            <span class="font-bold text-gray-800">{{ order.order.tax | currency: ' EGP ' }}</span>
+          </div>
+
           @if (order.order.loyalty_points_discount) {
-            <tr>
-              <td colspan="5" class="text-right font-bold text-lg">
-                promo code
-              </td>
-              <td class="text-center font-bold text-lg">
-                <span class="flex items-center justify-center gap-2">
-                  <p-badge
-                    [value]="
-                      '-' + order.order.loyalty_points_discount
-                        | currency: ' EGP '
-                    "
-                    severity="warning"
-                    pTooltip="promo code value"
-                    tooltipPosition="top"
-                    aria-label="promo code value"
-                  ></p-badge>
-                </span>
-              </td>
-            </tr>
+            <div class="flex justify-between items-center text-sm py-1">
+              <span class="font-medium text-gray-600">Loyalty Points:</span>
+              <span class="font-bold text-purple-700">- {{ order.order.loyalty_points_discount | currency: ' EGP ' }}</span>
+            </div>
           }
+
+          @if (convertStringToNumber(order.order.happy_hours_discount) > 0) {
+            <div class="flex justify-between items-center text-sm py-1">
+              <span class="font-medium text-gray-600">Happy Hours Discount:</span>
+              <span class="font-bold text-blue-700">- {{ convertStringToNumber(order.order.happy_hours_discount) | currency: ' EGP ' }}</span>
+            </div>
+          }
+
           @if (order.order.delivery_fee) {
-            <tr>
-              <td colspan="5" class="text-right font-bold text-lg">
-                Delivery:
-              </td>
-              <td class="text-center font-bold text-lg">
-                <span class="flex items-center justify-center gap-2">
-                  <p-badge
-                    [value]="order.order.delivery_fee | currency: ' EGP '"
-                    severity="danger"
-                    pTooltip="Delivery charge"
-                    tooltipPosition="top"
-                    aria-label="Delivery charge"
-                  ></p-badge>
-                </span>
-              </td>
-            </tr>
+            <div class="flex justify-between items-center text-sm py-1">
+              <span class="font-medium text-gray-600">Delivery Fee:</span>
+              <span class="font-bold text-red-600">{{ order.order.delivery_fee | currency: ' EGP ' }}</span>
+            </div>
           }
-          <tr>
-            <td colspan="5" class="text-right font-bold text-lg">Total:</td>
-            <td class="text-center font-bold text-lg">
-              {{ order.order.total_price | currency: " EGP " }}
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+
+          <div class="flex justify-between items-center text-base py-2 border-t border-b border-gray-300 my-1 font-bold">
+            <span class="text-gray-900">Total Price:</span>
+            <span class="text-xl text-green-600">{{ order.order.total_price | currency: ' EGP ' }}</span>
+          </div>
+        </div>
+      </div>
     </p-card>
   </div>
 
@@ -437,20 +434,58 @@
 
       <p><strong>Status:</strong> {{ order.order.status }}</p>
 
-      <table class="w-full border-collapse border">
+      <table class="w-full border-collapse border my-3 text-sm">
         <thead>
-          <tr>
-            <th class="border p-2">Item</th>
-            <th class="border p-2">Quantity</th>
-            <th class="border p-2">Price</th>
+          <tr class="bg-gray-100">
+            <th class="border p-2 text-left">Item</th>
+            <th class="border p-2 text-center">Qty</th>
+            <th class="border p-2 text-center">Option</th>
+            <th class="border p-2 text-right">Price</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of userOrders">
-            <td class="border p-2">{{ item?.product?.title_en }}</td>
-            <td class="border p-2">{{ item?.quantity }}</td>
-            <td class="border p-2">{{ item?.price | currency: " EGP " }}</td>
-          </tr>
+          @for (group of cartDisplayGroups; track $index) {
+            @for (item of group.items; track item.id) {
+              <tr [ngClass]="group.isCombo ? 'bg-amber-50/60' : ''">
+                <td class="border p-2">
+                  {{ item?.product?.title_en }}
+                  @if (group.isCombo) {
+                    <span class="text-xs text-amber-700 font-medium"> (Combo Item)</span>
+                  }
+                </td>
+                <td class="border p-2 text-center">{{ item?.quantity }}</td>
+                <td class="border p-2 text-center text-xs text-gray-600">{{ item?.product_option?.title_en || '-' }}</td>
+                <td class="border p-2 text-right">
+                  @if (group.isCombo && item.product_option?.price && convertStringToNumber(item.price) === 0) {
+                    <span class="text-xs text-gray-400 line-through mr-1">
+                      {{ convertStringToNumber(item.product_option.price) * item.quantity | currency: ' EGP ' }}
+                    </span>
+                    <span class="text-green-600 text-xs font-semibold">Included</span>
+                  } @else {
+                    {{ convertStringToNumber(item.price) * item.quantity | currency: ' EGP ' }}
+                  }
+                </td>
+              </tr>
+            }
+
+            @if (group.isCombo) {
+              <tr class="bg-amber-100/90 text-amber-950 font-semibold border-b-2 border-amber-300">
+                <td colspan="3" class="border p-2">
+                  <strong>Combo:</strong> {{ group.combo_title }}
+                  @if (group.offer_title) {
+                    <span class="text-xs font-normal">({{ group.offer_title }})</span>
+                  }
+                  <span class="text-xs text-amber-800"> - {{ group.pieces }} Pcs</span>
+                  @if (group.combo_savings && group.combo_savings > 0) {
+                    <span class="text-xs text-green-700 font-bold ml-2">(Saved: {{ group.combo_savings | currency: ' EGP ' }})</span>
+                  }
+                </td>
+                <td class="border p-2 text-right font-bold text-amber-950">
+                  {{ group.combo_price | currency: ' EGP ' }}
+                </td>
+              </tr>
+            }
+          }
         </tbody>
       </table>
 
@@ -468,24 +503,19 @@
           </div>
         </p-card>
 
-        <!-- Service Charge -->
-        <!-- <p-card styleClass="mb-3">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <i class="pi pi-percentage text-blue-500"></i>
-            <span class="font-bold">Service Charge</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <p-badge
-              [value]="order.order.service_value / 100 | percent"
-              severity="info"
-            ></p-badge>
-            <span class="font-bold text-blue-500">{{
-              order.order.service_money | currency : " EGP "
-            }}</span>
-          </div>
-        </div>
-      </p-card> -->
+        <!-- Combo Offers Discount -->
+        @if (totalComboSavings > 0) {
+          <p-card styleClass="mb-3">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-tag text-green-600"></i>
+                <span class="font-bold text-green-800">Combo Offers Discount</span>
+              </div>
+              <span class="font-bold text-green-700">- {{ totalComboSavings | currency: ' EGP ' }}</span>
+            </div>
+          </p-card>
+        }
+
         <!-- Happy Hours  -->
         @if (convertStringToNumber(order.order.happy_hours_discount)) {
           <p-card styleClass="mb-3">
@@ -587,5 +617,5 @@
     </div>
   </p-card>
 } @else {
-  <app-loading-data-banner></app-loading-data-banner>ng s
+  <app-loading-data-banner></app-loading-data-banner>
 }

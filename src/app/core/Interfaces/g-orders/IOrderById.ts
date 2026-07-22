@@ -1,98 +1,150 @@
 export interface IOrderById {
- success: boolean
-  order: Orderdetail
+  success: boolean;
+  order: Orderdetail;
 }
 
 export interface Orderdetail {
-  id: number
-  user_id: number
-  branch_id: number
-  address_id: number
-  promo_code_id: any
-  promo_code_discount: string
-  voucher_id: any
-  voucher_discount: string
-  loyalty_applied_points: number
-  loyalty_earned_points: number
-  loyalty_points_discount: number
-  happy_hours_discount: string
-  sub_total_price: string
-  delivery_fee: string
+  id: number;
+  user_id: number;
+  branch_id: number;
+  address_id: number;
+  promo_code_id: any;
+  promo_code_discount: string;
+  voucher_id: any;
+  voucher_discount: string;
+  loyalty_applied_points: number;
+  loyalty_earned_points: number;
+  loyalty_points_discount: number;
+  happy_hours_discount: string;
+  sub_total_price: string;
+  delivery_fee: string;
   tax: string;
-  tax_percentage:string;
-  total_price: string
-  delivery_time_minutes: number
-  payment_method: string
-  note: string
-  status: string
-  confirmed_by: any
-  created_at: string
-  updated_at: string
-  user: User
-  branch: Branch
-  address: Address
-  items: Item[]
-  promo_code: any
-  voucher: any
+  tax_type?: string;
+  tax_percentage: string;
+  total_price: string;
+  delivery_time_minutes: number;
+  payment_method: string;
+  payment_status?: string;
+  payment_reference?: any;
+  is_notified?: number;
+  note: string;
+  status: string;
+  confirmed_by: any;
+  created_at: string;
+  updated_at: string;
+  user: User;
+  branch: Branch;
+  address: Address;
+  items: Item[];
+  promo_code: any;
+  voucher: any;
 }
+
 export interface Branch {
-  title_en: string
-  id: number
+  title_en: string;
+  id: number;
 }
+
 export interface Address {
-  id: number
-  user_id: number
-  region_id: number
-  type: string
-  address: string
-  phone_primary: string
-  phone_secondary: string
-  note: string
-  status: boolean
-  created_at: string
-  updated_at: string
-  floor: string
-  apartment: string
-  region: Region
+  id: number;
+  user_id: number;
+  region_id: number;
+  type: string;
+  address: string;
+  phone_primary: string;
+  phone_secondary: string | null;
+  note: string | null;
+  status: boolean;
+  created_at: string;
+  updated_at: string;
+  floor: string;
+  apartment: string;
+  region: Region;
 }
+
+export interface Category {
+  id: number;
+  title_en: string;
+}
+
 export interface Product {
-  title_en: string
-  id: number
-  main_image: string
-  has_options: boolean
-  is_recommended: boolean
+  id: number;
+  title_en: string;
+  main_image: string;
+  category_id?: number;
+  has_options: boolean;
+  is_recommended: boolean;
+  price?: string;
+  category?: Category;
 }
+
 export interface Region {
-  title_en: string
-  id: number
-  delivery_fee: string
-  governorate:Governorate
+  id: number;
+  title_en: string;
+  delivery_fee: string;
+  governorate_id?: number;
+  governorate: Governorate;
 }
- interface Governorate {
-  title_en: string
-  id: number
+
+export interface Governorate {
+  id: number;
+  title_en: string;
 }
+
+export interface ComboOfferable {
+  id: number;
+  title_ar: string;
+  title_en: string;
+  description_ar: string;
+  description_en: string;
+  bonus_percentage?: number;
+  percentage?: string;
+  image?: string;
+  status?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ComboDetail {
+  id: number;
+  title_en: string;
+  pieces: number;
+  price: string;
+}
+
+export interface ComboOffer {
+  id: number;
+  offerable_type: string;
+  offerable_id: number;
+  combo_id: number;
+  created_at?: string;
+  updated_at?: string;
+  combo?: ComboDetail;
+  offerable?: ComboOfferable;
+}
+
 export interface Item {
-  id: number
-  order_id: number
-  product_id: number
-  product_option_id: any
-  combo_offer_id: any
-  combo_group_id: any
-  price: string
-  quantity: number
-  created_at: string
-  updated_at: string
-  product: Product
-  product_option: any
-  combo_offer: any
+  id: number;
+  order_id: number;
+  product_id: number;
+  product_option_id: any;
+  combo_offer_id: any;
+  combo_group_id: any;
+  price: string;
+  quantity: number;
+  created_at: string;
+  updated_at: string;
+  product: Product;
+  product_option: any;
+  combo_offer: ComboOffer | null;
 }
+
 export interface Order {
   id: number;
   user_id: number;
   branch_id: number;
   address_id: number;
-  address: Address
+  address: Address;
   address_information: null;
   location_id: null;
   location_title: null;
@@ -103,9 +155,9 @@ export interface Order {
   total_price: number;
   taxes_value: number;
   delivry_value: number;
-  zi_points_discount:string;
+  zi_points_discount: string;
   happy_hours_discount: string;
-  zi_applied_points:number;
+  zi_applied_points: number;
   service_value: number;
   service_money: number;
   sub_total: number;
@@ -163,8 +215,8 @@ export interface Sublocationinfo {
 }
 
 export interface User {
-  id: number
-  name: string
-  email: string
-  phone: string
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
 }

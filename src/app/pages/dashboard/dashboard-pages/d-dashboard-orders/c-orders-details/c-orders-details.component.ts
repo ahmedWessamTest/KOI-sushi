@@ -17,7 +17,6 @@ import { TableModule } from 'primeng/table';
 import { timer } from 'rxjs';
 import {
   Address,
-  Addressinfo,
   IOrderById,
   Item,
   Orderdetail,
@@ -26,6 +25,34 @@ import {
 import { OrdersService } from '../../../../../core/services/g-orders/orders.service';
 import { LoadingDataBannerComponent } from '../../../../../shared/components/loading-data-banner/loading-data-banner.component';
 import { User } from './../../../../../core/Interfaces/g-orders/IAllOrders';
+
+export interface GroupedComboItem {
+  product_name: string;
+  option_name?: string;
+  quantity: number;
+}
+
+export interface GroupedCombo {
+  combo_group_id: string | number;
+  combo_offer_id: number;
+  title_en: string;
+  pieces: number;
+  price: number;
+  offer_title?: string;
+  items: GroupedComboItem[];
+}
+
+export interface CartDisplayGroup {
+  isCombo: boolean;
+  combo_group_id?: string | number;
+  combo_title?: string;
+  offer_title?: string;
+  pieces?: number;
+  combo_price?: number;
+  original_items_total?: number;
+  combo_savings?: number;
+  items: Item[];
+}
 
 @Component({
   selector: 'app-c-orders-details',
@@ -40,7 +67,6 @@ import { User } from './../../../../../core/Interfaces/g-orders/IAllOrders';
     PercentPipe,
     CardModule,
     ButtonModule,
-    JsonPipe,
     BadgeModule,
   ],
   templateUrl: './c-orders-details.component.html',
@@ -51,6 +77,9 @@ import { User } from './../../../../../core/Interfaces/g-orders/IAllOrders';
 export class COrdersDetailsComponent {
   order!: IOrderById;
   isHaveCombo = false;
+  groupedCombos: GroupedCombo[] = [];
+  cartDisplayGroups: CartDisplayGroup[] = [];
+  totalComboSavings = 0;
   userDetails: User[] = [];
   userAddress: Address[] = [];
   userPromoCode: Promo[] = [];
@@ -66,25 +95,16 @@ export class COrdersDetailsComponent {
     this.getCounters();
   }
   userPhones: string = '';
-  /*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Fetches and processes order data from route snapshot.
-   * - Retrieves order details and branch information from route snapshot data.
-   * - Extracts and compares user and address phone numbers, storing them in a formatted string.
-   * - Initializes user promo codes, user details, user address, and user orders arrays.
-   * - Adds user information and address information to respective arrays.
-   * - Logs order combo ID and order object for debugging purposes.
-   * - Populates `userOrders` with order details and updates `allBranches` with branch data.
-   */
-
-  /*******  10010e65-ab5f-4a88-9102-22e57d276945  *******/
   fetchData(): void {
     this.order = this.activatedRoute.snapshot.data['orderDetails'];
     console.log(this.order);
-    this.isHaveCombo = this.order.order.items.some((item) => item.combo_offer);
+
+    this.processComboGroups();
+    this.processCartDisplay();
+    this.isHaveCombo = this.groupedCombos.length > 0;
 
     const userPhone = this.order.order.user?.phone;
-    const addressPhone = this.order.order.user.phone;
+    const addressPhone = this.order.order.user?.phone;
 
     if (userPhone && addressPhone) {
       this.userPhones =
@@ -105,6 +125,117 @@ export class COrdersDetailsComponent {
       this.userPromoCode.push(this.order.order.promo_code);
     }
     this.userOrders = this.order.order.items;
+  }
+
+  processComboGroups(): void {
+    this.groupedCombos = [];
+    if (!this.order?.order?.items) return;
+
+    const comboMap = new Map<string | number, GroupedCombo>();
+
+    this.order.order.items.forEach((item) => {
+      if (item.combo_offer) {
+        const groupKey = item.combo_group_id || item.combo_offer_id || item.id;
+
+        if (!comboMap.has(groupKey)) {
+          const comboDetail = item.combo_offer.combo;
+          const offerable = item.combo_offer.offerable;
+
+          comboMap.set(groupKey, {
+            combo_group_id: groupKey,
+            combo_offer_id: item.combo_offer_id,
+            title_en: comboDetail?.title_en || 'Combo',
+            pieces: comboDetail?.pieces || 0,
+            price: 0,
+            offer_title: offerable?.title_en || offerable?.title_ar || '',
+            items: [],
+          });
+        }
+
+        const group = comboMap.get(groupKey)!;
+
+        const itemPrice = parseFloat(item.price || '0');
+        if (itemPrice > 0) {
+          group.price = itemPrice;
+        }
+
+        group.items.push({
+          product_name: item.product?.title_en || '',
+          option_name: item.product_option?.title_en || '',
+          quantity: item.quantity || 1,
+        });
+      }
+    });
+
+    this.groupedCombos = Array.from(comboMap.values());
+  }
+
+  processCartDisplay(): void {
+    this.cartDisplayGroups = [];
+    this.totalComboSavings = 0;
+    if (!this.order?.order?.items) return;
+
+    const comboMap = new Map<string | number, CartDisplayGroup>();
+    const nonComboItems: Item[] = [];
+
+    this.order.order.items.forEach((item) => {
+      if (item.combo_offer) {
+        const groupKey = item.combo_group_id || item.combo_offer_id || item.id;
+
+        if (!comboMap.has(groupKey)) {
+          const comboDetail = item.combo_offer.combo;
+          const offerable = item.combo_offer.offerable;
+
+          comboMap.set(groupKey, {
+            isCombo: true,
+            combo_group_id: groupKey,
+            combo_title: comboDetail?.title_en || 'Combo',
+            pieces: comboDetail?.pieces || 0,
+            combo_price: 0,
+            original_items_total: 0,
+            combo_savings: 0,
+            offer_title: offerable?.title_en || offerable?.title_ar || '',
+            items: [],
+          });
+        }
+
+        const group = comboMap.get(groupKey)!;
+        group.items.push(item);
+
+        const itemPrice = parseFloat(item.price || '0');
+        if (itemPrice > 0) {
+          group.combo_price = itemPrice;
+        }
+
+        const optionPrice = parseFloat(
+          item.product_option?.price || item.product?.price || '0'
+        );
+        const qty = item.quantity || 1;
+        group.original_items_total =
+          (group.original_items_total || 0) + optionPrice * qty;
+      } else {
+        nonComboItems.push(item);
+      }
+    });
+
+    comboMap.forEach((group) => {
+      const comboPrice = group.combo_price || 0;
+      const originalTotal = group.original_items_total || 0;
+      if (originalTotal > comboPrice) {
+        group.combo_savings = originalTotal - comboPrice;
+      } else {
+        group.combo_savings = 0;
+      }
+      this.totalComboSavings += group.combo_savings;
+      this.cartDisplayGroups.push(group);
+    });
+
+    if (nonComboItems.length > 0) {
+      this.cartDisplayGroups.push({
+        isCombo: false,
+        items: nonComboItems,
+      });
+    }
   }
 
   backToOrders(): void {
@@ -144,19 +275,28 @@ export class COrdersDetailsComponent {
       const happyValue = this.convertStringToNumber(happy);
 
       // Build the happy hours row only if value is not zero
+      const comboSavingsRow =
+        this.totalComboSavings > 0
+          ? `<tr>
+              <td>Combo Offers Savings:</td>
+              <td style="color: #15803d; font-weight: bold;">-${this.totalComboSavings} EGP</td>
+            </tr>`
+          : '';
+
       const printedReceiptRows = {
+        comboRow: comboSavingsRow,
         happyRow:
           happyValue !== 0
             ? `<tr>
               <td>Happy hours:</td>
-              <td>${happyValue}</td>
+              <td>${happyValue} EGP</td>
             </tr>`
             : '',
         ziDiscountRow: ziDiscount
           ? `
     <tr>
       <td>Zi Points:</td>
-      <td>${ziDiscount}</td>
+      <td>${ziDiscount} EGP</td>
     </tr>
   `
           : '',
@@ -173,6 +313,8 @@ export class COrdersDetailsComponent {
             th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
             th { background-color: #f4f4f4; }
             .total { text-align: right; font-weight: bold; margin-top: 10px; }
+            tr.bg-amber-100, tr.bg-amber-100\\/90 { background-color: #fef3c7 !important; font-weight: bold; }
+            tr.bg-amber-50, tr.bg-amber-50\\/50 { background-color: #fffdf5 !important; }
             @media print {
               body { margin: 10px; }
               .p-button-outlined { display: none; } /* Hide buttons in print */
@@ -203,11 +345,10 @@ export class COrdersDetailsComponent {
               <td>VAT:</td>
               <td>${vat}</td>
             </tr>
-              <tr>
+            <tr>
               <td>Delivery:</td>
               <td>${delivery}</td>
             </tr>
-             </tr>
             ${Object.values(printedReceiptRows).filter(Boolean).join('')}
             <tr>
               <td><strong>Total:</strong></td>
