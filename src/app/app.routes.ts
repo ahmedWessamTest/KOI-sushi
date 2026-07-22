@@ -1303,6 +1303,17 @@ export const routes: Routes = [
               description: 'Dashboard Page',
             },
           },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import('./pages/dashboard/dashboard-pages/m-settings/app-versions/app-versions.component').then(
+                (c) => c.AppVersionsComponent,
+              ),
+            data: {
+              title: 'KOI Sushi - Settings',
+              description: 'App Versions Settings Page',
+            },
+          },
         ],
       },
     ],

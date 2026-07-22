@@ -29,6 +29,7 @@ import { routes } from './app.routes';
 import { networkInterceptor } from './core/interceptors/is-stable.interceptor';
 import { loadingSpinnerInterceptor } from './core/interceptors/loading-spinner.interceptor';
 import { setTokenInterceptor } from './core/interceptors/set-token.interceptor';
+import { unauthorizedInterceptor } from './core/interceptors/unauthorized.interceptor';
 
 const scrollConfig: InMemoryScrollingOptions = {
   scrollPositionRestoration: 'top',
@@ -56,7 +57,7 @@ export const appConfig: ApplicationConfig = {
       closeButton: true,
     }),
     provideHttpClient(
-      withInterceptors([loadingSpinnerInterceptor, networkInterceptor,setTokenInterceptor]),
+      withInterceptors([loadingSpinnerInterceptor, networkInterceptor, unauthorizedInterceptor, setTokenInterceptor]),
       withFetch()
     ),
 

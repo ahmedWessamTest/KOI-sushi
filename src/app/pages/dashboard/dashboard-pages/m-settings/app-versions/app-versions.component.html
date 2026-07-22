@@ -1,0 +1,72 @@
+<p-card class="p-4">
+  <ng-template pTemplate="title">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-semibold text-gray-800">App Versions Settings</h2>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <form [formGroup]="versionForm" (ngSubmit)="saveVersions()" class="grid md:grid-cols-2 gap-6 mt-4">
+      <!-- iOS Version Input -->
+      <div class="flex flex-col">
+        <label class="font-medium mb-1">iOS Version</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="ios_version"
+          placeholder="e.g. 1.0.0"
+          class="p-inputtext-sm w-full"
+        />
+        @if (versionForm.get('ios_version')?.touched) {
+          @if (versionForm.get('ios_version')?.hasError('required')) {
+            <div class="p-error text-red-500 text-sm mt-1">
+              <small>iOS Version is required.</small>
+            </div>
+          } @else if (versionForm.get('ios_version')?.hasError('pattern')) {
+            <div class="p-error text-red-500 text-sm mt-1">
+              <small>Invalid version format. Use numbers separated by dots (e.g. 1.0.0).</small>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Android Version Input -->
+      <div class="flex flex-col">
+        <label class="font-medium mb-1">Android Version</label>
+        <input
+          type="text"
+          pInputText
+          formControlName="android_version"
+          placeholder="e.g. 1.0.0"
+          class="p-inputtext-sm w-full"
+        />
+        @if (versionForm.get('android_version')?.touched) {
+          @if (versionForm.get('android_version')?.hasError('required')) {
+            <div class="p-error text-red-500 text-sm mt-1">
+              <small>Android Version is required.</small>
+            </div>
+          } @else if (versionForm.get('android_version')?.hasError('pattern')) {
+            <div class="p-error text-red-500 text-sm mt-1">
+              <small>Invalid version format. Use numbers separated by dots (e.g. 1.0.0).</small>
+            </div>
+          }
+        }
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3 mt-4">
+      <button
+        pButton
+        label="Save Changes"
+        type="submit"
+        (click)="saveVersions()"
+        class="p-button-success btn-main px-4"
+        [disabled]="versionForm.invalid"
+      ></button>
+    </div>
+  </ng-template>
+</p-card>
+
+<p-toast></p-toast>

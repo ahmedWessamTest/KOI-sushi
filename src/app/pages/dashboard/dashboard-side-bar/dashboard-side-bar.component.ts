@@ -29,7 +29,7 @@ export class DashboardSideBarComponent {
     public el: ElementRef,
     private _Router: Router,
     private _ConfirmationService: ConfirmationService,
-  ) {}
+  ) { }
   showModal = signal<boolean>(false);
   ngOnInit(): void {
     if (JSON.parse(localStorage.getItem('user')!).role === 'super-admin')
@@ -208,6 +208,12 @@ export class DashboardSideBarComponent {
           label: 'Settings',
           items: [
             {
+              label: 'App Version',
+              icon: 'pi pi-fw pi-cog',
+              routerLink: ['/dashboard/settings'],
+
+            },
+            {
               label: 'Dashboard Settings',
               icon: 'pi pi-fw pi-cog',
             },
@@ -251,6 +257,11 @@ export class DashboardSideBarComponent {
           label: 'Settings',
           items: [
             {
+              label: 'App Version',
+              icon: 'pi pi-fw pi-cog',
+              routerLink: ['/dashboard/settings'],
+            },
+            {
               label: 'Dashboard Settings',
               icon: 'pi pi-fw pi-cog',
             },
@@ -279,7 +290,7 @@ export class DashboardSideBarComponent {
         localStorage.removeItem('user');
         this._Router.navigate(['/login']);
       },
-      reject: () => {},
+      reject: () => { },
     });
   }
 }
