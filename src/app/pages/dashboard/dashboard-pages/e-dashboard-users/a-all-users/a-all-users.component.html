@@ -116,10 +116,19 @@
             ></p-inputSwitch>
           </td>
           <td class="text-center">
-            <p-inputSwitch
-              [ngModel]="user.is_active"
-              (onChange)="toggleUsersActivation(user)"
-            ></p-inputSwitch>
+            <button
+              pButton
+              type="button"
+              [label]="user.is_active ? 'Activated' : 'Active'"
+              [icon]="user.is_active ? 'pi pi-check' : 'pi pi-check-circle'"
+              [disabled]="user.is_active"
+              [class]="
+                user.is_active
+                  ? 'p-button-sm p-button-secondary p-button-outlined'
+                  : 'p-button-sm p-button-success shadow-2'
+              "
+              (click)="toggleUsersActivation(user)"
+            ></button>
           </td>
 
           <td class="flex justify-center gap-1 mx-auto">
